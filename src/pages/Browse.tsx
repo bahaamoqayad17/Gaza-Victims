@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Header } from "@/components/Header";
+import { VictimCard } from "@/components/VictimCard";
 import { Footer } from "@/components/Footer";
 
 // Mock data - expanded to 10 victims
@@ -23,6 +24,10 @@ const cases = [
     status: "documented",
     causeOfDeath: "Armed Conflict",
     actionTaken: "pending",
+    verified: false,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/sarah-m",
+    lifeStory: "Sarah was a primary school teacher who dedicated her life to educating children in her community. She was known for her kindness and commitment to her students.",
     images: [
       "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
@@ -38,6 +43,10 @@ const cases = [
     status: "verified",
     causeOfDeath: "Civilian Attack",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/ahmed-k",
+    lifeStory: "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.'",
     images: [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
@@ -53,6 +62,10 @@ const cases = [
     status: "investigating",
     causeOfDeath: "Siege",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/maria-l",
+    lifeStory: "Maria was a nurse who worked tirelessly during the conflict, often staying beyond her shifts to care for patients.",
     images: [
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1452378174528-3024x3024?w=400&h=300&fit=crop",
@@ -68,6 +81,10 @@ const cases = [
     status: "documented",
     causeOfDeath: "Civil Unrest",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/chen-w",
+    lifeStory: "Chen was a university student studying journalism. He believed in the power of truth and was known for his courage.",
     images: [
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=300&fit=crop",
@@ -83,6 +100,10 @@ const cases = [
     status: "verified",
     causeOfDeath: "Chemical Attack",
     actionTaken: "investigating",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/elena-r",
+    lifeStory: "Elena was a doctor who volunteered at refugee camps. She was passionate about providing medical care to those in need.",
     images: [
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop",
@@ -98,6 +119,10 @@ const cases = [
     status: "documented",
     causeOfDeath: "Execution",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/david-l",
+    lifeStory: "David was a local shop owner who helped distribute food and supplies to elderly residents during the siege.",
     images: [
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1542190891-2093d38760f2?w=400&h=300&fit=crop",
@@ -113,6 +138,10 @@ const cases = [
     status: "investigating",
     causeOfDeath: "Airstrike",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/fatima-a",
+    lifeStory: "Fatima was an art student who used her creativity to bring joy to children in refugee camps.",
     images: [
       "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
@@ -128,6 +157,10 @@ const cases = [
     status: "verified",
     causeOfDeath: "Landmine",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/michael-t",
+    lifeStory: "Michael was a humanitarian worker who specialized in mine clearance. He had already saved countless lives.",
     images: [
       "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=300&fit=crop",
@@ -143,6 +176,10 @@ const cases = [
     status: "documented",
     causeOfDeath: "Targeted Killing",
     actionTaken: "investigating",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/amira-h",
+    lifeStory: "Amira was a women's rights activist and teacher who continued to educate girls in secret.",
     images: [
       "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=300&fit=crop",
@@ -158,6 +195,10 @@ const cases = [
     status: "verified",
     causeOfDeath: "Police Brutality",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/carlos-m",
+    lifeStory: "Carlos was a community organizer who worked to improve living conditions in his neighborhood.",
     images: [
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1618641986557-1ecd230959aa?w=400&h=300&fit=crop",
@@ -243,90 +284,12 @@ const Browse = () => {
         <TooltipProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {cases.map((victim) => (
-              <Link key={victim.id} to={`/case/${victim.id}`}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardContent className="p-4">
-                    {/* Photo carousel */}
-                    <div className="mb-4">
-                      <Carousel className="w-full">
-                        <CarouselContent>
-                          {victim.images.map((image, index) => (
-                            <CarouselItem key={index}>
-                              <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
-                                <img 
-                                  src={image} 
-                                  alt={`${victim.name} - Photo ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            </CarouselItem>
-                          ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="left-2 h-6 w-6" />
-                        <CarouselNext className="right-2 h-6 w-6" />
-                      </Carousel>
-                    </div>
-                    
-                    {/* Victim info */}
-                    <div className="text-center space-y-2">
-                      <div>
-                        <h4 className="text-lg font-semibold">{victim.name}</h4>
-                        <p className="text-sm text-muted-foreground">Age {victim.age}</p>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                          <MapPin className="w-3 h-3" />
-                          <span className="truncate">{victim.location}</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="w-3 h-3" />
-                          <span className="truncate">{victim.date}</span>
-                        </div>
-                      </div>
-
-                      {/* Cause of death */}
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">Cause:</span> <span className="break-words">{victim.causeOfDeath}</span>
-                      </div>
-
-                      {/* Action taken with tooltip */}
-                      <div className="flex items-center justify-center gap-1 text-sm">
-                        <span className="text-muted-foreground">Action taken:</span>
-                        <span className="break-words">{victim.actionTaken}</span>
-                        {victim.actionTaken === 'pending' && (
-                          <span className="text-red-500 text-xs ml-1">
-                            for {Math.floor((new Date().getTime() - new Date(victim.date).getTime()) / (1000 * 60 * 60 * 24))} days
-                          </span>
-                        )}
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-xs">This showcases the legal action taken thus far.</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-
-                      {/* Status badge and report button */}
-                      <div className="flex items-center justify-center gap-2">
-                        <Badge 
-                          variant={victim.status === 'verified' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {victim.status}
-                        </Badge>
-                        <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
-                          <Link to="/report">
-                            <AlertTriangle className="w-3 h-3 text-yellow-600" />
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+              <VictimCard 
+                key={victim.id} 
+                victim={victim} 
+                showReportButton={true}
+                clickable={true}
+              />
             ))}
           </div>
         </TooltipProvider>

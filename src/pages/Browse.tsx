@@ -308,6 +308,9 @@ const Browse = () => {
 
       {/* Results */}
       <div className="container mx-auto px-4 py-8">
+        <p className="text-sm text-muted-foreground mb-4">
+          All cases have been vetted at least once by a human who corroborated facts with both official and field sources.
+        </p>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <p className="text-sm text-muted-foreground">
             {cases.length} cases found

@@ -1,0 +1,182 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Calendar } from 'lucide-react';
+
+// Generate timeline data with daily cases
+const generateTimelineData = () => {
+  const data = [];
+  const startDate = new Date('2023-01-01');
+  const endDate = new Date('2023-12-31');
+  
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    const cases = Math.floor(Math.random() * 8) + (Math.random() > 0.7 ? Math.floor(Math.random() * 15) : 0);
+    data.push({
+      date: new Date(d),
+      cases,
+      month: d.toLocaleDateString('en', { month: 'short' }),
+      day: d.getDate(),
+      isHighActivity: cases > 10
+    });
+  }
+  return data;
+};
+
+const HorizontalTimeline = () => {
+  const [timelineData] = useState(generateTimelineData());
+  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const maxCases = Math.max(...timelineData.map(d => d.cases));
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    
+    const rect = scrollRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const scrollPercent = x / rect.width;
+    const maxScroll = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+    const newScrollLeft = scrollPercent * maxScroll;
+    
+    scrollRef.current.scrollLeft = newScrollLeft;
+    setScrollPosition(newScrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = () => {
+    setIsDragging(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    const handleGlobalMouseUp = () => setIsDragging(false);
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !scrollRef.current) return;
+      
+      const rect = scrollRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const scrollPercent = Math.max(0, Math.min(1, x / rect.width));
+      const maxScroll = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+      const newScrollLeft = scrollPercent * maxScroll;
+      
+      scrollRef.current.scrollLeft = newScrollLeft;
+      setScrollPosition(newScrollLeft);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging]);
+
+  return (
+    <Card className="w-full p-4 bg-muted/20">
+      <div className="flex items-center gap-2 mb-4">
+        <Calendar className="h-4 w-4" />
+        <h3 className="text-sm font-semibold">2023 Timeline</h3>
+        <span className="text-xs text-muted-foreground">
+          (Touch and drag to scroll • {timelineData.reduce((sum, d) => sum + d.cases, 0)} total cases)
+        </span>
+      </div>
+      
+      <div 
+        ref={scrollRef}
+        className={`relative overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="flex items-end gap-1 pb-2" style={{ width: `${timelineData.length * 8}px` }}>
+          {timelineData.map((day, index) => {
+            const heightPercent = day.cases > 0 ? Math.max(10, (day.cases / maxCases) * 100) : 5;
+            const isHovered = hoveredDay === index;
+            const shouldShowMonth = day.day === 1;
+            
+            return (
+              <div
+                key={index}
+                className="relative flex flex-col items-center group"
+                onMouseEnter={() => setHoveredDay(index)}
+                onMouseLeave={() => setHoveredDay(null)}
+              >
+                {/* Month label */}
+                {shouldShowMonth && (
+                  <div className="absolute -top-6 left-0 text-xs font-medium text-muted-foreground whitespace-nowrap">
+                    {day.month}
+                  </div>
+                )}
+                
+                {/* Case count bar */}
+                <div
+                  className={`
+                    w-2 transition-all duration-200 rounded-t-sm
+                    ${day.cases === 0 ? 'bg-muted' : day.isHighActivity ? 'bg-destructive' : 'bg-primary'}
+                    ${isHovered ? 'brightness-110 scale-x-150 z-10' : ''}
+                  `}
+                  style={{ 
+                    height: `${heightPercent}px`,
+                    minHeight: '2px'
+                  }}
+                />
+                
+                {/* Hover tooltip */}
+                {isHovered && (
+                  <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-popover border rounded px-2 py-1 text-xs whitespace-nowrap shadow-lg z-20 animate-fade-in">
+                    <div className="font-medium">{day.date.toLocaleDateString('en', { month: 'short', day: 'numeric' })}</div>
+                    <div className="text-muted-foreground">
+                      {day.cases} {day.cases === 1 ? 'case' : 'cases'}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Day marker (only for significant days) */}
+                {(day.day % 7 === 0 || day.isHighActivity) && (
+                  <div className="absolute -bottom-4 text-xs text-muted-foreground">
+                    {day.day}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      
+      {/* Legend */}
+      <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 bg-primary rounded-sm"></div>
+          <span>Regular activity</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 bg-destructive rounded-sm"></div>
+          <span>High activity (10+ cases)</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 bg-muted rounded-sm"></div>
+          <span>No cases</span>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+export default HorizontalTimeline;

@@ -7,6 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Calendar, MapPin, Users, HelpCircle, ChevronDown, Clock, Menu, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import HorizontalTimeline from "@/components/HorizontalTimeline";
 
 // Mock victim data for demonstration
 const recentCases = [
@@ -440,6 +441,13 @@ const Index = () => {
                   <CarouselNext className="hidden sm:flex" />
                 </Carousel>
               </TooltipProvider>
+            </div>
+          </section>
+
+          {/* Horizontal Timeline */}
+          <section className="py-8 md:py-12 border-b">
+            <div className="container mx-auto px-4">
+              <HorizontalTimeline />
             </div>
           </section>
         </main>

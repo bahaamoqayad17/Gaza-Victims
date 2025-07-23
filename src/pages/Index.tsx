@@ -382,14 +382,6 @@ const Index = () => {
               <p className="text-muted-foreground mb-4 md:mb-6 max-w-2xl mx-auto text-sm md:text-base">
                 {t('documentingLives')}
               </p>
-              <div className="mb-6 md:mb-8">
-                <p className="text-sm md:text-base text-muted-foreground">
-                  There are <span className="text-red-600 font-semibold">48,405</span> reported <span className="text-red-600 font-semibold">fatalities</span> in the conflict. Of those cases, the following were killed on day, date, year and
-                </p>
-                <p className="text-red-600 font-bold text-lg md:text-xl mt-2">
-                  this is hard evidence
-                </p>
-              </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="sm" className="md:size-default">
                   <Link to="/upload">{t('submitDocumentation')}</Link>
@@ -404,18 +396,26 @@ const Index = () => {
           {/* Recent Cases */}
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">
-                The following were <span className="text-red-600">killed</span> <span className="underline">
-                  {recentCases.length > 0 ? 
-                    new Date(recentCases[0].date).toLocaleDateString('en-US', { 
-                      weekday: 'long',
-                      month: 'long', 
-                      day: 'numeric'
-                    }).toLowerCase() 
-                    : 'recently'
-                  }
-                </span>
-              </h3>
+              <div className="text-center mb-6 md:mb-8">
+                <p className="text-sm md:text-base text-muted-foreground mb-4">
+                  There are <span className="text-red-600 font-semibold">48,405</span> reported <span className="text-red-600 font-semibold">fatalities</span> in the conflict. Of those cases,
+                </p>
+                <h3 className="text-xl md:text-2xl font-bold">
+                  The following were <span className="text-red-600">killed</span> <span className="underline">
+                    {recentCases.length > 0 ?
+                      new Date(recentCases[0].date).toLocaleDateString('en-US', { 
+                        weekday: 'long',
+                        month: 'long', 
+                        day: 'numeric'
+                      }).toLowerCase() 
+                      : 'recently'
+                    }
+                  </span> and
+                </h3>
+                <p className="text-red-600 font-bold text-lg md:text-xl mt-2">
+                  this is hard evidence
+                </p>
+              </div>
               
               {/* Mobile: Vertical scroll, Desktop: Grid */}
               <div className="md:hidden space-y-4">

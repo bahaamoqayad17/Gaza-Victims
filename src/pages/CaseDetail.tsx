@@ -93,6 +93,54 @@ const CaseDetail = () => {
               </CardContent>
             </Card>
 
+            {/* Their life in few images */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Their life in few images</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {/* Sample images */}
+                  <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" 
+                      alt="Life moment 1"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" 
+                      alt="Life moment 2"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1473091534298-04dcbce3278c" 
+                      alt="Life moment 3"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" 
+                      alt="Life moment 4"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="col-span-2 aspect-video bg-muted rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-primary/60 ml-1"></div>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Video clip</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Incident Details */}
             <Card>
               <CardHeader>

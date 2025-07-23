@@ -24,6 +24,8 @@ interface VictimCardProps {
     lifeStory?: string;
     deathDetails?: string;
     familyRelationship?: string;
+    occupation?: string;
+    perpetrator?: string;
     images: string[];
   };
   showReportButton?: boolean;
@@ -75,7 +77,9 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 <h4 className="font-semibold text-lg">{victim.name}</h4>
                 <p className="text-sm text-muted-foreground">{t('age')}: {victim.age}</p>
                 {victim.familyRelationship && (
-                  <p className="text-xs text-muted-foreground italic">{victim.familyRelationship}</p>
+                  <p className="text-xs text-muted-foreground italic">
+                    {victim.occupation && `${victim.occupation}. `}{victim.familyRelationship}
+                  </p>
                 )}
               </div>
               <div className="flex gap-1">
@@ -131,6 +135,11 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 <Clock className="h-3 w-3" />
                 <span>{t('causeOfDeath')}: {victim.causeOfDeath}</span>
               </div>
+              {victim.perpetrator && (
+                <div className="flex items-center gap-1">
+                  <span className="text-xs">Perpetrator: {victim.perpetrator}</span>
+                </div>
+              )}
               {victim.newsLink && (
                 <div className="flex items-center gap-1">
                   <ExternalLink className="h-3 w-3" />

@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, AlertTriangle, Shield, Send } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, AlertTriangle, Shield, Send, Plus, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Header } from "@/components/Header";
@@ -21,7 +22,18 @@ const ReportCase = () => {
     message: "",
     reportType: [] as string[],
     caseId: "",
-    urgency: "medium"
+    urgency: "medium",
+    familyComposition: {
+      father: false,
+      mother: false,
+      grandfather: false,
+      grandmother: false,
+      wife: false,
+      brothers: 0,
+      sisters: 0,
+      son: 0,
+      daughter: 0
+    }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,6 +54,26 @@ const ReportCase = () => {
         reportType: prev.reportType.filter(t => t !== type)
       }));
     }
+  };
+
+  const handleFamilyTagChange = (tag: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      familyComposition: {
+        ...prev.familyComposition,
+        [tag]: checked
+      }
+    }));
+  };
+
+  const handleFamilyCountChange = (type: string, increment: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      familyComposition: {
+        ...prev.familyComposition,
+        [type]: Math.max(0, (prev.familyComposition[type as keyof typeof prev.familyComposition] as number) + (increment ? 1 : -1))
+      }
+    }));
   };
 
   return (
@@ -152,6 +184,63 @@ const ReportCase = () => {
                           <SelectItem value="urgent">Urgent</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Family Composition */}
+                <div className="space-y-4">
+                  <h4 className="font-medium">Family Composition (Optional)</h4>
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground">Select family members who are still alive:</p>
+                    
+                    {/* Checkbox tags for individual family members */}
+                    <div className="flex flex-wrap gap-2">
+                      {['father', 'mother', 'grandfather', 'grandmother', 'wife'].map((member) => (
+                        <div key={member} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={member}
+                            checked={formData.familyComposition[member as keyof typeof formData.familyComposition] as boolean}
+                            onCheckedChange={(checked) => handleFamilyTagChange(member, checked as boolean)}
+                          />
+                          <Label htmlFor={member} className="text-sm capitalize">{member}</Label>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Counter for multiple family members */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {['brothers', 'sisters', 'son', 'daughter'].map((member) => (
+                        <div key={member} className="space-y-2">
+                          <Label className="text-sm capitalize">{member}</Label>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                              onClick={() => handleFamilyCountChange(member, false)}
+                              disabled={formData.familyComposition[member as keyof typeof formData.familyComposition] === 0}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="w-8 text-center text-sm">
+                              {formData.familyComposition[member as keyof typeof formData.familyComposition]}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                              onClick={() => handleFamilyCountChange(member, true)}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>

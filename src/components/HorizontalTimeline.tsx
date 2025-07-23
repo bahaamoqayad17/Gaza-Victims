@@ -91,12 +91,15 @@ const HorizontalTimeline = () => {
     <Card className="w-full p-4 bg-muted/20">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-4 w-4" />
-        <button 
-          onClick={() => setSelectedYear(selectedYear === 2025 ? 2024 : 2025)}
-          className="text-sm font-semibold hover:underline"
+        <select 
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(Number(e.target.value))}
+          className="text-sm font-semibold bg-transparent border-none focus:outline-none hover:underline cursor-pointer"
         >
-          {selectedYear} Cases
-        </button>
+          <option value={2025}>2025 Cases</option>
+          <option value={2024}>2024 Cases</option>
+          <option value={2023}>2023 Cases</option>
+        </select>
         <span className="text-xs text-muted-foreground">
           (Touch and drag to scroll • {timelineData.reduce((sum, d) => sum + d.cases, 0)} total cases)
         </span>

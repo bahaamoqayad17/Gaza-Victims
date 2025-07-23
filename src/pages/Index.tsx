@@ -455,18 +455,20 @@ const Index = () => {
           <section className="py-8 md:py-16 bg-muted/20">
             <div className="container mx-auto px-4">
               <div className="text-center mb-8">
-                <div className="text-sm text-muted-foreground space-x-4">
-                  <Link to="/browse" className="hover:text-foreground">
-                    <span className="font-bold text-2xl">2,847</span> Total Cases
-                  </Link>
-                  •
-                  <Link to="/map" className="hover:text-foreground">
-                    <span className="font-bold text-2xl">47</span> Locations
-                  </Link>
-                  •
-                  <Link to="/browse?filter=verified" className="hover:text-foreground">
-                    <span className="font-bold text-2xl">1,893</span> Verified
-                  </Link>
+                <div className="text-sm text-muted-foreground">
+                  <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
+                    <Link to="/browse" className="hover:text-foreground whitespace-nowrap">
+                      <span className="font-bold text-2xl">2,847</span> Total Cases
+                    </Link>
+                    <span className="hidden md:inline">•</span>
+                    <Link to="/map" className="hover:text-foreground whitespace-nowrap">
+                      <span className="font-bold text-2xl">47</span> Locations
+                    </Link>
+                    <span className="hidden md:inline">•</span>
+                    <Link to="/browse?filter=verified" className="hover:text-foreground whitespace-nowrap">
+                      <span className="font-bold text-2xl">1,893</span> Verified
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

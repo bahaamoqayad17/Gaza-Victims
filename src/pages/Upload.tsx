@@ -117,6 +117,38 @@ const Upload = () => {
                   </div>
 
                   <div>
+                    <Label>Family Relationships</Label>
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="parent" />
+                          <Label htmlFor="parent" className="text-sm">Parent</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="spouse" />
+                          <Label htmlFor="spouse" className="text-sm">Spouse</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="child" />
+                          <Label htmlFor="child" className="text-sm">Child</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="sibling" />
+                          <Label htmlFor="sibling" className="text-sm">Sibling</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="grandparent" />
+                          <Label htmlFor="grandparent" className="text-sm">Grandparent</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="other" />
+                          <Label htmlFor="other" className="text-sm">Other Relative</Label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
                     <Label htmlFor="photo">Portrait Photo</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
                       <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
@@ -213,7 +245,7 @@ const Upload = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="date">Date of Incident</Label>
+                      <Label htmlFor="date">Date of Incident (DD/MM/YYYY)</Label>
                       <Input id="date" type="date" />
                     </div>
                     <div>

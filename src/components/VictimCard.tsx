@@ -208,7 +208,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 <div className="flex items-center gap-1">
                   <span className="text-sm">
                     Enforced legal response: 
-                    <span className={victim.actionTaken === 'pending' ? 'text-orange-600' : ''}>
+                    <span className={victim.actionTaken === 'pending' ? 'text-red-600' : ''}>
                       {victim.actionTaken === 'pending' 
                         ? ` NONE, since ${daysSinceDeath} days`
                         : ` ${victim.actionTaken}`

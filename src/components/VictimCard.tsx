@@ -96,12 +96,12 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
             
             <div className="flex flex-wrap gap-1 mb-2 text-xs">
               <span className="text-muted-foreground">{t('age')}: {victim.age}</span>
-              <span className="text-blue-600">• Documented</span>
+              <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">Documented</span>
               {victim.verified && (
-                <span className="text-green-600">• Verified</span>
+                <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">Verified</span>
               )}
               {victim.thirdPartyVerified && (
-                <span className="text-purple-600">• Third Party Verified</span>
+                <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">Third Party Verified</span>
               )}
             </div>
 

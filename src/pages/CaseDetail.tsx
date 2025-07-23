@@ -54,9 +54,6 @@ const CaseDetail = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Victim Profile
-                  <Badge variant={caseData.status === 'verified' ? 'default' : 'secondary'}>
-                    {caseData.status}
-                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>

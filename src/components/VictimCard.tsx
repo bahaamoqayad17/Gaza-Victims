@@ -22,6 +22,7 @@ interface VictimCardProps {
     thirdPartyVerified?: boolean;
     newsLink?: string;
     lifeStory?: string;
+    deathDetails?: string;
     images: string[];
   };
   showReportButton?: boolean;
@@ -139,8 +140,22 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 <ChevronDown className="h-3 w-3" />
                 Who were they?
               </CollapsibleTrigger>
-              <CollapsibleContent className="text-xs text-muted-foreground mt-1">
-                {victim.lifeStory || "Life story information not available."}
+              <CollapsibleContent className="text-xs text-muted-foreground mt-1 space-y-2">
+                {victim.lifeStory && (
+                  <div>
+                    <span className="font-medium">About them:</span>
+                    <p className="mt-1">{victim.lifeStory}</p>
+                  </div>
+                )}
+                {victim.deathDetails && (
+                  <div>
+                    <span className="font-medium">How they died:</span>
+                    <p className="mt-1">{victim.deathDetails}</p>
+                  </div>
+                )}
+                {!victim.lifeStory && !victim.deathDetails && (
+                  <p>Information not available.</p>
+                )}
               </CollapsibleContent>
             </Collapsible>
           </div>

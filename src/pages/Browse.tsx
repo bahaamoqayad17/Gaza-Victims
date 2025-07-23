@@ -34,9 +34,9 @@ const cases = [
       occupation: "A primary school teacher",
       perpetrator: "Syrian Government Forces",
       images: [
-        "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
+        "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?w=400&h=300&fit=crop"
       ]
     },
   {
@@ -260,7 +260,32 @@ const cases = [
 const Browse = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [causeFilter, setCauseFilter] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
+
+  // Extract unique statuses and causes from cases data
+  const uniqueStatuses = [...new Set(cases.map(c => c.status))];
+  const uniqueCauses = [...new Set(cases.map(c => c.causeOfDeath))];
+
+  // Filter and sort cases
+  const filteredCases = cases.filter(victim => {
+    const matchesSearch = victim.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         victim.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || victim.status === statusFilter;
+    const matchesCause = causeFilter === "all" || victim.causeOfDeath === causeFilter;
+    
+    return matchesSearch && matchesStatus && matchesCause;
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case "alphabetical":
+        return a.name.localeCompare(b.name);
+      case "age":
+        return a.age - b.age;
+      case "recent":
+      default:
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -286,9 +311,25 @@ const Browse = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="documented">Documented</SelectItem>
-                <SelectItem value="verified">Verified</SelectItem>
-                <SelectItem value="investigating">Investigating</SelectItem>
+                {uniqueStatuses.map(status => (
+                  <SelectItem key={status} value={status}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={causeFilter} onValueChange={setCauseFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Cause of Death" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Causes</SelectItem>
+                {uniqueCauses.map(cause => (
+                  <SelectItem key={cause} value={cause}>
+                    {cause}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -313,7 +354,7 @@ const Browse = () => {
         </p>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <p className="text-sm text-muted-foreground">
-            {cases.length} cases found
+            {filteredCases.length} cases found
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" asChild>
@@ -336,7 +377,7 @@ const Browse = () => {
 
         <TooltipProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {cases.map((victim) => (
+            {filteredCases.map((victim) => (
               <VictimCard 
                 key={victim.id} 
                 victim={victim} 

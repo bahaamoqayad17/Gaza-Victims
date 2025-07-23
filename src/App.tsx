@@ -8,6 +8,8 @@ import Upload from "./pages/Upload";
 import Browse from "./pages/Browse";
 import CaseDetail from "./pages/CaseDetail";
 import Map from "./pages/Map";
+import About from "./pages/About";
+import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/browse" element={<Browse />} />
           <Route path="/case/:id" element={<CaseDetail />} />
           <Route path="/map" element={<Map />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/legal" element={<Legal />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

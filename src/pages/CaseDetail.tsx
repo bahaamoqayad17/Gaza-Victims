@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, MapPin, ArrowLeft, Shield, AlertTriangle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Footer } from "@/components/Footer";
 
 // Mock case data
 const caseData = {
@@ -44,9 +46,12 @@ const CaseDetail = () => {
                 Browse
               </Link>
             </Button>
-            <div>
-              <h1 className="text-xl font-bold">{caseData.name}</h1>
-              <p className="text-sm text-muted-foreground">Case #{caseData.caseNumber}</p>
+            <div className="flex items-center justify-between flex-1">
+              <div>
+                <h1 className="text-xl font-bold">{caseData.name}</h1>
+                <p className="text-sm text-muted-foreground">Case #{caseData.caseNumber}</p>
+              </div>
+              <LanguageSelector />
             </div>
           </div>
         </div>
@@ -215,6 +220,8 @@ const CaseDetail = () => {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

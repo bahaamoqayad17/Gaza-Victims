@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Upload as UploadIcon, ArrowLeft, ArrowRight, X, Eye, Download } from "lucide-react";
 import { Link } from "react-router-dom";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Footer } from "@/components/Footer";
 
 const Upload = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -63,7 +65,10 @@ const Upload = () => {
                 Archive
               </Link>
             </Button>
-            <h1 className="text-xl font-bold">Document Case</h1>
+            <div className="flex items-center justify-between flex-1">
+              <h1 className="text-xl font-bold">Document Case</h1>
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       </header>
@@ -412,6 +417,8 @@ const Upload = () => {
           </Card>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Footer } from "@/components/Footer";
 
 const Map = () => {
   return (
@@ -16,7 +18,10 @@ const Map = () => {
                 Back
               </Link>
             </Button>
-            <h1 className="text-xl font-bold">Interactive Map</h1>
+            <div className="flex items-center justify-between flex-1">
+              <h1 className="text-xl font-bold">Interactive Map</h1>
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       </header>
@@ -25,6 +30,8 @@ const Map = () => {
       <div className="container mx-auto px-4 py-8">
         <InteractiveMap />
       </div>
+      
+      <Footer />
     </div>
   );
 };

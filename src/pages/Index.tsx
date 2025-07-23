@@ -8,6 +8,9 @@ import { Calendar, MapPin, Users, HelpCircle, ChevronDown, Clock, Menu, ChevronL
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import HorizontalTimeline from "@/components/HorizontalTimeline";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Footer } from "@/components/Footer";
+import childPhoto from "@/assets/child-photo.jpg";
 
 // Mock victim data for demonstration
 const recentCases = [
@@ -23,9 +26,9 @@ const recentCases = [
     lifeStory: "Sarah was a dedicated teacher who loved working with children. Her colleagues remember her infectious laughter and her dream of opening a school for underprivileged kids. 'She believed every child deserved a chance to learn,' her sister recalls.",
     deathDetails: "Sarah was killed during a targeted bombing of her school. She had stayed late to prepare lessons for the next day when the attack occurred. Security cameras showed she tried to reach the shelter but didn't make it in time.",
     images: [
-      "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400&h=300&fit=crop"
+      "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
     ]
   },
   {
@@ -224,10 +227,12 @@ const Index = () => {
               </Button>
               <h1 className="text-xl md:text-2xl font-bold">Archive</h1>
             </div>
-            <nav className="flex gap-4 md:gap-6">
+            <nav className="flex items-center gap-4 md:gap-6">
               <Link to="/browse" className="text-xs md:text-sm hover:underline">Browse</Link>
               <Link to="/map" className="text-xs md:text-sm hover:underline">Map</Link>
               <Link to="/upload" className="text-xs md:text-sm hover:underline">Document</Link>
+              <Link to="/about" className="text-xs md:text-sm hover:underline">About</Link>
+              <LanguageSelector />
             </nav>
           </div>
         </div>
@@ -335,7 +340,7 @@ const Index = () => {
           {/* Recent Cases */}
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">Recent Documentation</h3>
+              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">The following were "killed" yesterday</h3>
               
               <TooltipProvider>
                 <Carousel className="max-w-5xl mx-auto">
@@ -392,6 +397,11 @@ const Index = () => {
                             <div className="flex items-center justify-center gap-1 text-xs md:text-sm">
                               <span className="text-muted-foreground">Action taken:</span>
                               <span className="break-words">{victim.actionTaken}</span>
+                              {victim.actionTaken === 'pending' && (
+                                <span className="text-red-500 text-xs ml-1">
+                                  for {Math.floor((new Date().getTime() - new Date(victim.date).getTime()) / (1000 * 60 * 60 * 24))} days
+                                </span>
+                              )}
                               <Tooltip>
                                 <TooltipTrigger>
                                   <HelpCircle className="w-3 h-3 text-muted-foreground" />
@@ -473,12 +483,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t py-6 md:py-8">
-        <div className="container mx-auto px-4 text-center text-xs md:text-sm text-muted-foreground">
-          <p>All submissions are anonymous and encrypted.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

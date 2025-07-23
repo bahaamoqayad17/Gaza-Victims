@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Calendar, MapPin, ArrowLeft } from "lucide-react";
+import { Search, Filter, Calendar, MapPin, ArrowLeft, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 
 // Mock data
@@ -16,8 +18,13 @@ const cases = [
     location: "Aleppo, Syria",
     date: "2023-10-15",
     status: "documented",
-    incidentType: "Armed Conflict",
-    imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=300&h=300&fit=crop&crop=face"
+    causeOfDeath: "Armed Conflict",
+    actionTaken: "pending",
+    images: [
+      "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400&h=300&fit=crop"
+    ]
   },
   {
     id: "002", 
@@ -26,8 +33,13 @@ const cases = [
     location: "Kharkiv, Ukraine",
     date: "2023-09-22",
     status: "verified",
-    incidentType: "Civilian Attack",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
+    causeOfDeath: "Civilian Attack",
+    actionTaken: "pending",
+    images: [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1501286353178-1ec881214838?w=400&h=300&fit=crop"
+    ]
   },
   {
     id: "003",
@@ -36,8 +48,13 @@ const cases = [
     location: "Mariupol, Ukraine", 
     date: "2023-08-30",
     status: "investigating",
-    incidentType: "Siege",
-    imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face"
+    causeOfDeath: "Siege",
+    actionTaken: "pending",
+    images: [
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1452378174528-3024x3024?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop"
+    ]
   },
   {
     id: "004",
@@ -46,8 +63,13 @@ const cases = [
     location: "Yangon, Myanmar",
     date: "2023-07-12",
     status: "documented",
-    incidentType: "Civil Unrest",
-    imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+    causeOfDeath: "Civil Unrest",
+    actionTaken: "pending",
+    images: [
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=300&fit=crop"
+    ]
   }
 ];
 
@@ -127,44 +149,84 @@ const Browse = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {cases.map((victim) => (
-            <Link key={victim.id} to={`/case/${victim.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden bg-muted">
-                    <img 
-                      src={victim.imageUrl} 
-                      alt={`${victim.name}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <CardTitle className="text-base">{victim.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground">Age {victim.age}</p>
-                </CardHeader>
-                <CardContent className="text-center space-y-2 pt-0">
-                  <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-                    <MapPin className="w-3 h-3" />
-                    {victim.location}
-                  </div>
-                  <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" />
-                    {victim.date}
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-2">
-                    {victim.incidentType}
-                  </div>
-                  <Badge 
-                    variant={victim.status === 'verified' ? 'default' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {victim.status}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+        <TooltipProvider>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {cases.map((victim) => (
+              <Link key={victim.id} to={`/case/${victim.id}`}>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <CardContent className="p-4">
+                    {/* Photo carousel */}
+                    <div className="mb-4">
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {victim.images.map((image, index) => (
+                            <CarouselItem key={index}>
+                              <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
+                                <img 
+                                  src={image} 
+                                  alt={`${victim.name} - Photo ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-2 h-6 w-6" />
+                        <CarouselNext className="right-2 h-6 w-6" />
+                      </Carousel>
+                    </div>
+                    
+                    {/* Victim info */}
+                    <div className="text-center space-y-2">
+                      <div>
+                        <h4 className="text-lg font-semibold">{victim.name}</h4>
+                        <p className="text-sm text-muted-foreground">Age {victim.age}</p>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                          <MapPin className="w-3 h-3" />
+                          <span className="truncate">{victim.location}</span>
+                        </div>
+                        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                          <Calendar className="w-3 h-3" />
+                          <span className="truncate">{victim.date}</span>
+                        </div>
+                      </div>
+
+                      {/* Cause of death */}
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Cause:</span> <span className="break-words">{victim.causeOfDeath}</span>
+                      </div>
+
+                      {/* Action taken with tooltip */}
+                      <div className="flex items-center justify-center gap-1 text-sm">
+                        <span className="text-muted-foreground">Action taken:</span>
+                        <span className="break-words">{victim.actionTaken}</span>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-xs">This showcases the legal action taken thus far.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+
+                      {/* Status badge */}
+                      <Badge 
+                        variant={victim.status === 'verified' ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {victim.status}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </TooltipProvider>
 
         {/* Pagination placeholder */}
         <div className="flex justify-center mt-12">

@@ -69,22 +69,56 @@ const CaseDetail = () => {
                     />
                   </div>
                   <div className="flex-1 space-y-3">
-                    <div>
-                      <h3 className="font-semibold text-lg">{caseData.name}</h3>
-                      <p className="text-muted-foreground">Age {caseData.age} • {caseData.gender} • {caseData.occupation}</p>
-                      <p className="text-muted-foreground italic text-sm mt-1">{caseData.familyRelationship}</p>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        {caseData.location}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        {caseData.date}
-                      </div>
-                    </div>
-                    <p className="text-sm">{caseData.background}</p>
+                     <div>
+                       <h3 className="font-semibold text-lg">{caseData.name}</h3>
+                       <p className="text-muted-foreground">Age {caseData.age} • {caseData.gender} • {caseData.occupation}</p>
+                       <p className="text-muted-foreground italic text-sm mt-1">{caseData.familyRelationship}</p>
+                     </div>
+                     
+                     <div className="flex flex-wrap gap-1 mb-2 text-xs">
+                       <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">Documented</span>
+                       {caseData.verified && (
+                         <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">Verified</span>
+                       )}
+                       {caseData.thirdPartyVerified && (
+                         <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">Third Party Verified</span>
+                       )}
+                       <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300">Proof of ID</span>
+                       <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300">Proof of Death</span>
+                     </div>
+                     
+                     <div className="space-y-2">
+                       <div className="flex items-center gap-2 text-sm">
+                         <MapPin className="w-4 h-4 text-muted-foreground" />
+                         {caseData.location}
+                       </div>
+                       <div className="flex items-center gap-2 text-sm">
+                         <Calendar className="w-4 h-4 text-muted-foreground" />
+                         {caseData.date}
+                       </div>
+                       <div className="text-sm">
+                         <span>Perpetrator: {caseData.perpetrator}</span>
+                       </div>
+                       <div className="text-sm">
+                         <span>Enforced legal response: 
+                           <span className="text-red-600"> NONE, since 3 days</span>
+                         </span>
+                       </div>
+                       {caseData.newsLink && (
+                         <div className="text-sm">
+                           <span>Incident news story: </span>
+                           <a 
+                             href={caseData.newsLink} 
+                             target="_blank" 
+                             rel="noopener noreferrer"
+                             className="text-blue-600 hover:text-blue-800 underline text-xs"
+                           >
+                             {caseData.newsLink}
+                           </a>
+                         </div>
+                       )}
+                     </div>
+                     <p className="text-sm">{caseData.background}</p>
                   </div>
                 </div>
               </CardContent>

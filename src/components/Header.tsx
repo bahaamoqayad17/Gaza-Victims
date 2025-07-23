@@ -109,16 +109,6 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
             >
               {t('map')}
             </Link>
-            <Link 
-              to="/upload" 
-              className={`px-2 py-1 rounded transition-colors ${
-                isActivePage('/upload') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
-              }`}
-            >
-              Submit
-            </Link>
           </div>
         </div>
 
@@ -167,26 +157,6 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               }`}
             >
               {t('map')}
-            </Link>
-            <Link 
-              to="/report" 
-              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
-                isActivePage('/report') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
-              }`}
-            >
-              {t('reportCase')}
-            </Link>
-            <Link 
-              to="/upload" 
-              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors hidden sm:inline-block ${
-                isActivePage('/upload') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
-              }`}
-            >
-              Submit
             </Link>
             <Link 
               to="/about" 

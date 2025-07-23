@@ -282,12 +282,6 @@ const Index = () => {
                 <span className="text-sm md:text-base lg:text-lg font-semibold">Timeline</span>
               </div>
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="sm" onClick={() => setTimelineScrollPosition(Math.max(0, timelineScrollPosition - 1))} disabled={timelineScrollPosition === 0} className="hidden md:flex h-6 w-6 p-0">
-                  <ChevronLeft className="h-3 w-3" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setTimelineScrollPosition(Math.min(timelineData.length - 1, timelineScrollPosition + 1))} disabled={timelineScrollPosition >= timelineData.length - 1} className="hidden md:flex h-6 w-6 p-0">
-                  <ChevronRight className="h-3 w-3" />
-                </Button>
                 <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setSidebarOpen(false)}>
                   ×
                 </Button>
@@ -322,19 +316,10 @@ const Index = () => {
             <div className="container mx-auto px-4">
               <div className="text-center mb-6 md:mb-8">
                 <p className="text-sm md:text-base text-muted-foreground mb-4">
-                  There are <span className="text-red-600 font-semibold">48,405</span> reported <span className="text-red-600 font-semibold">fatalities</span> in the conflict. Of those cases,
+                  As of 23/07/2025, there are <span className="text-red-600 font-bold">48,405</span> <span className="text-red-600 font-bold">reported fatalities</span> in the conflict. Of those numerous cases, the following (and counting) are without a doubt <span className="text-red-600 font-bold">confirmed cases of state murder</span>. We present you with
                 </p>
-                <h3 className="text-xl md:text-2xl font-bold">
-                  The following were <span className="text-red-600">killed</span> <span className="underline">
-                    {recentCases.length > 0 ? new Date(recentCases[0].date).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    month: 'long',
-                    day: 'numeric'
-                  }).toLowerCase() : 'recently'}
-                  </span> and
-                </h3>
-                <p className="text-red-600 font-bold text-lg md:text-xl mt-2">
-                  this is hard evidence
+                <p className="text-red-600 font-bold text-xl md:text-2xl mt-2" style={{fontSize: '115%'}}>
+                  HARD EVIDENCE
                 </p>
               </div>
               

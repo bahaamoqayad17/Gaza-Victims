@@ -118,55 +118,84 @@ const Upload = () => {
 
                   <div>
                     <Label>Family Relationships</Label>
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="parent" />
-                          <Label htmlFor="parent" className="text-sm">Parent</Label>
+                          <Checkbox id="father" />
+                          <Label htmlFor="father" className="text-sm">Father</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="spouse" />
-                          <Label htmlFor="spouse" className="text-sm">Spouse</Label>
+                          <Checkbox id="mother" />
+                          <Label htmlFor="mother" className="text-sm">Mother</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="daughter" />
-                          <Label htmlFor="daughter" className="text-sm">Daughter</Label>
-                          <div className="flex items-center ml-2">
+                          <Checkbox id="wife" />
+                          <Label htmlFor="wife" className="text-sm">Wife</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="husband" />
+                          <Label htmlFor="husband" className="text-sm">Husband</Label>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="flex items-center justify-between p-2 border rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="daughter" />
+                            <Label htmlFor="daughter" className="text-sm">Daughter</Label>
+                          </div>
+                          <div className="flex items-center space-x-1">
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm">0</span>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="son" />
-                          <Label htmlFor="son" className="text-sm">Son</Label>
-                          <div className="flex items-center ml-2">
+                        
+                        <div className="flex items-center justify-between p-2 border rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="son" />
+                            <Label htmlFor="son" className="text-sm">Son</Label>
+                          </div>
+                          <div className="flex items-center space-x-1">
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm">0</span>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="brother" />
-                          <Label htmlFor="brother" className="text-sm">Brother</Label>
-                          <div className="flex items-center ml-2">
+                        
+                        <div className="flex items-center justify-between p-2 border rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="brother" />
+                            <Label htmlFor="brother" className="text-sm">Brother</Label>
+                          </div>
+                          <div className="flex items-center space-x-1">
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm">0</span>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="sister" />
-                          <Label htmlFor="sister" className="text-sm">Sister</Label>
-                          <div className="flex items-center ml-2">
+                        
+                        <div className="flex items-center justify-between p-2 border rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="sister" />
+                            <Label htmlFor="sister" className="text-sm">Sister</Label>
+                          </div>
+                          <div className="flex items-center space-x-1">
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm">0</span>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
                             <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
                           </div>
                         </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3">
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="grandparent" />
-                          <Label htmlFor="grandparent" className="text-sm">Grandparent</Label>
+                          <Checkbox id="grandfather" />
+                          <Label htmlFor="grandfather" className="text-sm">Grandfather</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="grandmother" />
+                          <Label htmlFor="grandmother" className="text-sm">Grandmother</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox id="other" />

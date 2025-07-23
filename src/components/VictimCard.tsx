@@ -179,15 +179,13 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                   <span>Location of incident: {victim.location}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
                   <span className="ltr-text">Date of incident: {formatDate(victim.date)}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  <span className="text-sm">{t('causeOfDeath')}: {victim.causeOfDeath}</span>
+                  <span className="text-sm">Submitted by: Relative</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-sm">Submitted by: Relative</span>
+                  <span className="text-sm">{t('causeOfDeath')}: {victim.causeOfDeath}</span>
                 </div>
                 {victim.perpetrator && (
                   <div className="flex items-center gap-1">

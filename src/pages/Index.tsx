@@ -319,24 +319,18 @@ const Index = () => {
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
               <div className="bg-gradient-to-r from-background via-muted/20 to-background p-8 md:p-12 rounded-lg border-2 border-border/50 shadow-lg mb-8 md:mb-12">
-                <div className="max-w-4xl mx-auto text-center space-y-6">
+                <div className="max-w-4xl mx-auto text-center">
                   <p className="text-lg md:text-xl leading-relaxed text-foreground">
                     As of <span className="font-mono text-red-600 font-bold">23/07/2025</span>, there are{' '}
-                    <span className="text-red-600 font-bold text-xl md:text-2xl">48,405</span>{' '}
+                    <span className="text-red-600 font-bold">48,405</span>{' '}
                     <span className="text-red-600 font-bold">reported fatalities</span> in the conflict.
-                  </p>
-                  <p className="text-lg md:text-xl leading-relaxed text-foreground">
                     Of those numerous cases, the following (and counting) are without a doubt{' '}
                     <span className="text-red-600 font-bold">confirmed cases of state murder</span>.{' '}
                     We present you with
                   </p>
-                  <div className="relative">
-                    <p className="text-red-600 font-bold text-3xl md:text-4xl lg:text-5xl tracking-wider drop-shadow-lg" 
-                       style={{fontSize: '115%', textShadow: '2px 2px 4px rgba(0,0,0,0.1)'}}>
-                      HARD EVIDENCE
-                    </p>
-                    <div className="absolute inset-0 bg-red-600/10 blur-xl rounded-full -z-10"></div>
-                  </div>
+                  <p className="text-lg md:text-xl text-red-600 font-bold">
+                    HARD EVIDENCE
+                  </p>
                 </div>
               </div>
               

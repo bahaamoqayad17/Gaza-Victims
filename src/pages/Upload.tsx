@@ -6,16 +6,50 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Upload as UploadIcon, ArrowLeft, ArrowRight } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Shield, Upload as UploadIcon, ArrowLeft, ArrowRight, X, Eye, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Upload = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    age: '',
+    occupation: '',
+    background: '',
+    date: '',
+    location: '',
+    circumstances: '',
+    witnesses: '',
+    source: '',
+    notes: '',
+    consentAgreed: false
+  });
+  const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
+  const [socialMediaUrl, setSocialMediaUrl] = useState('');
+  const [socialMediaPreview, setSocialMediaPreview] = useState<string | null>(null);
+  const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
+  const [isGraphicContent, setIsGraphicContent] = useState(false);
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
+
+  const handleSocialMediaFetch = async () => {
+    // Mock implementation - in real app would use social media APIs
+    setSocialMediaPreview(socialMediaUrl);
+  };
+
+  const removeAdditionalPhoto = (index: number) => {
+    setAdditionalPhotos(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeEvidenceFile = (index: number) => {
+    setEvidenceFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,7 +93,8 @@ const Upload = () => {
                 {currentStep === 1 && "Victim Information"}
                 {currentStep === 2 && "Incident Details"}
                 {currentStep === 3 && "Documentation"}
-                {currentStep === 4 && "Review & Submit"}
+                {currentStep === 4 && "Preview"}
+                {currentStep === 5 && "Review & Submit"}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -89,6 +124,77 @@ const Upload = () => {
                         Upload a dignified portrait photo
                       </p>
                       <Input type="file" accept="image/*" className="mt-2" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Additional Photos (up to 5)</Label>
+                    <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
+                      <UploadIcon className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Upload additional photos showing the person's life
+                      </p>
+                      <Input 
+                        type="file" 
+                        accept="image/*" 
+                        multiple 
+                        className="mt-2"
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          setAdditionalPhotos(prev => [...prev, ...files].slice(0, 5));
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      ⚠️ Note: Any other person appearing in photos must consent or be blurred prior to uploading
+                    </p>
+                    {additionalPhotos.length > 0 && (
+                      <div className="grid grid-cols-3 gap-2 mt-2">
+                        {additionalPhotos.map((file, index) => (
+                          <div key={index} className="relative">
+                            <img 
+                              src={URL.createObjectURL(file)} 
+                              alt={`Additional ${index + 1}`}
+                              className="w-full h-20 object-cover rounded"
+                            />
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="absolute top-1 right-1 h-6 w-6 p-0"
+                              onClick={() => removeAdditionalPhoto(index)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="socialMedia">Social Media Content</Label>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input 
+                          id="socialMedia"
+                          placeholder="Paste URL from social media post (Instagram, Facebook, etc.)"
+                          value={socialMediaUrl}
+                          onChange={(e) => setSocialMediaUrl(e.target.value)}
+                        />
+                        <Button type="button" onClick={handleSocialMediaFetch}>
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      {socialMediaPreview && (
+                        <div className="border rounded p-2">
+                          <p className="text-sm text-muted-foreground mb-2">Preview:</p>
+                          <img src={socialMediaPreview} alt="Social media preview" className="w-full max-w-xs rounded" />
+                          <Button size="sm" variant="outline" className="mt-2">
+                            <Eye className="w-3 h-3 mr-1" />
+                            Blur faces
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -139,13 +245,48 @@ const Upload = () => {
               {currentStep === 3 && (
                 <div className="space-y-4">
                   <div>
-                    <Label>Additional Evidence</Label>
+                    <Label>Evidence Upload</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
                       <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                       <p className="text-sm text-muted-foreground">
-                        Upload supporting documentation
+                        Upload photos, videos, documents, and other evidence
                       </p>
-                      <Input type="file" multiple className="mt-2" />
+                      <Input 
+                        type="file" 
+                        multiple 
+                        accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+                        className="mt-2"
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          setEvidenceFiles(prev => [...prev, ...files]);
+                        }}
+                      />
+                    </div>
+                    {evidenceFiles.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {evidenceFiles.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-sm">{file.name}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeEvidenceFile(index)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-2 mt-4">
+                      <Checkbox 
+                        id="graphic" 
+                        checked={isGraphicContent}
+                        onCheckedChange={(checked) => setIsGraphicContent(checked as boolean)}
+                      />
+                      <Label htmlFor="graphic" className="text-sm">
+                        This evidence contains graphic content
+                      </Label>
                     </div>
                   </div>
 
@@ -166,6 +307,53 @@ const Upload = () => {
               )}
 
               {currentStep === 4 && (
+                <div className="space-y-6">
+                  <h4 className="font-semibold">Case Preview</h4>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Victim Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p><span className="font-medium">Name:</span> {formData.name || 'Not provided'}</p>
+                      <p><span className="font-medium">Age:</span> {formData.age || 'Not provided'}</p>
+                      <p><span className="font-medium">Occupation:</span> {formData.occupation || 'Not provided'}</p>
+                      <p><span className="font-medium">Background:</span> {formData.background || 'Not provided'}</p>
+                      {additionalPhotos.length > 0 && (
+                        <div>
+                          <span className="font-medium">Additional Photos:</span> {additionalPhotos.length} uploaded
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Incident Details</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p><span className="font-medium">Date:</span> {formData.date || 'Not provided'}</p>
+                      <p><span className="font-medium">Location:</span> {formData.location || 'Not provided'}</p>
+                      <p><span className="font-medium">Circumstances:</span> {formData.circumstances || 'Not provided'}</p>
+                      <p><span className="font-medium">Witnesses:</span> {formData.witnesses || 'Not provided'}</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Evidence</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p><span className="font-medium">Files:</span> {evidenceFiles.length} uploaded</p>
+                      <p><span className="font-medium">Graphic Content:</span> {isGraphicContent ? 'Yes' : 'No'}</p>
+                      <p><span className="font-medium">Source:</span> {formData.source || 'Not provided'}</p>
+                      <p><span className="font-medium">Notes:</span> {formData.notes || 'Not provided'}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {currentStep === 5 && (
                 <div className="space-y-4">
                   <div className="bg-muted/50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-2">Submission Summary</h4>
@@ -175,6 +363,19 @@ const Upload = () => {
                       <li>• Case will be reviewed before publication</li>
                       <li>• You will receive a reference number for tracking</li>
                     </ul>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="consent" 
+                        checked={formData.consentAgreed}
+                        onCheckedChange={(checked) => setFormData(prev => ({...prev, consentAgreed: checked as boolean}))}
+                      />
+                      <Label htmlFor="consent" className="text-sm">
+                        I confirm that I have the right to share this information and any media content included
+                      </Label>
+                    </div>
                   </div>
 
                   <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -202,7 +403,9 @@ const Upload = () => {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button>Submit Documentation</Button>
+                  <Button disabled={!formData.consentAgreed}>
+                    Submit Documentation
+                  </Button>
                 )}
               </div>
             </CardContent>

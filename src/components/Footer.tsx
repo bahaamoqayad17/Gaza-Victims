@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Shield } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -44,6 +46,16 @@ export const Footer = () => {
             <p>Dedicated to the memory of victims worldwide.</p>
             <p className="text-xs">This site is voluntary and non-profit.</p>
           </div>
+        </div>
+
+        {/* MVP Moderator Access Button */}
+        <div className="fixed bottom-4 right-4">
+          <Button variant="outline" size="sm" asChild className="bg-background/90 backdrop-blur-sm">
+            <Link to="/moderators">
+              <Shield className="w-4 h-4 mr-2" />
+              For MVP: Moderators Dashboard
+            </Link>
+          </Button>
         </div>
       </div>
     </footer>

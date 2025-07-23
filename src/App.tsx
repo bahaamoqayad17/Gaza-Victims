@@ -16,6 +16,7 @@ import DownloadArchive from "./pages/DownloadArchive";
 import ReportCase from "./pages/ReportCase";
 import ReportAdditional from "./pages/ReportAdditional";
 import Auth from "./pages/Auth";
+import ModeratorsDashboard from "./pages/ModeratorsDashboard";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/report" element={<ReportCase />} />
             <Route path="/report-additional" element={<ReportAdditional />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/moderators" element={<ModeratorsDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

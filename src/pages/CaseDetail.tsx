@@ -59,7 +59,7 @@ const CaseDetail = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col md:flex-row gap-6">
-                  <div className="w-32 h-32 rounded-lg overflow-hidden bg-muted flex-shrink-0 mx-auto md:mx-0">
+                  <div className="aspect-[4/3] w-32 overflow-hidden bg-muted flex-shrink-0 mx-auto md:mx-0 rounded-lg">
                     <img 
                       src={sarahPortrait} 
                       alt={`${caseData.name}`}

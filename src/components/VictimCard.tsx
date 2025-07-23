@@ -1,10 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AlertTriangle, ExternalLink, Calendar, MapPin, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { AlertTriangle, ExternalLink, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "./LanguageSelector";
 import { useTranslation } from "@/lib/translations";
@@ -40,8 +39,21 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
   const [isLifeStoryExpanded, setIsLifeStoryExpanded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   const daysSinceDeath = calculateDaysSince(victim.date);
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % victim.images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + victim.images.length) % victim.images.length);
+  };
 
   const CardWrapper = clickable ? Link : 'div';
   const cardProps = clickable ? { to: `/case/${victim.id}` } : {} as any;
@@ -51,41 +63,47 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
       <CardWrapper {...cardProps}>
         <Card className={`hover:shadow-lg transition-shadow mx-auto max-w-sm ${clickable ? 'cursor-pointer' : ''}`}>
           <CardContent className="p-3 md:p-4 lg:p-6" onClick={clickable ? undefined : (e) => e.stopPropagation()}>
-            {/* Photo carousel */}
+            {/* Photo display */}
             <div className="mb-3 md:mb-4" onClick={(e) => e.stopPropagation()}>
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {victim.images.map((image, index) => (
-                    <CarouselItem key={index}>
-                       <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
-                         <img 
-                           src={image} 
-                           alt={`${victim.name} - Photo ${index + 1}`}
-                           className="w-full h-full object-cover transition-all duration-300 hover:grayscale"
-                         />
-                       </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
+              <div className="relative">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
+                  <img 
+                    src={victim.images[currentImageIndex]} 
+                    alt={`${victim.name} - Photo ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover transition-all duration-300 hover:grayscale"
+                  />
+                </div>
+                
+                {/* Custom navigation buttons */}
                 {victim.images.length > 1 && (
                   <>
-                    <CarouselPrevious 
-                      className="left-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }} 
-                    />
-                    <CarouselNext 
-                      className="right-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }} 
-                    />
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70 rounded-full flex items-center justify-center"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70 rounded-full flex items-center justify-center"
+                    >
+                      ›
+                    </button>
+                    
+                    {/* Image indicators */}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                      {victim.images.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`w-2 h-2 rounded-full ${
+                            index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ))}
+                    </div>
                   </>
                 )}
-              </Carousel>
+              </div>
             </div>
 
             {/* Victim details */}

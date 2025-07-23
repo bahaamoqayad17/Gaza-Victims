@@ -18,25 +18,25 @@ const cases = [
     {
       id: "001",
       name: "Sarah M.",
-      age: 28,
+      age: 8,
       gender: "Female",
       location: "Aleppo, Syria",
       date: "2023-10-15",
       status: "documented",
-      causeOfDeath: "Armed Conflict",
+      causeOfDeath: "Bombing",
       actionTaken: "pending",
-      verified: false,
+      verified: true,
       thirdPartyVerified: false,
       newsLink: "https://example.com/news/sarah-m",
-      lifeStory: "Sarah was a primary school teacher who dedicated her life to educating children in her community. She was known for her kindness and commitment to her students.",
-      deathDetails: "Sarah was killed during a bombing of her residential area. She was in her classroom when the attack occurred.",
-      familyRelationship: "left behind her parents and younger sister",
-      occupation: "A primary school teacher",
+      lifeStory: "Sarah was a bright 8-year-old who loved painting and playing with her dolls. Her teacher remembers her as a curious child who always asked thoughtful questions. 'She wanted to be an artist when she grew up,' her mother recalls through tears.",
+      deathDetails: "Sarah was killed during a bombing of her residential area. She was playing in her room when the attack occurred. Her family tried to reach the shelter but didn't make it in time.",
+      familyRelationship: "left behind her mother, father, and two younger brothers",
+      occupation: "A student",
       perpetrator: "Syrian Government Forces",
       images: [
-        "/src/assets/sarah-teacher.jpg",
-        "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?w=400&h=300&fit=crop"
+        "/src/assets/sarah-portrait.jpg",
+        "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
       ]
     },
   {

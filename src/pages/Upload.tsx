@@ -129,12 +129,40 @@ const Upload = () => {
                           <Label htmlFor="spouse" className="text-sm">Spouse</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="child" />
-                          <Label htmlFor="child" className="text-sm">Child</Label>
+                          <Checkbox id="daughter" />
+                          <Label htmlFor="daughter" className="text-sm">Daughter</Label>
+                          <div className="flex items-center ml-2">
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
+                            <span className="mx-2 text-sm">0</span>
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="sibling" />
-                          <Label htmlFor="sibling" className="text-sm">Sibling</Label>
+                          <Checkbox id="son" />
+                          <Label htmlFor="son" className="text-sm">Son</Label>
+                          <div className="flex items-center ml-2">
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
+                            <span className="mx-2 text-sm">0</span>
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="brother" />
+                          <Label htmlFor="brother" className="text-sm">Brother</Label>
+                          <div className="flex items-center ml-2">
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
+                            <span className="mx-2 text-sm">0</span>
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="sister" />
+                          <Label htmlFor="sister" className="text-sm">Sister</Label>
+                          <div className="flex items-center ml-2">
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
+                            <span className="mx-2 text-sm">0</span>
+                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox id="grandparent" />

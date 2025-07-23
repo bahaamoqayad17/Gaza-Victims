@@ -69,8 +69,20 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 </CarouselContent>
                 {victim.images.length > 1 && (
                   <>
-                    <CarouselPrevious className="left-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" onClick={(e) => e.stopPropagation()} />
-                    <CarouselNext className="right-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" onClick={(e) => e.stopPropagation()} />
+                    <CarouselPrevious 
+                      className="left-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }} 
+                    />
+                    <CarouselNext 
+                      className="right-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }} 
+                    />
                   </>
                 )}
               </Carousel>

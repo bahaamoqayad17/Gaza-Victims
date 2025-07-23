@@ -397,8 +397,8 @@ const Index = () => {
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
               <div className="text-center mb-6 md:mb-8">
-                <h3 className="text-xl md:text-2xl font-bold">
-                  There are <span className="text-red-600 font-semibold">48,405</span> reported <span className="text-red-600 font-semibold">fatalities</span> in the conflict. Of those cases, the following (and counting) are without a doubt confirmed cases of state murder. We present you with
+                <h3 className="text-lg md:text-xl lg:text-2xl font-bold leading-relaxed">
+                  As of 23/07/2025, there are <span className="text-red-600 font-bold">48,405</span> <span className="text-red-600 font-bold">reported fatalities</span> in the conflict. Of those numerous cases, the following (and counting) are without a doubt <span className="text-red-600 font-bold">confirmed cases of state murder</span>. We present you with
                 </h3>
                 <p className="text-red-600 font-bold mt-4" style={{ fontSize: '1.15em' }}>
                   HARD EVIDENCE.

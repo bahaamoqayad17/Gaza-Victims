@@ -4,7 +4,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Calendar, MapPin, Users, HelpCircle, ChevronDown } from "lucide-react";
+import { Calendar, MapPin, Users, HelpCircle, ChevronDown, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
@@ -20,7 +20,12 @@ const recentCases = [
     causeOfDeath: "Armed conflict",
     actionTaken: "pending",
     lifeStory: "Sarah was a dedicated teacher who loved working with children. Her colleagues remember her infectious laughter and her dream of opening a school for underprivileged kids. 'She believed every child deserved a chance to learn,' her sister recalls.",
-    imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
+    deathDetails: "Sarah was killed during a targeted bombing of her school. She had stayed late to prepare lessons for the next day when the attack occurred. Security cameras showed she tried to reach the shelter but didn't make it in time.",
+    images: [
+      "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400&h=300&fit=crop"
+    ]
   },
   {
     id: "002", 
@@ -32,7 +37,12 @@ const recentCases = [
     causeOfDeath: "Bombing",
     actionTaken: "pending",
     lifeStory: "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.' He had been planning to start a family and dreamed of building sustainable housing.",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face"
+    deathDetails: "Ahmed was caught in a missile strike while delivering aid to a residential building. Witnesses report he was helping evacuate elderly residents when the second wave of attacks hit the area.",
+    images: [
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1501286353178-1ec881214838?w=400&h=300&fit=crop"
+    ]
   },
   {
     id: "003",
@@ -44,14 +54,32 @@ const recentCases = [
     causeOfDeath: "Shelling",
     actionTaken: "pending",
     lifeStory: "Maria was a nurse who worked tirelessly during the conflict, often staying beyond her shifts to care for patients. Her daughter remembers her saying, 'Healing is the only way to fight darkness.' She loved gardening and classical music.",
-    imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face"
+    deathDetails: "Maria died when artillery shells hit the hospital where she worked. She was in the intensive care unit attending to critical patients when the attack began. She refused to leave her patients behind.",
+    images: [
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1452378174528-3024x3024?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop"
+    ]
   }
 ];
 
 const timelineData = [
-  { year: "2023", months: ["October", "September", "August", "July"] },
-  { year: "2022", months: ["December", "November", "October", "September"] },
-  { year: "2021", months: ["December", "November"] }
+  { year: "2023", months: [
+    { name: "Oct", cases: 23 }, 
+    { name: "Sep", cases: 31 }, 
+    { name: "Aug", cases: 18 }, 
+    { name: "Jul", cases: 27 }
+  ]},
+  { year: "2022", months: [
+    { name: "Dec", cases: 15 }, 
+    { name: "Nov", cases: 22 }, 
+    { name: "Oct", cases: 29 }, 
+    { name: "Sep", cases: 34 }
+  ]},
+  { year: "2021", months: [
+    { name: "Dec", cases: 12 }, 
+    { name: "Nov", cases: 19 }
+  ]}
 ];
 
 const Index = () => {
@@ -75,23 +103,27 @@ const Index = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 border-r bg-muted/20 min-h-screen">
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Timeline</h3>
+        <aside className="w-48 lg:w-56 border-r bg-muted/20 min-h-screen">
+          <div className="p-3 lg:p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="h-4 w-4" />
+              <span className="hidden lg:inline text-lg font-semibold">Timeline</span>
+            </div>
             <div className="space-y-2">
               {timelineData.map((yearData) => (
                 <Collapsible key={yearData.year}>
                   <CollapsibleTrigger className="flex w-full items-center justify-between text-left hover:bg-muted/50 p-2 rounded">
-                    <span className="font-medium">{yearData.year}</span>
-                    <ChevronDown className="h-4 w-4" />
+                    <span className="font-medium text-sm lg:text-base">{yearData.year}</span>
+                    <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-4 space-y-1">
+                  <CollapsibleContent className="pl-2 lg:pl-4 space-y-1">
                     {yearData.months.map((month) => (
                       <button
-                        key={month}
-                        className="block w-full text-left text-sm text-muted-foreground hover:text-foreground p-1 hover:bg-muted/30 rounded"
+                        key={month.name}
+                        className="flex w-full items-center justify-between text-left text-xs lg:text-sm text-muted-foreground hover:text-foreground p-1 hover:bg-muted/30 rounded"
                       >
-                        {month}
+                        <span>{month.name}</span>
+                        <span className="text-xs">({month.cases})</span>
                       </button>
                     ))}
                   </CollapsibleContent>
@@ -130,79 +162,100 @@ const Index = () => {
                 <Carousel className="max-w-5xl mx-auto">
                   <CarouselContent>
                     {recentCases.map((victim) => (
-                      <CarouselItem key={victim.id} className="md:basis-1/2 lg:basis-1/3">
-                        <Card className="hover:shadow-lg transition-shadow">
-                          <CardContent className="p-6">
-                            {/* Large ID-style portrait */}
-                            <div className="aspect-[4/3] w-full mb-4 overflow-hidden bg-muted border">
-                              <img 
-                                src={victim.imageUrl} 
-                                alt={`${victim.name}`}
-                                className="w-full h-full object-cover"
-                              />
+                  <CarouselItem key={victim.id} className="md:basis-1/2 lg:basis-1/3">
+                    <Card className="hover:shadow-lg transition-shadow">
+                      <CardContent className="p-4 lg:p-6">
+                        {/* Photo carousel */}
+                        <div className="mb-4">
+                          <Carousel className="w-full">
+                            <CarouselContent>
+                              {victim.images.map((image, index) => (
+                                <CarouselItem key={index}>
+                                  <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
+                                    <img 
+                                      src={image} 
+                                      alt={`${victim.name} - Photo ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                </CarouselItem>
+                              ))}
+                            </CarouselContent>
+                            <CarouselPrevious className="left-2" />
+                            <CarouselNext className="right-2" />
+                          </Carousel>
+                        </div>
+                        
+                        {/* Victim info */}
+                        <div className="text-center space-y-3">
+                          <div>
+                            <h4 className="text-lg font-semibold">{victim.name}</h4>
+                            <p className="text-sm text-muted-foreground">Age {victim.age}</p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                              <MapPin className="w-3 h-3" />
+                              {victim.location}
                             </div>
-                            
-                            {/* Victim info */}
-                            <div className="text-center space-y-3">
-                              <div>
-                                <h4 className="text-lg font-semibold">{victim.name}</h4>
-                                <p className="text-sm text-muted-foreground">Age {victim.age}</p>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                                  <MapPin className="w-3 h-3" />
-                                  {victim.location}
-                                </div>
-                                <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                                  <Calendar className="w-3 h-3" />
-                                  {victim.date}
-                                </div>
-                              </div>
-
-                              {/* Cause of death */}
-                              <div className="text-sm">
-                                <span className="text-muted-foreground">Cause:</span> {victim.causeOfDeath}
-                              </div>
-
-                              {/* Action taken with tooltip */}
-                              <div className="flex items-center justify-center gap-1 text-sm">
-                                <span className="text-muted-foreground">Action taken:</span>
-                                <span>{victim.actionTaken}</span>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="text-xs">This showcases the legal action taken thus far.</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </div>
-
-                              {/* Status badge */}
-                              <Badge 
-                                variant={victim.status === 'verified' ? 'default' : 'secondary'}
-                                className="text-xs"
-                              >
-                                {victim.status}
-                              </Badge>
-
-                              {/* Clickable life story */}
-                              <Collapsible 
-                                open={expandedVictim === victim.id}
-                                onOpenChange={(open) => setExpandedVictim(open ? victim.id : null)}
-                              >
-                                <CollapsibleTrigger className="text-xs text-primary hover:underline">
-                                  {expandedVictim === victim.id ? 'Hide story' : 'Read their story'}
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="mt-3 text-xs text-muted-foreground leading-relaxed border-t pt-3">
-                                  {victim.lifeStory}
-                                </CollapsibleContent>
-                              </Collapsible>
+                            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                              <Calendar className="w-3 h-3" />
+                              {victim.date}
                             </div>
-                          </CardContent>
-                        </Card>
-                      </CarouselItem>
+                          </div>
+
+                          {/* Cause of death */}
+                          <div className="text-sm">
+                            <span className="text-muted-foreground">Cause:</span> {victim.causeOfDeath}
+                          </div>
+
+                          {/* Action taken with tooltip */}
+                          <div className="flex items-center justify-center gap-1 text-sm">
+                            <span className="text-muted-foreground">Action taken:</span>
+                            <span>{victim.actionTaken}</span>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="text-xs">This showcases the legal action taken thus far.</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+
+                          {/* Status badge */}
+                          <Badge 
+                            variant={victim.status === 'verified' ? 'default' : 'secondary'}
+                            className="text-xs"
+                          >
+                            {victim.status}
+                          </Badge>
+
+                          {/* Life story and death details */}
+                          <div className="space-y-2">
+                            <Collapsible 
+                              open={expandedVictim === victim.id}
+                              onOpenChange={(open) => setExpandedVictim(open ? victim.id : null)}
+                            >
+                              <CollapsibleTrigger className="text-xs text-primary hover:underline">
+                                {expandedVictim === victim.id ? 'Hide details' : 'Who were they?'}
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-3 space-y-3 text-xs leading-relaxed border-t pt-3">
+                                <div>
+                                  <h5 className="font-medium text-foreground mb-1">Who were they?</h5>
+                                  <p className="text-muted-foreground">{victim.lifeStory}</p>
+                                </div>
+                                <div>
+                                  <h5 className="font-medium text-foreground mb-1">How did they die?</h5>
+                                  <p className="text-muted-foreground">{victim.deathDetails}</p>
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
                     ))}
                   </CarouselContent>
                   <CarouselPrevious />

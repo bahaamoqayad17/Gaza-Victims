@@ -147,57 +147,82 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               </div>
               
               <div className="flex flex-wrap gap-1 mb-2 text-xs">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300 cursor-help">Documented</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      This case has been formally documented with submitted evidence and witness accounts.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-                {victim.verified && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300 cursor-help">Verified</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-xs">
-                        A platform moderator corroborated the information provided with official sources as well as the community on the ground.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-                {victim.thirdPartyVerified && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300 cursor-help">Third Party Verified</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-xs">
-                        Independent organizations or media outlets have confirmed the details of this case.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300 cursor-help">Proof of ID</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      Identity documents or official records have been submitted to verify the victim's identity.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300 cursor-help">Proof of Death</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      Death certificate, medical records, or other official documentation has been provided to confirm the death.
+                 <Tooltip>
+                   <TooltipTrigger asChild>
+                     <span 
+                       className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300 cursor-help touch-none"
+                       onClick={(e) => e.preventDefault()}
+                     >
+                       Documented
+                     </span>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                     <p className="max-w-xs text-xs">
+                       This case has been formally documented with submitted evidence and witness accounts.
+                     </p>
+                   </TooltipContent>
+                 </Tooltip>
+                 {victim.verified && (
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <span 
+                         className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300 cursor-help touch-none"
+                         onClick={(e) => e.preventDefault()}
+                       >
+                         Verified
+                       </span>
+                     </TooltipTrigger>
+                     <TooltipContent>
+                       <p className="max-w-xs text-xs">
+                         A platform moderator corroborated the information provided with official sources as well as the community on the ground.
+                       </p>
+                     </TooltipContent>
+                   </Tooltip>
+                 )}
+                 {victim.thirdPartyVerified && (
+                   <Tooltip>
+                     <TooltipTrigger asChild>
+                       <span 
+                         className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300 cursor-help touch-none"
+                         onClick={(e) => e.preventDefault()}
+                       >
+                         Third Party Verified
+                       </span>
+                     </TooltipTrigger>
+                     <TooltipContent>
+                       <p className="max-w-xs text-xs">
+                         Independent organizations or media outlets have confirmed the details of this case.
+                       </p>
+                     </TooltipContent>
+                   </Tooltip>
+                 )}
+                 <Tooltip>
+                   <TooltipTrigger asChild>
+                     <span 
+                       className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300 cursor-help touch-none"
+                       onClick={(e) => e.preventDefault()}
+                     >
+                       Proof of ID
+                     </span>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                     <p className="max-w-xs text-xs">
+                       Identity documents or official records have been submitted to verify the victim's identity.
+                     </p>
+                   </TooltipContent>
+                 </Tooltip>
+                 <Tooltip>
+                   <TooltipTrigger asChild>
+                     <span 
+                       className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300 cursor-help touch-none"
+                       onClick={(e) => e.preventDefault()}
+                     >
+                       Proof of Death
+                     </span>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                     <p className="max-w-xs text-xs">
+                       Death certificate, medical records, or other official documentation has been provided to confirm the death.
                     </p>
                   </TooltipContent>
                 </Tooltip>

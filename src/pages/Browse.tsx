@@ -34,7 +34,7 @@ const cases = [
       occupation: "A primary school teacher",
       perpetrator: "Syrian Government Forces",
       images: [
-        "/src/assets/sarah-teacher.jpg",
+        "/src/assets/sarah-portrait.jpg",
         "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400&h=300&fit=crop",
         "https://images.unsplash.com/photo-1473091534298-04dcbce3278c?w=400&h=300&fit=crop"
       ]

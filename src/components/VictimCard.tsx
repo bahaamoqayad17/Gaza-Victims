@@ -108,6 +108,8 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               {victim.thirdPartyVerified && (
                 <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">Third Party Verified</span>
               )}
+              <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300">Proof of ID</span>
+              <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300">Proof of Death</span>
             </div>
 
             <div className="text-sm text-muted-foreground space-y-1">
@@ -123,6 +125,20 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 <Clock className="h-3 w-3" />
                 <span>{t('causeOfDeath')}: {victim.causeOfDeath}</span>
               </div>
+              {victim.newsLink && (
+                <div className="flex items-center gap-1">
+                  <ExternalLink className="h-3 w-3" />
+                  <span>News Story: </span>
+                  <a 
+                    href={victim.newsLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline text-xs truncate"
+                  >
+                    {victim.newsLink}
+                  </a>
+                </div>
+              )}
               <div className="flex items-center gap-1">
                 <span className="text-xs">
                   {t('actionTaken')}: 

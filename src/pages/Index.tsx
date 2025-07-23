@@ -274,15 +274,22 @@ const Index = () => {
           border-r bg-background md:bg-muted/20 
           min-h-screen 
           transition-transform duration-300 ease-in-out
+          rtl:border-r-0 rtl:border-l rtl:translate-x-full rtl:-translate-x-0
+          ${sidebarOpen ? 'rtl:translate-x-0' : 'rtl:translate-x-full'}
         `}>
           <div className="p-3 lg:p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <span className="text-sm md:text-base lg:text-lg font-semibold">Timeline</span>
+                <span className="text-sm md:text-base lg:text-lg font-semibold">{t('timeline')}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setSidebarOpen(false)}>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="md:hidden h-6 w-6 p-0" 
+                  onClick={() => setSidebarOpen(false)}
+                >
                   ×
                 </Button>
               </div>
@@ -295,7 +302,7 @@ const Index = () => {
                     </span>
                     <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="pl-2 lg:pl-4 space-y-1">
+                  <CollapsibleContent className="pl-2 lg:pl-4 space-y-1 rtl:pr-2 rtl:lg:pr-4 rtl:pl-0">
                     {yearData.months.map(month => <Link 
                         key={month.name} 
                         to={`/browse?year=${yearData.year}&month=${month.name}`}

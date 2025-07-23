@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Calendar } from 'lucide-react';
+import { useLanguage } from './LanguageSelector';
+import { useTranslation } from '@/lib/translations';
 
 // Generate timeline data with daily cases
 const generateTimelineData = () => {
@@ -28,6 +30,8 @@ const HorizontalTimeline = () => {
   const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
 
   const maxCases = Math.max(...timelineData.map(d => d.cases));
 
@@ -96,12 +100,12 @@ const HorizontalTimeline = () => {
           onChange={(e) => setSelectedYear(Number(e.target.value))}
           className="text-sm font-semibold bg-transparent border-none focus:outline-none hover:underline cursor-pointer"
         >
-          <option value={2025}>2025 Cases</option>
-          <option value={2024}>2024 Cases</option>
-          <option value={2023}>2023 Cases</option>
+          <option value={2025}>2025 {t('cases')}</option>
+          <option value={2024}>2024 {t('cases')}</option>
+          <option value={2023}>2023 {t('cases')}</option>
         </select>
         <span className="text-xs text-muted-foreground">
-          (Touch and drag to scroll • {timelineData.reduce((sum, d) => sum + d.cases, 0)} total cases)
+          ({t('touchAndDrag')} • {timelineData.reduce((sum, d) => sum + d.cases, 0)} {t('totalCases')})
         </span>
       </div>
       
@@ -152,7 +156,7 @@ const HorizontalTimeline = () => {
                   <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-popover border rounded px-2 py-1 text-xs whitespace-nowrap shadow-lg z-20 animate-fade-in">
                     <div className="font-medium">{day.date.toLocaleDateString('en', { month: 'short', day: 'numeric' })}</div>
                     <div className="text-muted-foreground">
-                      {day.cases} {day.cases === 1 ? 'case' : 'cases'}
+                      {day.cases} {day.cases === 1 ? t('case') : t('cases')}
                     </div>
                   </div>
                 )}
@@ -173,15 +177,15 @@ const HorizontalTimeline = () => {
       <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-primary rounded-sm"></div>
-          <span>Regular cases</span>
+          <span>{t('regularCases')}</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-destructive rounded-sm"></div>
-          <span>High cases (10+ cases)</span>
+          <span>{t('highCases')}</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-muted rounded-sm"></div>
-          <span>No cases</span>
+          <span>{t('noCases')}</span>
         </div>
       </div>
     </Card>

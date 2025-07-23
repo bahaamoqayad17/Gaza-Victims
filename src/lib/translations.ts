@@ -39,7 +39,29 @@ export const translations = {
     dedicatedToMemory: "Dedicated to the memory of victims worldwide.",
     voluntaryNonProfit: "This site is voluntary and non-profit.",
     // Report
-    reportCase: "Report Case"
+    reportCase: "Report Case",
+    // Timeline translations
+    timeline: "Timeline",
+    cases: "cases",
+    case: "case",
+    totalCases: "total cases",
+    touchAndDrag: "Touch and drag to scroll",
+    regularCases: "Regular cases",
+    highCases: "High cases (10+ cases)",
+    noCases: "No cases",
+    // Months
+    jan: "Jan",
+    feb: "Feb", 
+    mar: "Mar",
+    apr: "Apr",
+    may: "May",
+    jun: "Jun",
+    jul: "Jul",
+    aug: "Aug",
+    sep: "Sep",
+    oct: "Oct",
+    nov: "Nov",
+    dec: "Dec"
   },
   es: {
     archive: "Archivo",
@@ -141,7 +163,29 @@ export const translations = {
     allRightsReserved: "جميع الحقوق محفوظة.",
     dedicatedToMemory: "مكرس لذكرى الضحايا في جميع أنحاء العالم.",
     voluntaryNonProfit: "هذا الموقع تطوعي وغير ربحي.",
-    reportCase: "بلاغ عن حالة"
+    reportCase: "بلاغ عن حالة",
+    // Timeline translations
+    timeline: "الجدول الزمني",
+    cases: "حالات",
+    case: "حالة",
+    totalCases: "إجمالي الحالات",
+    touchAndDrag: "اللمس والسحب للتمرير",
+    regularCases: "حالات عادية",
+    highCases: "حالات عالية (10+ حالات)",
+    noCases: "لا توجد حالات",
+    // Months in Arabic
+    jan: "يناير",
+    feb: "فبراير", 
+    mar: "مارس",
+    apr: "أبريل",
+    may: "مايو",
+    jun: "يونيو",
+    jul: "يوليو",
+    aug: "أغسطس",
+    sep: "سبتمبر",
+    oct: "أكتوبر",
+    nov: "نوفمبر",
+    dec: "ديسمبر"
   }
   // Add more languages as needed - keeping it shorter for now but can be expanded
 } as const;

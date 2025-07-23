@@ -112,4 +112,16 @@ All colors MUST be HSL.
     direction: ltr;
     text-align: left;
   }
+
+  /* Fix sidebar positioning in RTL */
+  body[dir="rtl"] aside {
+    right: 0;
+    left: auto;
+  }
+  
+  /* Fix fixed elements in RTL */
+  body[dir="rtl"] .fixed {
+    right: 0;
+    left: auto;
+  }
 }

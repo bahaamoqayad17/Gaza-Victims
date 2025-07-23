@@ -67,7 +67,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-1"
+                  className="p-1 rtl:order-last"
                   onClick={onMenuToggle}
                 >
                   <Menu className="h-4 w-4" />

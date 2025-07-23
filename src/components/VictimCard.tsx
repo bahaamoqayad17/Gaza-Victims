@@ -50,9 +50,9 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
     <TooltipProvider>
       <CardWrapper {...cardProps}>
         <Card className={`hover:shadow-lg transition-shadow mx-auto max-w-sm ${clickable ? 'cursor-pointer' : ''}`}>
-          <CardContent className="p-3 md:p-4 lg:p-6">
+          <CardContent className="p-3 md:p-4 lg:p-6" onClick={clickable ? undefined : (e) => e.stopPropagation()}>
             {/* Photo carousel */}
-            <div className="mb-3 md:mb-4">
+            <div className="mb-3 md:mb-4" onClick={(e) => e.stopPropagation()}>
               <Carousel className="w-full">
                 <CarouselContent>
                   {victim.images.map((image, index) => (
@@ -69,8 +69,8 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 </CarouselContent>
                 {victim.images.length > 1 && (
                   <>
-                    <CarouselPrevious className="left-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" />
-                    <CarouselNext className="right-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" />
+                    <CarouselPrevious className="left-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" onClick={(e) => e.stopPropagation()} />
+                    <CarouselNext className="right-2 w-8 h-8 bg-black/50 text-white border-none hover:bg-black/70" onClick={(e) => e.stopPropagation()} />
                   </>
                 )}
               </Carousel>
@@ -123,7 +123,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="max-w-xs text-xs">
-                      A platform moderator corroborated the information provided with official sources as well as the community on the ground.
+                      This case has been formally documented with submitted evidence and witness accounts.
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -146,7 +146,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-xs text-xs">
-                        A platform moderator corroborated the information provided with official sources as well as the community on the ground.
+                        Independent organizations or media outlets have confirmed the details of this case.
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -157,7 +157,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="max-w-xs text-xs">
-                      A platform moderator corroborated the information provided with official sources as well as the community on the ground.
+                      Identity documents or official records have been submitted to verify the victim's identity.
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -167,7 +167,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="max-w-xs text-xs">
-                      A platform moderator corroborated the information provided with official sources as well as the community on the ground.
+                      Death certificate, medical records, or other official documentation has been provided to confirm the death.
                     </p>
                   </TooltipContent>
                 </Tooltip>

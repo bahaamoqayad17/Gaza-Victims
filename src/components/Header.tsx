@@ -75,7 +75,13 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               )}
               <Link to="/" className="flex items-center gap-2">
                 <h1 className="text-lg font-bold truncate">
-                  {getPageTitle()}
+                  {location.pathname === '/' ? getPageTitle() : (
+                    <>
+                      <span className="text-muted-foreground">{t('archive')}</span>
+                      <span className="text-muted-foreground mx-2">•</span>
+                      <span>{getPageTitle()}</span>
+                    </>
+                  )}
                 </h1>
               </Link>
             </div>

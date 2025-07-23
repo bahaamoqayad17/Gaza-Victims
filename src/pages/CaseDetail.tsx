@@ -141,6 +141,53 @@ const CaseDetail = () => {
               </CardContent>
             </Card>
 
+            {/* Proof of Identity */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Proof of Identity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
+                    <div className="text-center filter blur-sm">
+                      <div className="w-32 h-32 bg-gray-300 rounded mx-auto mb-2"></div>
+                      <p className="text-sm text-muted-foreground">Identity Document</p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Button variant="outline" size="sm">
+                      Login to View
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Proof of Death */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Proof of Death</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
+                    <div className="text-center filter blur-sm">
+                      <div className="w-32 h-32 bg-gray-300 rounded mx-auto mb-2"></div>
+                      <p className="text-sm text-muted-foreground">Death Certificate</p>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Button variant="outline" size="sm" className="mb-2">
+                      Login to View
+                    </Button>
+                    <p className="text-xs text-center text-amber-600 px-4">
+                      ⚠️ Graphic content warning. Viewer discretion advised.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Timeline */}
             <Card>
               <CardHeader>

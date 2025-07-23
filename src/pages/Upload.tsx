@@ -283,15 +283,29 @@ const Upload = () => {
                         ))}
                       </div>
                     )}
-                    <div className="flex items-center space-x-2 mt-4">
-                      <Checkbox 
-                        id="graphic" 
-                        checked={isGraphicContent}
-                        onCheckedChange={(checked) => setIsGraphicContent(checked as boolean)}
-                      />
-                      <Label htmlFor="graphic" className="text-sm">
-                        This evidence contains graphic content
-                      </Label>
+                    <div className="space-y-3 mt-4">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="proofId" />
+                        <Label htmlFor="proofId" className="text-sm text-green-600">
+                          ✓ Proof of ID added
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="proofDeath" />
+                        <Label htmlFor="proofDeath" className="text-sm text-green-600">
+                          ✓ Proof of death added
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="graphic" 
+                          checked={isGraphicContent}
+                          onCheckedChange={(checked) => setIsGraphicContent(checked as boolean)}
+                        />
+                        <Label htmlFor="graphic" className="text-sm">
+                          This evidence contains graphic content
+                        </Label>
+                      </div>
                     </div>
                   </div>
 

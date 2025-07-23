@@ -381,7 +381,7 @@ const Index = () => {
               </h3>
               
               {/* Mobile: Vertical scroll, Desktop: Grid */}
-              <div className="md:hidden space-y-4 max-h-96 overflow-y-auto">
+              <div className="md:hidden space-y-4">
                 {recentCases.slice(0, 10).map((victim) => (
                   <VictimCard 
                     key={victim.id} 
@@ -418,50 +418,20 @@ const Index = () => {
           {/* Stats */}
           <section className="py-8 md:py-16 bg-muted/20">
             <div className="container mx-auto px-4">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">Platform Statistics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 max-w-4xl mx-auto">
-                <Link to="/browse">
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <Users className="h-5 w-5" />
-                        Total Cases
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl md:text-3xl font-bold">2,847</div>
-                      <p className="text-sm text-muted-foreground">Documented victims</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-                <Link to="/map">
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <MapPin className="h-5 w-5" />
-                        Locations
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl md:text-3xl font-bold">47</div>
-                      <p className="text-sm text-muted-foreground">Countries documented</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-                <Link to="/browse?filter=verified">
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <Users className="h-5 w-5" />
-                        Verified
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl md:text-3xl font-bold">1,893</div>
-                      <p className="text-sm text-muted-foreground">Verified cases</p>
-                    </CardContent>
-                  </Card>
-                </Link>
+              <div className="text-center mb-8">
+                <div className="text-sm text-muted-foreground space-x-4">
+                  <Link to="/browse" className="hover:text-foreground">
+                    <span className="font-bold text-2xl">2,847</span> Total Cases
+                  </Link>
+                  •
+                  <Link to="/map" className="hover:text-foreground">
+                    <span className="font-bold text-2xl">47</span> Locations
+                  </Link>
+                  •
+                  <Link to="/browse?filter=verified" className="hover:text-foreground">
+                    <span className="font-bold text-2xl">1,893</span> Verified
+                  </Link>
+                </div>
               </div>
             </div>
           </section>

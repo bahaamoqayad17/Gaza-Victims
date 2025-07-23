@@ -47,13 +47,13 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               <CarouselContent>
                 {victim.images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
-                      <img 
-                        src={image} 
-                        alt={`${victim.name} - Photo ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                     <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
+                       <img 
+                         src={image} 
+                         alt={`${victim.name} - Photo ${index + 1}`}
+                         className="w-full h-full object-cover transition-all duration-300 hover:grayscale"
+                       />
+                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>

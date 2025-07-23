@@ -301,6 +301,14 @@ const Upload = () => {
                   </div>
 
                   <div>
+                    <Label htmlFor="newsLink">News Article Link (Optional)</Label>
+                    <Input 
+                      id="newsLink" 
+                      placeholder="Link to news article about this case"
+                    />
+                  </div>
+
+                  <div>
                     <Label htmlFor="notes">Additional Notes</Label>
                     <Textarea 
                       id="notes" 

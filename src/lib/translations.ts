@@ -148,7 +148,8 @@ export const translations = {
 
 export const useTranslation = (language: Language = 'en') => {
   const t = (key: keyof typeof translations.en): string => {
-    return translations[language]?.[key] || translations.en[key] || key;
+    const translation = translations[language]?.[key] || translations.en[key] || key;
+    return typeof translation === 'string' ? translation : key;
   };
   
   return { t };

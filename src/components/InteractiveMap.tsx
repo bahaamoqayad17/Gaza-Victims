@@ -13,11 +13,11 @@ interface VictimData {
 }
 
 const mockVictims: VictimData[] = [
-  { id: "001", name: "Sarah M.", location: "Aleppo", date: "2025-07-20", lat: 36.2021, lng: 37.1343 },
+  { id: "001", name: "Sarah M.", location: "Kyiv", date: "2025-07-20", lat: 50.4501, lng: 30.5234 },
   { id: "002", name: "Ahmed K.", location: "Kharkiv", date: "2025-07-19", lat: 49.9935, lng: 36.2304 },
   { id: "003", name: "Maria L.", location: "Mariupol", date: "2025-07-18", lat: 47.0971, lng: 37.5431 },
-  { id: "004", name: "Chen W.", location: "Yangon", date: "2025-07-17", lat: 16.8661, lng: 96.1951 },
-  { id: "005", name: "Elena R.", location: "Damascus", date: "2025-07-16", lat: 33.5138, lng: 36.2765 },
+  { id: "004", name: "David L.", location: "Bucha", date: "2025-07-17", lat: 50.5489, lng: 30.2097 },
+  { id: "005", name: "Michael T.", location: "Donetsk", date: "2025-07-16", lat: 48.0159, lng: 37.8028 },
 ];
 
 export const InteractiveMap = () => {
@@ -88,7 +88,7 @@ export const InteractiveMap = () => {
           {/* Map label */}
           <div className="absolute bottom-2 left-2 text-xs text-muted-foreground flex items-center gap-1">
             <MapPin className="h-3 w-3" />
-            <span>Recent Cases Map</span>
+            <span>Recent Cases - Ukraine</span>
           </div>
         </div>
       </CardContent>

@@ -377,7 +377,7 @@ const Index = () => {
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
               <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">
-                The following were <span className="text-red-600">"killed"</span> yesterday
+                The following were <span className="text-red-600">killed</span> yesterday
               </h3>
               
               {/* Mobile: Vertical scroll, Desktop: Grid */}

@@ -2,7 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { AlertTriangle, ExternalLink, Calendar, MapPin, Clock } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AlertTriangle, ExternalLink, Calendar, MapPin, Clock, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "./LanguageSelector";
 import { useTranslation } from "@/lib/translations";
@@ -20,6 +21,7 @@ interface VictimCardProps {
     verified?: boolean;
     thirdPartyVerified?: boolean;
     newsLink?: string;
+    lifeStory?: string;
     images: string[];
   };
   showReportButton?: boolean;
@@ -69,54 +71,37 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
             <div className="flex justify-between items-start">
               <h4 className="font-semibold text-lg">{victim.name}</h4>
               <div className="flex gap-1">
-                {showReportButton && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0"
-                    asChild
-                  >
-                    <Link to="/report-case">
-                      <AlertTriangle className="h-3 w-3 text-orange-500" />
-                    </Link>
-                  </Button>
-                )}
-                {victim.newsLink && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0"
-                    asChild
-                  >
-                    <a href={victim.newsLink} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3 w-3 text-blue-500" />
-                    </a>
-                  </Button>
-                )}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0"
+                  asChild
+                >
+                  <Link to="/report-case">
+                    <AlertTriangle className="h-3 w-3 text-orange-500" />
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-6 w-6 p-0"
+                  asChild
+                >
+                  <a href={victim.newsLink} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-3 w-3 text-blue-500" />
+                  </a>
+                </Button>
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-1 mb-2">
-              <Badge variant="outline" className="text-xs">
-                {t('name')}: {victim.name}
-              </Badge>
-              <Badge variant="outline" className="text-xs bg-green-50">
-                {t('age')}: {victim.age}
-              </Badge>
+            <div className="flex flex-wrap gap-1 mb-2 text-xs">
+              <span className="text-muted-foreground">{t('age')}: {victim.age}</span>
+              <span className="text-blue-600">• Documented</span>
               {victim.verified && (
-                <Badge className="text-xs bg-blue-500">
-                  Documented
-                </Badge>
-              )}
-              {victim.verified && (
-                <Badge className="text-xs bg-green-500">
-                  Verified
-                </Badge>
+                <span className="text-green-600">• Verified</span>
               )}
               {victim.thirdPartyVerified && (
-                <Badge className="text-xs bg-purple-500">
-                  Third Party Verified
-                </Badge>
+                <span className="text-purple-600">• Third Party Verified</span>
               )}
             </div>
 
@@ -147,6 +132,17 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 </span>
               </div>
             </div>
+            
+            {/* Who were they expandable section */}
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-2">
+                <ChevronDown className="h-3 w-3" />
+                Who were they?
+              </CollapsibleTrigger>
+              <CollapsibleContent className="text-xs text-muted-foreground mt-1">
+                {victim.lifeStory || "Life story information not available."}
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </CardContent>
       </Card>

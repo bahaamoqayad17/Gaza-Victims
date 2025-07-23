@@ -238,7 +238,10 @@ const Browse = () => {
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" asChild>
-              <Link to="/download">
+              <Link to="/upload">Submit Case</Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/download-archive">
                 <Download className="w-4 h-4 mr-2" />
                 Download Archive
               </Link>

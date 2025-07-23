@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Shield, Users, Globe, Heart } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowLeft, Shield, Users, Globe, Heart, Hand } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -175,59 +179,63 @@ const About = () => {
                 or require support as a survivor or family member, please reach out to us.
               </p>
               
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
-                    <input type="text" id="name" className="w-full px-3 py-2 border rounded-md" required />
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" placeholder="Your name" />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-                    <input type="email" id="email" className="w-full px-3 py-2 border rounded-md" required />
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="Your email" />
                   </div>
                 </div>
+                
                 <div>
-                  <label htmlFor="contact" className="block text-sm font-medium mb-1">Contact Information</label>
-                  <input type="text" id="contact" className="w-full px-3 py-2 border rounded-md" placeholder="Phone or alternative contact" />
+                  <Label htmlFor="contact">Contact Number (Optional)</Label>
+                  <Input id="contact" placeholder="Your contact number" />
                 </div>
+                
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-1">Message</label>
-                  <textarea id="message" rows={4} className="w-full px-3 py-2 border rounded-md" required></textarea>
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea id="message" placeholder="Your message" rows={4} />
                 </div>
                 
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Type of inquiry:</p>
+                  <Label className="text-sm font-medium">Select all that apply:</Label>
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded" />
-                      <span className="text-sm">Report technical issue</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded" />
-                      <span className="text-sm">We would like to help <span className="bg-green-100 text-green-800 px-1 rounded text-xs">Volunteer</span></span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded" />
-                      <span className="text-sm">Legal violation</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded" />
-                      <span className="text-sm">Other</span>
-                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="technical" />
+                      <Label htmlFor="technical" className="text-sm">Report technical issue</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="help" />
+                      <Label htmlFor="help" className="text-sm">We would like to help <span className="bg-green-100 text-green-800 px-1 rounded text-xs">Volunteer</span></Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="legal" />
+                      <Label htmlFor="legal" className="text-sm">Legal violation</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="other" />
+                      <Label htmlFor="other" className="text-sm">Other</Label>
+                    </div>
                   </div>
                 </div>
-
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground">reCAPTCHA verification would appear here</p>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="recaptcha" />
+                  <Label htmlFor="recaptcha" className="text-sm">I'm not a robot (reCAPTCHA)</Label>
                 </div>
-
-                <Button type="submit" className="w-full">Submit</Button>
-              </form>
+                
+                <Button className="w-full">Submit</Button>
+              </div>
             </CardContent>
           </Card>
+
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

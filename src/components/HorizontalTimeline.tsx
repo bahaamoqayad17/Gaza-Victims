@@ -22,7 +22,8 @@ const generateTimelineData = () => {
 };
 
 const HorizontalTimeline = () => {
-  const [timelineData] = useState(generateTimelineData());
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [timelineData, setTimelineData] = useState(generateTimelineData());
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -90,7 +91,12 @@ const HorizontalTimeline = () => {
     <Card className="w-full p-4 bg-muted/20">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">2025 Cases</h3>
+        <button 
+          onClick={() => setSelectedYear(selectedYear === 2025 ? 2024 : 2025)}
+          className="text-sm font-semibold hover:underline"
+        >
+          {selectedYear} Cases
+        </button>
         <span className="text-xs text-muted-foreground">
           (Touch and drag to scroll • {timelineData.reduce((sum, d) => sum + d.cases, 0)} total cases)
         </span>
@@ -164,11 +170,11 @@ const HorizontalTimeline = () => {
       <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-primary rounded-sm"></div>
-          <span>Regular activity</span>
+          <span>Regular cases</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-destructive rounded-sm"></div>
-          <span>High activity (10+ cases)</span>
+          <span>High cases (10+ cases)</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-muted rounded-sm"></div>

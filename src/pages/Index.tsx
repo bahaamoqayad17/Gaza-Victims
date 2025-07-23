@@ -10,7 +10,7 @@ import { useState } from "react";
 import HorizontalTimeline from "@/components/HorizontalTimeline";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Footer } from "@/components/Footer";
-import childPhoto from "@/assets/child-photo.jpg";
+import victimSarah from "@/assets/victim-sarah.jpg";
 
 // Mock victim data for demonstration
 const recentCases = [
@@ -26,7 +26,7 @@ const recentCases = [
     lifeStory: "Sarah was a dedicated teacher who loved working with children. Her colleagues remember her infectious laughter and her dream of opening a school for underprivileged kids. 'She believed every child deserved a chance to learn,' her sister recalls.",
     deathDetails: "Sarah was killed during a targeted bombing of her school. She had stayed late to prepare lessons for the next day when the attack occurred. Security cameras showed she tried to reach the shelter but didn't make it in time.",
     images: [
-      "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
+      victimSarah,
       "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
     ]
@@ -212,26 +212,26 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+          {/* Header */}
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button
                 variant="ghost"
                 size="sm"
-                className="md:hidden"
+                className="md:hidden p-1"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
                 <Menu className="h-4 w-4" />
               </Button>
-              <h1 className="text-xl md:text-2xl font-bold">Archive</h1>
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">Archive</h1>
             </div>
-            <nav className="flex items-center gap-4 md:gap-6">
-              <Link to="/browse" className="text-xs md:text-sm hover:underline">Browse</Link>
-              <Link to="/map" className="text-xs md:text-sm hover:underline">Map</Link>
-              <Link to="/upload" className="text-xs md:text-sm hover:underline">Document</Link>
-              <Link to="/about" className="text-xs md:text-sm hover:underline">About</Link>
+            <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
+              <Link to="/browse" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">Browse</Link>
+              <Link to="/map" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">Map</Link>
+              <Link to="/upload" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden sm:inline">Document</Link>
+              <Link to="/about" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden md:inline">About</Link>
               <LanguageSelector />
             </nav>
           </div>
@@ -340,7 +340,7 @@ const Index = () => {
           {/* Recent Cases */}
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">The following were "killed" yesterday</h3>
+              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">The following were <span className="text-red-600">"killed"</span> yesterday</h3>
               
               <TooltipProvider>
                 <Carousel className="max-w-5xl mx-auto">

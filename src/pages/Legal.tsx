@@ -3,21 +3,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Scale, Shield, Eye, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Footer } from "@/components/Footer";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Legal = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Archive
-              </Link>
-            </Button>
-            <h1 className="text-xl font-bold">Legal Information</h1>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Archive
+                </Link>
+              </Button>
+              <h1 className="text-lg sm:text-xl font-bold truncate">Legal Information</h1>
+            </div>
+            <LanguageSelector />
           </div>
         </div>
       </header>
@@ -171,15 +176,17 @@ const Legal = () => {
 
               <Separator />
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button variant="outline" size="sm">Contact Legal Team</Button>
-                <Button variant="outline" size="sm">Report Violation</Button>
-                <Button variant="outline" size="sm">Data Protection Officer</Button>
+              <div className="flex justify-center pt-4">
+                <Button asChild>
+                  <Link to="/about#contact">Contact Us</Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

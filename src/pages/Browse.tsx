@@ -5,7 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Calendar, MapPin, ArrowLeft, HelpCircle } from "lucide-react";
+import { Search, Filter, Calendar, MapPin, ArrowLeft, HelpCircle, Download, AlertTriangle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -174,18 +174,18 @@ const Browse = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Archive
-              </Link>
-            </Button>
-            <div className="flex items-center justify-between flex-1">
-              <h1 className="text-xl font-bold">Browse Cases</h1>
-              <LanguageSelector />
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Archive
+                </Link>
+              </Button>
+              <h1 className="text-lg sm:text-xl font-bold truncate">Browse Cases</h1>
             </div>
+            <LanguageSelector />
           </div>
         </div>
       </header>
@@ -236,12 +236,20 @@ const Browse = () => {
           <p className="text-sm text-muted-foreground">
             {cases.length} cases found
           </p>
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/map">
-              <MapPin className="w-4 h-4 mr-2" />
-              Map View
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/download">
+                <Download className="w-4 h-4 mr-2" />
+                Download Archive
+              </Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/map">
+                <MapPin className="w-4 h-4 mr-2" />
+                Map View
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <TooltipProvider>
@@ -313,13 +321,20 @@ const Browse = () => {
                         </Tooltip>
                       </div>
 
-                      {/* Status badge */}
-                      <Badge 
-                        variant={victim.status === 'verified' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {victim.status}
-                      </Badge>
+                      {/* Status badge and report button */}
+                      <div className="flex items-center justify-center gap-2">
+                        <Badge 
+                          variant={victim.status === 'verified' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {victim.status}
+                        </Badge>
+                        <Button variant="ghost" size="sm" asChild className="h-6 w-6 p-0">
+                          <Link to="/report">
+                            <AlertTriangle className="w-3 h-3 text-yellow-600" />
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

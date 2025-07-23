@@ -11,6 +11,8 @@ import Map from "./pages/Map";
 import About from "./pages/About";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
+import DownloadArchive from "./pages/DownloadArchive";
+import ReportCase from "./pages/ReportCase";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/map" element={<Map />} />
           <Route path="/about" element={<About />} />
           <Route path="/legal" element={<Legal />} />
+          <Route path="/download" element={<DownloadArchive />} />
+          <Route path="/report" element={<ReportCase />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

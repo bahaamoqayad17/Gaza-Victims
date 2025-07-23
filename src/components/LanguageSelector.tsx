@@ -10,6 +10,7 @@ const languages = [
   { code: 'it', name: 'Italiano', flag: '🇮🇹' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
   { code: 'he', name: 'עברית', flag: '🇮🇱' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
   { code: 'fa', name: 'فارسی', flag: '🇮🇷' },
   { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
   { code: 'pl', name: 'Polski', flag: '🇵🇱' },

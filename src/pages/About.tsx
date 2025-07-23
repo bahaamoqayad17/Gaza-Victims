@@ -2,21 +2,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Shield, Users, Globe, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Footer } from "@/components/Footer";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const About = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Archive
-              </Link>
-            </Button>
-            <h1 className="text-xl font-bold">About Us</h1>
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Archive
+                </Link>
+              </Button>
+              <h1 className="text-lg sm:text-xl font-bold truncate">About Us</h1>
+            </div>
+            <LanguageSelector />
           </div>
         </div>
       </header>
@@ -121,25 +126,109 @@ const About = () => {
             </CardContent>
           </Card>
 
-          {/* Contact */}
+          {/* How Can You Help */}
           <Card>
             <CardHeader>
-              <CardTitle>Contact & Support</CardTitle>
+              <CardTitle>How Can You Help?</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>
+                There are many ways to contribute to preserving memory and seeking justice:
+              </p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Documentation</h4>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Submit verified documentation</li>
+                    <li>• Share witness testimonies</li>
+                    <li>• Provide additional evidence</li>
+                    <li>• Help with verification</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Support</h4>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Technical expertise</li>
+                    <li>• Translation services</li>
+                    <li>• Legal assistance</li>
+                    <li>• Advocacy efforts</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="text-sm">
+                  <strong>Note:</strong> This platform is completely voluntary and non-profit. 
+                  All contributions are made by volunteers dedicated to preserving memory and seeking accountability.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Contact */}
+          <Card id="contact">
+            <CardHeader>
+              <CardTitle>Contact</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>
                 If you need assistance, have questions about the documentation process, 
                 or require support as a survivor or family member, please reach out to us.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline">Contact Support</Button>
-                <Button variant="outline">Report Technical Issues</Button>
-                <Button variant="outline">Emergency Resources</Button>
-              </div>
+              
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
+                    <input type="text" id="name" className="w-full px-3 py-2 border rounded-md" required />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+                    <input type="email" id="email" className="w-full px-3 py-2 border rounded-md" required />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="contact" className="block text-sm font-medium mb-1">Contact Information</label>
+                  <input type="text" id="contact" className="w-full px-3 py-2 border rounded-md" placeholder="Phone or alternative contact" />
+                </div>
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium mb-1">Message</label>
+                  <textarea id="message" rows={4} className="w-full px-3 py-2 border rounded-md" required></textarea>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Type of inquiry:</p>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Report technical issue</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">We would like to help</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Legal violation</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Other</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                  <p className="text-sm text-muted-foreground">reCAPTCHA verification would appear here</p>
+                </div>
+
+                <Button type="submit" className="w-full">Submit</Button>
+              </form>
             </CardContent>
           </Card>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

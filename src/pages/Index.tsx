@@ -379,9 +379,17 @@ const Index = () => {
           <section className="py-8 md:py-16 border-b">
             <div className="container mx-auto px-4 text-center">
               <h2 className="text-2xl md:text-4xl font-bold mb-4">Documented by those who knew them, to those who care about them.</h2>
-              <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto text-sm md:text-base">
+              <p className="text-muted-foreground mb-4 md:mb-6 max-w-2xl mx-auto text-sm md:text-base">
                 {t('documentingLives')}
               </p>
+              <div className="mb-6 md:mb-8">
+                <p className="text-sm md:text-base text-muted-foreground">
+                  There are <span className="text-red-600 font-semibold">48,405</span> reported <span className="text-red-600 font-semibold">fatalities</span> in the conflict. Of those cases, the following were killed on day, date, year and
+                </p>
+                <p className="text-red-600 font-bold text-lg md:text-xl mt-2">
+                  this is hard evidence
+                </p>
+              </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="sm" className="md:size-default">
                   <Link to="/upload">{t('submitDocumentation')}</Link>
@@ -434,12 +442,6 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Show More Button */}
-              <div className="text-center mt-8">
-                <Button asChild variant="outline">
-                  <Link to="/browse">Show More Cases</Link>
-                </Button>
-              </div>
             </div>
           </section>
 
@@ -481,6 +483,15 @@ const Index = () => {
             </div>
           </section>
         </main>
+      </div>
+
+      {/* Show More Button */}
+      <div className="container mx-auto px-4 py-8 text-center">
+        <Button asChild size="lg" variant="outline">
+          <Link to="/browse">
+            Show More Cases
+          </Link>
+        </Button>
       </div>
 
       <Footer />

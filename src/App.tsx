@@ -14,6 +14,7 @@ import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 import DownloadArchive from "./pages/DownloadArchive";
 import ReportCase from "./pages/ReportCase";
+import ReportAdditional from "./pages/ReportAdditional";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/legal" element={<Legal />} />
             <Route path="/download" element={<DownloadArchive />} />
             <Route path="/report" element={<ReportCase />} />
+            <Route path="/report-additional" element={<ReportAdditional />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

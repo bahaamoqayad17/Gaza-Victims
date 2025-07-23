@@ -12,23 +12,28 @@ import { Footer } from "@/components/Footer";
 const caseData = {
   id: "001",
   name: "Sarah M.",
-  age: 28,
+  age: 8,
+  gender: "Female",
   location: "Aleppo, Syria",
-  date: "2023-10-15",
+  date: "2025-07-20",
   status: "documented",
-  incidentType: "Armed Conflict",
-  occupation: "Teacher",
+  incidentType: "Bombing",
+  occupation: "Student",
   imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=400&fit=crop&crop=face",
-  background: "Sarah was a primary school teacher who dedicated her life to educating children in her community. She was known for her kindness and commitment to her students.",
-  circumstances: "Sarah was killed during a bombing of civilian areas in Aleppo. She was walking to school when the attack occurred.",
-  witnesses: "Multiple witnesses confirmed the civilian nature of the attack.",
-  submittedDate: "2023-10-20",
-  caseNumber: "VIC-2023-001",
+  background: "Sarah was a bright 8-year-old who loved painting and playing with her dolls. Her teacher remembers her as a curious child who always asked thoughtful questions. 'She wanted to be an artist when she grew up,' her mother recalls through tears.",
+  circumstances: "Sarah was killed during a bombing of her residential area. She was playing in her room when the attack occurred. Her family tried to reach the shelter but didn't make it in time.",
+  witnesses: ["Mother", "Father", "Neighbors"],
+  submittedDate: "2025-07-21",
+  caseNumber: "FAR-2025-001",
+  familyRelationship: "left behind her mother, father, and two younger brothers",
+  perpetrator: "Syrian Government Forces",
+  verified: true,
+  thirdPartyVerified: false,
+  newsLink: "https://example.com/news/sarah-m",
   timeline: [
-    { date: "2023-10-15", event: "Incident occurred" },
-    { date: "2023-10-20", event: "Case documented" },
-    { date: "2023-10-25", event: "Witness statements collected" },
-    { date: "2023-11-01", event: "Case verified" }
+    { date: "2025-07-20", event: "Incident occurred" },
+    { date: "2025-07-21", event: "Case submitted" },
+    { date: "2025-07-22", event: "Initial verification completed" }
   ]
 };
 
@@ -39,15 +44,6 @@ const CaseDetail = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Content Warning */}
-      <div className="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-amber-800 dark:text-amber-200">
-            <AlertTriangle className="w-4 h-4" />
-            <span>This case contains sensitive content documenting violence against civilians.</span>
-          </div>
-        </div>
-      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -75,7 +71,8 @@ const CaseDetail = () => {
                   <div className="flex-1 space-y-3">
                     <div>
                       <h3 className="font-semibold text-lg">{caseData.name}</h3>
-                      <p className="text-muted-foreground">Age {caseData.age} • Male • {caseData.occupation}</p>
+                      <p className="text-muted-foreground">Age {caseData.age} • {caseData.gender} • {caseData.occupation}</p>
+                      <p className="text-muted-foreground italic text-sm mt-1">{caseData.familyRelationship}</p>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm">
@@ -224,26 +221,48 @@ const CaseDetail = () => {
                 <CardTitle>Incident News Story</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=400&fit=crop" 
-                    alt="News article screenshot"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <p className="text-sm text-muted-foreground">News article screenshot would appear here</p>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">Related News Stories:</h4>
+                  <h4 className="font-semibold text-sm">Related News Coverage:</h4>
                   <div className="space-y-1 text-sm">
-                    <a href="#" className="text-blue-600 hover:text-blue-800 underline block">
-                      Local News: Civilian casualties reported in Aleppo bombing
+                    <a href={caseData.newsLink} target="_blank" rel="noopener noreferrer" 
+                       className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1">
+                      <span className="w-3 h-3">📰</span>
+                      {caseData.newsLink}
                     </a>
-                    <a href="#" className="text-blue-600 hover:text-blue-800 underline block">
-                      International Report: Syrian conflict escalation
+                    <a href="https://example.com/news/related-1" target="_blank" rel="noopener noreferrer" 
+                       className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1">
+                      <span className="w-3 h-3">📰</span>
+                      https://example.com/news/related-1
                     </a>
-                    <a href="#" className="text-blue-600 hover:text-blue-800 underline block">
-                      Human Rights Watch: Documentation of war crimes
+                    <a href="https://example.com/news/related-2" target="_blank" rel="noopener noreferrer" 
+                       className="text-blue-600 hover:text-blue-800 underline flex items-center gap-1">
+                      <span className="w-3 h-3">📰</span>
+                      https://example.com/news/related-2
                     </a>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Location Details */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Location Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-2">Incident Location</h4>
+                  <p className="text-muted-foreground">{caseData.location}</p>
+                  <p className="text-sm text-muted-foreground mt-1">Approximate coordinates: 36.2021° N, 37.1343° E</p>
+                </div>
+                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <p className="text-sm text-muted-foreground">Interactive map with location marker would appear here</p>
                 </div>
               </CardContent>
             </Card>
@@ -316,8 +335,10 @@ const CaseDetail = () => {
                 <CardTitle className="text-sm">Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="outline" size="sm" className="w-full text-xs">
-                  Report Additional Information
+                <Button variant="outline" size="sm" className="w-full text-xs" asChild>
+                  <Link to="/report-additional">
+                    Report Additional Information
+                  </Link>
                 </Button>
                 <Button variant="outline" size="sm" className="w-full text-xs">
                   Download Case File

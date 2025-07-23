@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, LogIn } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
@@ -85,7 +85,15 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                 </h1>
               </Link>
             </div>
-            <LanguageSelector />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/auth">
+                  <LogIn className="h-4 w-4 mr-1" />
+                  Login
+                </Link>
+              </Button>
+              <LanguageSelector />
+            </div>
           </div>
           {/* Mobile navigation - second line */}
           <div className="flex justify-center items-center gap-4 pb-3 text-sm font-medium border-t pt-2">
@@ -198,6 +206,12 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
             >
               {t('about')}
             </Link>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/auth">
+                <LogIn className="h-4 w-4 mr-1" />
+                Login
+              </Link>
+            </Button>
             <LanguageSelector />
           </nav>
         </div>

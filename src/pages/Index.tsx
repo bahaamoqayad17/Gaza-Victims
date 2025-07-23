@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { VictimCard } from "@/components/VictimCard";
 import { InteractiveMap } from "@/components/InteractiveMap";
 import { useTranslation } from "@/lib/translations";
+import { formatDate } from "@/lib/dateUtils";
 import victimSarah from "@/assets/victim-sarah.jpg";
 
 // Mock victim data for demonstration
@@ -350,7 +351,9 @@ const Index = () => {
                     className="flex w-full items-center justify-between text-left hover:bg-muted/50 p-2 rounded"
                     onClick={() => setSelectedYear(yearData.year)}
                   >
-                    <span className="font-medium text-sm lg:text-base">{yearData.year}</span>
+                    <span className="font-medium text-sm lg:text-base">
+                      {yearData.year} ({yearData.months.reduce((sum, month) => sum + month.cases, 0)})
+                    </span>
                     <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-2 lg:pl-4 space-y-1">

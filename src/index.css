@@ -102,4 +102,14 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* RTL support for Arabic/Persian languages */
+  body[dir="rtl"] {
+    direction: rtl;
+  }
+  
+  body[dir="rtl"] .ltr-text {
+    direction: ltr;
+    text-align: left;
+  }
 }

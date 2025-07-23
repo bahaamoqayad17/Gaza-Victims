@@ -33,7 +33,7 @@ const recentCases = [{
   familyRelationship: "left behind her mother, father, and two younger brothers",
   occupation: "A student",
   perpetrator: "Syrian Government Forces",
-  images: [victimSarah, "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop", "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"]
+  images: ["https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=400&fit=crop&crop=face", "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop", "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"]
 }, {
   id: "002",
   name: "Ahmed K.",

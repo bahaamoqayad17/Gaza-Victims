@@ -7,7 +7,7 @@ import { Link, useParams } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import victimSarahImage from "@/assets/victim-sarah.jpg";
+import sarahPortrait from "@/assets/sarah-portrait.jpg";
 
 // Mock case data
 const caseData = {
@@ -61,7 +61,7 @@ const CaseDetail = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="w-32 h-32 rounded-lg overflow-hidden bg-muted flex-shrink-0 mx-auto md:mx-0">
                     <img 
-                      src={victimSarahImage} 
+                      src={sarahPortrait} 
                       alt={`${caseData.name}`}
                       className="w-full h-full object-cover"
                     />

@@ -13,6 +13,7 @@ interface VictimCardProps {
     id: string;
     name: string;
     age: number;
+    gender: string;
     location: string;
     date: string;
     status: string;
@@ -76,6 +77,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               <div>
                 <h4 className="font-semibold text-lg">{victim.name}</h4>
                 <p className="text-sm text-muted-foreground">{t('age')}: {victim.age}</p>
+                <p className="text-sm text-muted-foreground">Gender: {victim.gender}</p>
                 {victim.familyRelationship && (
                   <p className="text-xs text-muted-foreground italic">
                     {victim.occupation && `${victim.occupation}. `}{victim.familyRelationship}

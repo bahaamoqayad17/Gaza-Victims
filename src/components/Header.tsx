@@ -95,6 +95,16 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t('map')}
             </Link>
             <Link 
+              to="/report" 
+              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
+                isActivePage('/report') 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              Submit
+            </Link>
+            <Link 
               to="/upload" 
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors hidden sm:inline-block ${
                 isActivePage('/upload') 

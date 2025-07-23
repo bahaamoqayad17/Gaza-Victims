@@ -15,33 +15,35 @@ import { Footer } from "@/components/Footer";
 
 // Mock data - expanded to 10 victims
 const cases = [
-  {
-    id: "001",
-    name: "Sarah M.",
-    age: 28,
-    location: "Aleppo, Syria",
-    date: "2023-10-15",
-    status: "documented",
-    causeOfDeath: "Armed Conflict",
-    actionTaken: "pending",
-    verified: false,
-    thirdPartyVerified: false,
-    newsLink: "https://example.com/news/sarah-m",
-    lifeStory: "Sarah was a primary school teacher who dedicated her life to educating children in her community. She was known for her kindness and commitment to her students.",
-    deathDetails: "Sarah was killed during a bombing of her residential area. She was in her classroom when the attack occurred.",
-    familyRelationship: "left behind her parents and younger sister",
-    occupation: "A primary school teacher",
-    perpetrator: "Syrian Government Forces",
-    images: [
-      "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
-    ]
-  },
+    {
+      id: "001",
+      name: "Sarah M.",
+      age: 28,
+      gender: "Female",
+      location: "Aleppo, Syria",
+      date: "2023-10-15",
+      status: "documented",
+      causeOfDeath: "Armed Conflict",
+      actionTaken: "pending",
+      verified: false,
+      thirdPartyVerified: false,
+      newsLink: "https://example.com/news/sarah-m",
+      lifeStory: "Sarah was a primary school teacher who dedicated her life to educating children in her community. She was known for her kindness and commitment to her students.",
+      deathDetails: "Sarah was killed during a bombing of her residential area. She was in her classroom when the attack occurred.",
+      familyRelationship: "left behind her parents and younger sister",
+      occupation: "A primary school teacher",
+      perpetrator: "Syrian Government Forces",
+      images: [
+        "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
+      ]
+    },
   {
     id: "002", 
     name: "Ahmed K.",
     age: 34,
+    gender: "Male",
     location: "Kharkiv, Ukraine",
     date: "2023-09-22",
     status: "verified",

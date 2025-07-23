@@ -327,8 +327,9 @@ const Index = () => {
                     Of those numerous cases, the following (and counting) are without a doubt{' '}
                     <span className="text-red-600 font-bold">confirmed cases of state murder</span>.
                   </p>
-                  <p className="text-lg md:text-xl text-red-600 font-bold">
-                    We present you with HARD EVIDENCE
+                  <p className="text-lg md:text-xl">
+                    <span className="text-foreground">We present you with </span>
+                    <span className="text-red-600 font-bold">HARD EVIDENCE</span>
                   </p>
                 </div>
               </div>

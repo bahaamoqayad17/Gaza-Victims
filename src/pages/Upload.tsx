@@ -32,6 +32,12 @@ const Upload = () => {
     notes: '',
     consentAgreed: false
   });
+  const [familyCounts, setFamilyCounts] = useState({
+    daughters: 0,
+    sons: 0,
+    brothers: 0,
+    sisters: 0
+  });
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [socialMediaUrl, setSocialMediaUrl] = useState('');
   const [socialMediaPreview, setSocialMediaPreview] = useState<string | null>(null);
@@ -117,7 +123,7 @@ const Upload = () => {
                   </div>
 
                   <div>
-                    <Label>Family Relationships</Label>
+                    <Label>They leave behind</Label>
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="flex items-center space-x-2">
@@ -142,48 +148,112 @@ const Upload = () => {
                         <div className="flex items-center justify-between p-2 border rounded-lg">
                           <div className="flex items-center space-x-2">
                             <Checkbox id="daughter" />
-                            <Label htmlFor="daughter" className="text-sm">Daughter</Label>
+                            <Label htmlFor="daughter" className="text-sm">Daughter(s)</Label>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, daughters: Math.max(0, prev.daughters - 1)}))}
+                            >
+                              -
+                            </Button>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.daughters}</span>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, daughters: prev.daughters + 1}))}
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
                         
                         <div className="flex items-center justify-between p-2 border rounded-lg">
                           <div className="flex items-center space-x-2">
                             <Checkbox id="son" />
-                            <Label htmlFor="son" className="text-sm">Son</Label>
+                            <Label htmlFor="son" className="text-sm">Son(s)</Label>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, sons: Math.max(0, prev.sons - 1)}))}
+                            >
+                              -
+                            </Button>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.sons}</span>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, sons: prev.sons + 1}))}
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
                         
                         <div className="flex items-center justify-between p-2 border rounded-lg">
                           <div className="flex items-center space-x-2">
                             <Checkbox id="brother" />
-                            <Label htmlFor="brother" className="text-sm">Brother</Label>
+                            <Label htmlFor="brother" className="text-sm">Brother(s)</Label>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, brothers: Math.max(0, prev.brothers - 1)}))}
+                            >
+                              -
+                            </Button>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.brothers}</span>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, brothers: prev.brothers + 1}))}
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
                         
                         <div className="flex items-center justify-between p-2 border rounded-lg">
                           <div className="flex items-center space-x-2">
                             <Checkbox id="sister" />
-                            <Label htmlFor="sister" className="text-sm">Sister</Label>
+                            <Label htmlFor="sister" className="text-sm">Sister(s)</Label>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">-</Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">0</span>
-                            <Button type="button" variant="outline" size="sm" className="h-6 w-6 p-0">+</Button>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, sisters: Math.max(0, prev.sisters - 1)}))}
+                            >
+                              -
+                            </Button>
+                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.sisters}</span>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-6 w-6 p-0"
+                              onClick={() => setFamilyCounts(prev => ({...prev, sisters: prev.sisters + 1}))}
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
                       </div>

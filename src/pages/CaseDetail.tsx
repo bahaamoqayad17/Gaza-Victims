@@ -63,7 +63,7 @@ const CaseDetail = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="w-32 h-32 rounded-lg overflow-hidden bg-muted flex-shrink-0 mx-auto md:mx-0">
                     <img 
-                      src={caseData.imageUrl} 
+                      src="https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=400&fit=crop&crop=face" 
                       alt={`${caseData.name}`}
                       className="w-full h-full object-cover"
                     />
@@ -131,32 +131,32 @@ const CaseDetail = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {/* Sample images */}
+                  {/* Sample images of a child's life */}
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" 
-                      alt="Life moment 1"
+                      src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop" 
+                      alt="Sarah playing with toys"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" 
-                      alt="Life moment 2"
+                      src="https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&h=300&fit=crop" 
+                      alt="Sarah at school"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1473091534298-04dcbce3278c" 
-                      alt="Life moment 3"
+                      src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400&h=300&fit=crop" 
+                      alt="Sarah drawing"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" 
-                      alt="Life moment 4"
+                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop" 
+                      alt="Sarah with family"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -165,7 +165,7 @@ const CaseDetail = () => {
                       <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-2">
                         <div className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-primary/60 ml-1"></div>
                       </div>
-                      <p className="text-xs text-muted-foreground">Video clip</p>
+                      <p className="text-xs text-muted-foreground">Video of Sarah painting</p>
                     </div>
                   </div>
                 </div>

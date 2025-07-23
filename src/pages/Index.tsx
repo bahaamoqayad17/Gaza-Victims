@@ -296,10 +296,14 @@ const Index = () => {
                     <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pl-2 lg:pl-4 space-y-1">
-                    {yearData.months.map(month => <button key={month.name} className="flex w-full items-center justify-between text-left text-xs lg:text-sm text-muted-foreground hover:text-foreground p-1 hover:bg-muted/30 rounded">
+                    {yearData.months.map(month => <Link 
+                        key={month.name} 
+                        to={`/browse?year=${yearData.year}&month=${month.name}`}
+                        className="flex w-full items-center justify-between text-left text-xs lg:text-sm text-muted-foreground hover:text-foreground p-1 hover:bg-muted/30 rounded"
+                      >
                         <span>{month.name}</span>
                         <span className="text-xs">({month.cases})</span>
-                      </button>)}
+                      </Link>)}
                   </CollapsibleContent>
                 </Collapsible>)}
             </div>
@@ -314,13 +318,26 @@ const Index = () => {
           {/* Recent Cases */}
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
-              <div className="text-center mb-6 md:mb-8">
-                <p className="text-sm md:text-base text-muted-foreground mb-4">
-                  As of 23/07/2025, there are <span className="text-red-600 font-bold">48,405</span> <span className="text-red-600 font-bold">reported fatalities</span> in the conflict. Of those numerous cases, the following (and counting) are without a doubt <span className="text-red-600 font-bold">confirmed cases of state murder</span>. We present you with
-                </p>
-                <p className="text-red-600 font-bold text-xl md:text-2xl mt-2" style={{fontSize: '115%'}}>
-                  HARD EVIDENCE
-                </p>
+              <div className="bg-gradient-to-r from-background via-muted/20 to-background p-8 md:p-12 rounded-lg border-2 border-border/50 shadow-lg mb-8 md:mb-12">
+                <div className="max-w-4xl mx-auto text-center space-y-6">
+                  <p className="text-lg md:text-xl leading-relaxed text-foreground">
+                    As of <span className="font-mono text-red-600 font-bold">23/07/2025</span>, there are{' '}
+                    <span className="text-red-600 font-bold text-xl md:text-2xl">48,405</span>{' '}
+                    <span className="text-red-600 font-bold">reported fatalities</span> in the conflict.
+                  </p>
+                  <p className="text-lg md:text-xl leading-relaxed text-foreground">
+                    Of those numerous cases, the following (and counting) are without a doubt{' '}
+                    <span className="text-red-600 font-bold">confirmed cases of state murder</span>.{' '}
+                    We present you with
+                  </p>
+                  <div className="relative">
+                    <p className="text-red-600 font-bold text-3xl md:text-4xl lg:text-5xl tracking-wider drop-shadow-lg" 
+                       style={{fontSize: '115%', textShadow: '2px 2px 4px rgba(0,0,0,0.1)'}}>
+                      HARD EVIDENCE
+                    </p>
+                    <div className="absolute inset-0 bg-red-600/10 blur-xl rounded-full -z-10"></div>
+                  </div>
+                </div>
               </div>
               
               {/* Mobile: Vertical scroll, Desktop: Grid */}

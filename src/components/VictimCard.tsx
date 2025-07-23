@@ -23,6 +23,7 @@ interface VictimCardProps {
     newsLink?: string;
     lifeStory?: string;
     deathDetails?: string;
+    familyRelationship?: string;
     images: string[];
   };
   showReportButton?: boolean;
@@ -70,7 +71,13 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
           {/* Victim details */}
           <div className="space-y-2">
             <div className="flex justify-between items-start">
-              <h4 className="font-semibold text-lg">{victim.name}</h4>
+              <div>
+                <h4 className="font-semibold text-lg">{victim.name}</h4>
+                <p className="text-sm text-muted-foreground">{t('age')}: {victim.age}</p>
+                {victim.familyRelationship && (
+                  <p className="text-xs text-muted-foreground italic">{victim.familyRelationship}</p>
+                )}
+              </div>
               <div className="flex gap-1">
                 {!clickable && (
                   <Button
@@ -100,7 +107,6 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
             </div>
             
             <div className="flex flex-wrap gap-1 mb-2 text-xs">
-              <span className="text-muted-foreground">{t('age')}: {victim.age}</span>
               <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">Documented</span>
               {victim.verified && (
                 <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">Verified</span>

@@ -29,6 +29,7 @@ const recentCases = [
     newsLink: "https://example.com/news/sarah-m",
     lifeStory: "Sarah was a bright 8-year-old who loved painting and playing with her dolls. Her teacher remembers her as a curious child who always asked thoughtful questions. 'She wanted to be an artist when she grew up,' her mother recalls through tears.",
     deathDetails: "Sarah was killed during a bombing of her residential area. She was playing in her room when the attack occurred. Her family tried to reach the shelter but didn't make it in time.",
+    familyRelationship: "left behind her mother, father, and two younger brothers",
     images: [
       victimSarah,
       "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
@@ -49,6 +50,7 @@ const recentCases = [
     newsLink: "https://example.com/news/ahmed-k",
     lifeStory: "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.' He had been planning to start a family and dreamed of building sustainable housing.",
     deathDetails: "Ahmed was caught in a missile strike while delivering aid to a residential building. Witnesses report he was helping evacuate elderly residents when the second wave of attacks hit the area.",
+    familyRelationship: "left behind his wife and elderly parents",
     images: [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
@@ -69,6 +71,7 @@ const recentCases = [
     newsLink: "https://example.com/news/maria-l",
     lifeStory: "Maria was a nurse who worked tirelessly during the conflict, often staying beyond her shifts to care for patients. Her daughter remembers her saying, 'Healing is the only way to fight darkness.' She loved gardening and classical music.",
     deathDetails: "Maria died when artillery shells hit the hospital where she worked. She was in the intensive care unit attending to critical patients when the attack began. She refused to leave her patients behind.",
+    familyRelationship: "left behind her teenage daughter and sister",
     images: [
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1452378174528-3024x3024?w=400&h=300&fit=crop",
@@ -89,6 +92,7 @@ const recentCases = [
     newsLink: "https://example.com/news/chen-w",
     lifeStory: "Chen was a university student studying journalism. He believed in the power of truth and was known for his courage in standing up for justice. His friends describe him as someone who never backed down from doing what was right.",
     deathDetails: "Chen was shot during a peaceful protest while documenting police actions with his camera. Witnesses say he was clearly identified as press but was targeted nonetheless.",
+    familyRelationship: "left behind his parents and younger sister",
     images: [
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=300&fit=crop",
@@ -109,6 +113,7 @@ const recentCases = [
     newsLink: "https://example.com/news/elena-r",
     lifeStory: "Elena was a doctor who volunteered at refugee camps. She was passionate about providing medical care to those in need and often worked without pay to help families escape conflict zones.",
     deathDetails: "Elena died from exposure to chemical weapons during an attack on a medical facility. She was treating patients when the attack occurred and refused to abandon them.",
+    familyRelationship: "left behind her husband and twin daughters",
     images: [
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop",
@@ -354,7 +359,16 @@ const Index = () => {
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
               <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">
-                The following were <span className="text-red-600">killed</span> yesterday
+                The following were <span className="text-red-600">killed</span> <span className="underline">
+                  {recentCases.length > 0 ? 
+                    new Date(recentCases[0].date).toLocaleDateString('en-US', { 
+                      weekday: 'long',
+                      month: 'long', 
+                      day: 'numeric'
+                    }).toLowerCase() 
+                    : 'recently'
+                  }
+                </span>
               </h3>
               
               {/* Mobile: Vertical scroll, Desktop: Grid */}

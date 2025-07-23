@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Shield, Upload as UploadIcon, ArrowLeft, ArrowRight, X, Eye, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -466,6 +467,21 @@ const Upload = () => {
                   <div>
                     <Label htmlFor="source">Source of Information</Label>
                     <Input id="source" placeholder="How you obtained this information" />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="relationship">To the victim you are:</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your relationship" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="relative">Relative</SelectItem>
+                        <SelectItem value="eyewitness">Eye witness</SelectItem>
+                        <SelectItem value="journalist">Journalist</SelectItem>
+                        <SelectItem value="volunteer">Volunteer</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>

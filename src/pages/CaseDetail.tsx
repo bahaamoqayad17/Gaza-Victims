@@ -75,7 +75,7 @@ const CaseDetail = () => {
                   <div className="flex-1 space-y-3">
                     <div>
                       <h3 className="font-semibold text-lg">{caseData.name}</h3>
-                      <p className="text-muted-foreground">Age {caseData.age} • {caseData.occupation}</p>
+                      <p className="text-muted-foreground">Age {caseData.age} • Male • {caseData.occupation}</p>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm">
@@ -213,6 +213,36 @@ const CaseDetail = () => {
                     <p className="text-xs text-center text-amber-600 px-4">
                       ⚠️ Graphic content warning. Viewer discretion advised.
                     </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Incident News Story */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Incident News Story</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=400&fit=crop" 
+                    alt="News article screenshot"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Related News Stories:</h4>
+                  <div className="space-y-1 text-sm">
+                    <a href="#" className="text-blue-600 hover:text-blue-800 underline block">
+                      Local News: Civilian casualties reported in Aleppo bombing
+                    </a>
+                    <a href="#" className="text-blue-600 hover:text-blue-800 underline block">
+                      International Report: Syrian conflict escalation
+                    </a>
+                    <a href="#" className="text-blue-600 hover:text-blue-800 underline block">
+                      Human Rights Watch: Documentation of war crimes
+                    </a>
                   </div>
                 </div>
               </CardContent>

@@ -29,11 +29,11 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
       case '/':
         return t('archive');
       case '/browse':
-        return t('browse');
+        return 'Cases';
       case '/map':
         return t('map');
       case '/upload':
-        return t('document');
+        return 'Submit';
       case '/about':
         return t('about');
       case '/legal':
@@ -91,7 +91,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : 'hover:bg-muted hover:text-foreground'
               }`}
             >
-              {t('browse')}
+              Cases
             </Link>
             <Link 
               to="/map" 
@@ -111,7 +111,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : 'hover:bg-muted hover:text-foreground'
               }`}
             >
-              {t('document')}
+              Submit
             </Link>
           </div>
         </div>
@@ -150,7 +150,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : 'hover:bg-muted hover:text-foreground'
               }`}
             >
-              {t('browse')}
+              Cases
             </Link>
             <Link 
               to="/map" 
@@ -180,7 +180,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : 'hover:bg-muted hover:text-foreground'
               }`}
             >
-              {t('document')}
+              Submit
             </Link>
             <Link 
               to="/about" 

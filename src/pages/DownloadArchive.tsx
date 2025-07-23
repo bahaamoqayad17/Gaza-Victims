@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Download, FileImage, FileVideo, Filter, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const DownloadArchive = () => {
@@ -35,23 +36,7 @@ const DownloadArchive = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/browse">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Browse
-                </Link>
-              </Button>
-              <h1 className="text-xl font-bold">Download Archive</h1>
-            </div>
-            <LanguageSelector />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-6">

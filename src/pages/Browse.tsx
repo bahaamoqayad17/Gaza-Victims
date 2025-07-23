@@ -9,6 +9,7 @@ import { Search, Filter, Calendar, MapPin, ArrowLeft, HelpCircle, Download, Aler
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 // Mock data - expanded to 10 victims
@@ -172,23 +173,7 @@ const Browse = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Archive
-                </Link>
-              </Button>
-              <h1 className="text-lg sm:text-xl font-bold truncate">Browse Cases</h1>
-            </div>
-            <LanguageSelector />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Filters */}
       <div className="border-b bg-muted/50">

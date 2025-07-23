@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import HorizontalTimeline from "@/components/HorizontalTimeline";
 import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { VictimCard } from "@/components/VictimCard";
 import { InteractiveMap } from "@/components/InteractiveMap";
@@ -245,31 +246,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="md:hidden p-1"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-              <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">{t('archive')}</h1>
-            </div>
-            <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
-              <Link to="/browse" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">{t('browse')}</Link>
-              <Link to="/map" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">{t('map')}</Link>
-              <Link to="/upload" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden sm:inline">{t('document')}</Link>
-              <Link to="/about" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden md:inline">{t('about')}</Link>
-              <LanguageSelector />
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} showSidebar={true} />
 
       <div className="flex relative">
         {/* Mobile sidebar overlay */}

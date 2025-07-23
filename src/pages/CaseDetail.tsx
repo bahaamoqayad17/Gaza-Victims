@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, MapPin, ArrowLeft, Shield, AlertTriangle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 // Mock case data
@@ -36,26 +37,7 @@ const CaseDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/browse">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Browse
-              </Link>
-            </Button>
-            <div className="flex items-center justify-between flex-1">
-              <div>
-                <h1 className="text-xl font-bold">{caseData.name}</h1>
-                <p className="text-sm text-muted-foreground">Case #{caseData.caseNumber}</p>
-              </div>
-              <LanguageSelector />
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Content Warning */}
       <div className="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800">

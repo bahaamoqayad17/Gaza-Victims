@@ -1,0 +1,123 @@
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
+
+interface HeaderProps {
+  onMenuToggle?: () => void;
+  showSidebar?: boolean;
+}
+
+export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
+  const location = useLocation();
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
+
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case '/':
+        return t('archive');
+      case '/browse':
+        return 'Browse Cases';
+      case '/map':
+        return 'Interactive Map';
+      case '/upload':
+        return 'Document Case';
+      case '/about':
+        return 'About Us';
+      case '/legal':
+        return 'Legal Information';
+      case '/download':
+        return 'Download Archive';
+      case '/report':
+        return 'Report Case';
+      default:
+        if (location.pathname.startsWith('/case/')) {
+          return 'Case Details';
+        }
+        return t('archive');
+    }
+  };
+
+  const isActivePage = (path: string) => {
+    if (path === '/' && location.pathname === '/') return true;
+    if (path !== '/' && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
+  return (
+    <header className="border-b bg-background sticky top-0 z-50">
+      <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {showSidebar && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden p-1"
+                onClick={onMenuToggle}
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            )}
+            <Link to="/" className="flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">
+                {location.pathname === '/' ? t('archive') : (
+                  <>
+                    <span className="text-muted-foreground">{t('archive')}</span>
+                    <span className="text-muted-foreground mx-2">•</span>
+                    <span>{getPageTitle()}</span>
+                  </>
+                )}
+              </h1>
+            </Link>
+          </div>
+          <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
+            <Link 
+              to="/browse" 
+              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
+                isActivePage('/browse') 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              {t('browse')}
+            </Link>
+            <Link 
+              to="/map" 
+              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
+                isActivePage('/map') 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              {t('map')}
+            </Link>
+            <Link 
+              to="/upload" 
+              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors hidden sm:inline-block ${
+                isActivePage('/upload') 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              {t('document')}
+            </Link>
+            <Link 
+              to="/about" 
+              className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors hidden md:inline-block ${
+                isActivePage('/about') 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              {t('about')}
+            </Link>
+            <LanguageSelector />
+          </nav>
+        </div>
+      </div>
+    </header>
+  );
+};

@@ -8,27 +8,12 @@ import { ArrowLeft, Shield, Users, Globe, Heart, Hand } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { Header } from "@/components/Header";
 
 const About = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Archive
-                </Link>
-              </Button>
-              <h1 className="text-lg sm:text-xl font-bold truncate">About Us</h1>
-            </div>
-            <LanguageSelector />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">

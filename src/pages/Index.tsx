@@ -378,7 +378,7 @@ const Index = () => {
           {/* Hero */}
           <section className="py-8 md:py-16 border-b">
             <div className="container mx-auto px-4 text-center">
-              <h2 className="text-2xl md:text-4xl font-bold mb-4">{t('victimsArchive')}</h2>
+              <h2 className="text-2xl md:text-4xl font-bold mb-4">Documented by those who knew them, to those who care about them.</h2>
               <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto text-sm md:text-base">
                 {t('documentingLives')}
               </p>

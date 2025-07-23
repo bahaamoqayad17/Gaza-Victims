@@ -318,18 +318,17 @@ const Index = () => {
           {/* Recent Cases */}
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
-              <div className="bg-gradient-to-r from-background via-muted/20 to-background p-8 md:p-12 rounded-lg border-2 border-border/50 shadow-lg mb-8 md:mb-12">
+              <div className="mb-8 md:mb-12">
                 <div className="max-w-4xl mx-auto text-center">
                   <p className="text-lg md:text-xl leading-relaxed text-foreground">
                     As of <span className="font-mono text-red-600 font-bold">23/07/2025</span>, there are{' '}
                     <span className="text-red-600 font-bold">48,405</span>{' '}
                     <span className="text-red-600 font-bold">reported fatalities</span> in the conflict.
                     Of those numerous cases, the following (and counting) are without a doubt{' '}
-                    <span className="text-red-600 font-bold">confirmed cases of state murder</span>.{' '}
-                    We present you with
+                    <span className="text-red-600 font-bold">confirmed cases of state murder</span>.
                   </p>
                   <p className="text-lg md:text-xl text-red-600 font-bold">
-                    HARD EVIDENCE
+                    We present you with HARD EVIDENCE
                   </p>
                 </div>
               </div>

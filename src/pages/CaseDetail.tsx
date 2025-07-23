@@ -8,6 +8,10 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import sarahPortrait from "@/assets/sarah-portrait.jpg";
+import sarahPlaying from "@/assets/sarah-playing.jpg";
+import sarahSchool from "@/assets/sarah-school.jpg";
+import sarahDrawing from "@/assets/sarah-drawing.jpg";
+import sarahFamily from "@/assets/sarah-family.jpg";
 
 // Mock case data
 const caseData = {
@@ -132,28 +136,28 @@ const CaseDetail = () => {
                   {/* Sample images of a child's life */}
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop" 
+                      src={sarahPlaying} 
                       alt="Sarah playing with toys"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&h=300&fit=crop" 
+                      src={sarahSchool} 
                       alt="Sarah at school"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400&h=300&fit=crop" 
+                      src={sarahDrawing} 
                       alt="Sarah drawing"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                     <img 
-                      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop" 
+                      src={sarahFamily} 
                       alt="Sarah with family"
                       className="w-full h-full object-cover"
                     />

@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Calendar, MapPin, Users, HelpCircle, ChevronDown, Clock, Menu, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Users, ChevronDown, Clock, Menu, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import HorizontalTimeline from "@/components/HorizontalTimeline";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
 import { Footer } from "@/components/Footer";
+import { VictimCard } from "@/components/VictimCard";
+import { InteractiveMap } from "@/components/InteractiveMap";
+import { useTranslation } from "@/lib/translations";
 import victimSarah from "@/assets/victim-sarah.jpg";
 
 // Mock victim data for demonstration
@@ -17,14 +17,17 @@ const recentCases = [
   {
     id: "001",
     name: "Sarah M.",
-    age: 28,
+    age: 8,
     location: "Aleppo",
-    date: "2023-10-15",
+    date: "2025-07-20",
     status: "documented",
-    causeOfDeath: "Armed conflict",
+    causeOfDeath: "Bombing",
     actionTaken: "pending",
-    lifeStory: "Sarah was a dedicated teacher who loved working with children. Her colleagues remember her infectious laughter and her dream of opening a school for underprivileged kids. 'She believed every child deserved a chance to learn,' her sister recalls.",
-    deathDetails: "Sarah was killed during a targeted bombing of her school. She had stayed late to prepare lessons for the next day when the attack occurred. Security cameras showed she tried to reach the shelter but didn't make it in time.",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/sarah-m",
+    lifeStory: "Sarah was a bright 8-year-old who loved painting and playing with her dolls. Her teacher remembers her as a curious child who always asked thoughtful questions. 'She wanted to be an artist when she grew up,' her mother recalls through tears.",
+    deathDetails: "Sarah was killed during a bombing of her residential area. She was playing in her room when the attack occurred. Her family tried to reach the shelter but didn't make it in time.",
     images: [
       victimSarah,
       "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
@@ -36,10 +39,13 @@ const recentCases = [
     name: "Ahmed K.",
     age: 34,
     location: "Kharkiv",
-    date: "2023-09-22",
+    date: "2025-07-19",
     status: "verified",
     causeOfDeath: "Bombing",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/ahmed-k",
     lifeStory: "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.' He had been planning to start a family and dreamed of building sustainable housing.",
     deathDetails: "Ahmed was caught in a missile strike while delivering aid to a residential building. Witnesses report he was helping evacuate elderly residents when the second wave of attacks hit the area.",
     images: [
@@ -53,10 +59,13 @@ const recentCases = [
     name: "Maria L.",
     age: 42,
     location: "Mariupol", 
-    date: "2023-08-30",
+    date: "2025-07-18",
     status: "investigating",
     causeOfDeath: "Shelling",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/maria-l",
     lifeStory: "Maria was a nurse who worked tirelessly during the conflict, often staying beyond her shifts to care for patients. Her daughter remembers her saying, 'Healing is the only way to fight darkness.' She loved gardening and classical music.",
     deathDetails: "Maria died when artillery shells hit the hospital where she worked. She was in the intensive care unit attending to critical patients when the attack began. She refused to leave her patients behind.",
     images: [
@@ -70,10 +79,13 @@ const recentCases = [
     name: "Chen W.",
     age: 25,
     location: "Yangon",
-    date: "2023-07-12",
+    date: "2025-07-17",
     status: "documented",
     causeOfDeath: "Civil Unrest",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/chen-w",
     lifeStory: "Chen was a university student studying journalism. He believed in the power of truth and was known for his courage in standing up for justice. His friends describe him as someone who never backed down from doing what was right.",
     deathDetails: "Chen was shot during a peaceful protest while documenting police actions with his camera. Witnesses say he was clearly identified as press but was targeted nonetheless.",
     images: [
@@ -87,10 +99,13 @@ const recentCases = [
     name: "Elena R.",
     age: 31,
     location: "Damascus",
-    date: "2023-06-18",
+    date: "2025-07-16",
     status: "verified",
     causeOfDeath: "Chemical attack",
     actionTaken: "investigating",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/elena-r",
     lifeStory: "Elena was a doctor who volunteered at refugee camps. She was passionate about providing medical care to those in need and often worked without pay to help families escape conflict zones.",
     deathDetails: "Elena died from exposure to chemical weapons during an attack on a medical facility. She was treating patients when the attack occurred and refused to abandon them.",
     images: [
@@ -104,10 +119,13 @@ const recentCases = [
     name: "David L.",
     age: 45,
     location: "Bucha",
-    date: "2023-05-27",
+    date: "2025-07-15",
     status: "documented",
     causeOfDeath: "Execution",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/david-l",
     lifeStory: "David was a local shop owner who helped distribute food and supplies to elderly residents during the siege. His neighbors remember him as a kind man who always helped others, even when resources were scarce.",
     deathDetails: "David was executed by occupying forces after being found helping civilians evacuate. His body was discovered with his hands tied behind his back.",
     images: [
@@ -121,10 +139,13 @@ const recentCases = [
     name: "Fatima A.",
     age: 19,
     location: "Gaza",
-    date: "2023-04-14",
+    date: "2025-07-14",
     status: "investigating",
     causeOfDeath: "Airstrike",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/fatima-a",
     lifeStory: "Fatima was an art student who used her creativity to bring joy to children in refugee camps. She taught art classes and organized cultural events to help preserve Palestinian heritage.",
     deathDetails: "Fatima was killed in her family home during a nighttime airstrike. The building collapsed, trapping her and several family members inside.",
     images: [
@@ -138,10 +159,13 @@ const recentCases = [
     name: "Michael T.",
     age: 38,
     location: "Donetsk",
-    date: "2023-03-09",
+    date: "2025-07-13",
     status: "verified",
     causeOfDeath: "Landmine",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/michael-t",
     lifeStory: "Michael was a humanitarian worker who specialized in mine clearance. He had already saved countless lives by safely removing unexploded ordnance from civilian areas.",
     deathDetails: "Michael was killed by an unmarked landmine while clearing a path to a school. He died instantly, but his work had already made the surrounding area safe for children to return.",
     images: [
@@ -155,10 +179,13 @@ const recentCases = [
     name: "Amira H.",
     age: 26,
     location: "Kabul",
-    date: "2023-02-22",
+    date: "2025-07-12",
     status: "documented",
     causeOfDeath: "Targeted killing",
     actionTaken: "investigating",
+    verified: true,
+    thirdPartyVerified: false,
+    newsLink: "https://example.com/news/amira-h",
     lifeStory: "Amira was a women's rights activist and teacher who continued to educate girls in secret after schools were closed. She believed education was the key to freedom and never stopped fighting for women's rights.",
     deathDetails: "Amira was shot outside her home by unknown assailants. She had received death threats for her activism but refused to leave the country, saying her work was too important.",
     images: [
@@ -172,10 +199,13 @@ const recentCases = [
     name: "Carlos M.",
     age: 52,
     location: "Caracas",
-    date: "2023-01-15",
+    date: "2025-07-11",
     status: "verified",
     causeOfDeath: "Police brutality",
     actionTaken: "pending",
+    verified: true,
+    thirdPartyVerified: true,
+    newsLink: "https://example.com/news/carlos-m",
     lifeStory: "Carlos was a community organizer who worked to improve living conditions in his neighborhood. He organized food distribution programs and advocated for basic services like clean water and electricity.",
     deathDetails: "Carlos was beaten to death during a peaceful protest demanding better living conditions. Multiple witnesses identified the officers involved, but no arrests have been made.",
     images: [
@@ -187,19 +217,19 @@ const recentCases = [
 ];
 
 const timelineData = [
-  { year: "2023", months: [
-    { name: "Oct", cases: 23 }, 
-    { name: "Sep", cases: 31 }, 
-    { name: "Aug", cases: 18 }, 
-    { name: "Jul", cases: 27 }
+  { year: "2025", months: [
+    { name: "Jul", cases: 23 }, 
+    { name: "Jun", cases: 31 }, 
+    { name: "May", cases: 18 }, 
+    { name: "Apr", cases: 27 }
   ]},
-  { year: "2022", months: [
+  { year: "2024", months: [
     { name: "Dec", cases: 15 }, 
     { name: "Nov", cases: 22 }, 
     { name: "Oct", cases: 29 }, 
     { name: "Sep", cases: 34 }
   ]},
-  { year: "2021", months: [
+  { year: "2023", months: [
     { name: "Dec", cases: 12 }, 
     { name: "Nov", cases: 19 }
   ]}
@@ -209,10 +239,13 @@ const Index = () => {
   const [expandedVictim, setExpandedVictim] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [timelineScrollPosition, setTimelineScrollPosition] = useState(0);
+  const [selectedYear, setSelectedYear] = useState("2025");
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
 
   return (
     <div className="min-h-screen bg-background">
-          {/* Header */}
+      {/* Header */}
       <header className="border-b">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
@@ -225,13 +258,13 @@ const Index = () => {
               >
                 <Menu className="h-4 w-4" />
               </Button>
-              <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">Archive</h1>
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">{t('archive')}</h1>
             </div>
             <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
-              <Link to="/browse" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">Browse</Link>
-              <Link to="/map" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">Map</Link>
-              <Link to="/upload" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden sm:inline">Document</Link>
-              <Link to="/about" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden md:inline">About</Link>
+              <Link to="/browse" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">{t('browse')}</Link>
+              <Link to="/map" className="text-xs sm:text-sm hover:underline px-1 sm:px-2">{t('map')}</Link>
+              <Link to="/upload" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden sm:inline">{t('document')}</Link>
+              <Link to="/about" className="text-xs sm:text-sm hover:underline px-1 sm:px-2 hidden md:inline">{t('about')}</Link>
               <LanguageSelector />
             </nav>
           </div>
@@ -296,7 +329,10 @@ const Index = () => {
             <div className="space-y-2">
               {timelineData.map((yearData) => (
                 <Collapsible key={yearData.year}>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between text-left hover:bg-muted/50 p-2 rounded">
+                  <CollapsibleTrigger 
+                    className="flex w-full items-center justify-between text-left hover:bg-muted/50 p-2 rounded"
+                    onClick={() => setSelectedYear(yearData.year)}
+                  >
                     <span className="font-medium text-sm lg:text-base">{yearData.year}</span>
                     <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
                   </CollapsibleTrigger>
@@ -322,16 +358,16 @@ const Index = () => {
           {/* Hero */}
           <section className="py-8 md:py-16 border-b">
             <div className="container mx-auto px-4 text-center">
-              <h2 className="text-2xl md:text-4xl font-bold mb-4">Victims Archive</h2>
+              <h2 className="text-2xl md:text-4xl font-bold mb-4">{t('victimsArchive')}</h2>
               <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto text-sm md:text-base">
-                Documenting lives lost to preserve memory and seek accountability.
+                {t('documentingLives')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="sm" className="md:size-default">
-                  <Link to="/upload">Submit Documentation</Link>
+                  <Link to="/upload">{t('submitDocumentation')}</Link>
                 </Button>
                 <Button variant="outline" asChild size="sm" className="md:size-default">
-                  <Link to="/browse">Browse Records</Link>
+                  <Link to="/browse">{t('browseRecords')}</Link>
                 </Button>
               </div>
             </div>
@@ -340,117 +376,93 @@ const Index = () => {
           {/* Recent Cases */}
           <section className="py-8 md:py-16">
             <div className="container mx-auto px-4">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">The following were <span className="text-red-600">"killed"</span> yesterday</h3>
+              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">
+                The following were <span className="text-red-600">"killed"</span> yesterday
+              </h3>
               
-              <TooltipProvider>
-                <Carousel className="max-w-5xl mx-auto">
-                  <CarouselContent className="-ml-2 md:-ml-4">
-                    {recentCases.map((victim) => (
-                      <CarouselItem key={victim.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
-                        <Card className="hover:shadow-lg transition-shadow mx-auto max-w-sm">
-                          <CardContent className="p-3 md:p-4 lg:p-6">
-                          {/* Photo carousel */}
-                          <div className="mb-3 md:mb-4">
-                            <Carousel className="w-full">
-                              <CarouselContent>
-                                {victim.images.map((image, index) => (
-                                  <CarouselItem key={index}>
-                                    <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
-                                      <img 
-                                        src={image} 
-                                        alt={`${victim.name} - Photo ${index + 1}`}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    </div>
-                                  </CarouselItem>
-                                ))}
-                              </CarouselContent>
-                              <CarouselPrevious className="left-1 h-6 w-6 md:left-2 md:h-8 md:w-8" />
-                              <CarouselNext className="right-1 h-6 w-6 md:right-2 md:h-8 md:w-8" />
-                            </Carousel>
-                          </div>
-                        
-                          {/* Victim info */}
-                          <div className="text-center space-y-2 md:space-y-3">
-                            <div>
-                              <h4 className="text-base md:text-lg font-semibold">{victim.name}</h4>
-                              <p className="text-xs md:text-sm text-muted-foreground">Age {victim.age}</p>
-                            </div>
-                            
-                            <div className="space-y-1 md:space-y-2">
-                              <div className="flex items-center justify-center gap-1 text-xs md:text-sm text-muted-foreground">
-                                <MapPin className="w-3 h-3" />
-                                <span className="truncate">{victim.location}</span>
-                              </div>
-                              <div className="flex items-center justify-center gap-1 text-xs md:text-sm text-muted-foreground">
-                                <Calendar className="w-3 h-3" />
-                                <span className="truncate">{victim.date}</span>
-                              </div>
-                            </div>
+              {/* Mobile: Vertical scroll, Desktop: Grid */}
+              <div className="md:hidden space-y-4 max-h-96 overflow-y-auto">
+                {recentCases.slice(0, 10).map((victim) => (
+                  <VictimCard 
+                    key={victim.id} 
+                    victim={victim} 
+                    showReportButton={true}
+                    clickable={true}
+                  />
+                ))}
+              </div>
 
-                            {/* Cause of death */}
-                            <div className="text-xs md:text-sm">
-                              <span className="text-muted-foreground">Cause:</span> <span className="break-words">{victim.causeOfDeath}</span>
-                            </div>
+              <div className="hidden md:block">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                  {recentCases.slice(0, 10).map((victim) => (
+                    <VictimCard 
+                      key={victim.id} 
+                      victim={victim} 
+                      showReportButton={true}
+                      clickable={true}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
 
-                            {/* Action taken with tooltip */}
-                            <div className="flex items-center justify-center gap-1 text-xs md:text-sm">
-                              <span className="text-muted-foreground">Action taken:</span>
-                              <span className="break-words">{victim.actionTaken}</span>
-                              {victim.actionTaken === 'pending' && (
-                                <span className="text-red-500 text-xs ml-1">
-                                  for {Math.floor((new Date().getTime() - new Date(victim.date).getTime()) / (1000 * 60 * 60 * 24))} days
-                                </span>
-                              )}
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="text-xs">This showcases the legal action taken thus far.</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </div>
+          {/* Interactive Map */}
+          <section className="py-8">
+            <div className="container mx-auto px-4">
+              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Recent Cases Map</h3>
+              <InteractiveMap />
+            </div>
+          </section>
 
-                            {/* Status badge */}
-                            <Badge 
-                              variant={victim.status === 'verified' ? 'default' : 'secondary'}
-                              className="text-xs"
-                            >
-                              {victim.status}
-                            </Badge>
-
-                            {/* Life story and death details */}
-                            <div className="space-y-2">
-                              <Collapsible 
-                                open={expandedVictim === victim.id}
-                                onOpenChange={(open) => setExpandedVictim(open ? victim.id : null)}
-                              >
-                                <CollapsibleTrigger className="text-xs text-primary hover:underline">
-                                  {expandedVictim === victim.id ? 'Hide details' : 'Who were they?'}
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="mt-2 md:mt-3 space-y-2 md:space-y-3 text-xs leading-relaxed border-t pt-2 md:pt-3">
-                                  <div>
-                                    <h5 className="font-medium text-foreground mb-1">Who were they?</h5>
-                                    <p className="text-muted-foreground text-left">{victim.lifeStory}</p>
-                                  </div>
-                                  <div>
-                                    <h5 className="font-medium text-foreground mb-1">How did they die?</h5>
-                                    <p className="text-muted-foreground text-left">{victim.deathDetails}</p>
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="hidden sm:flex" />
-                  <CarouselNext className="hidden sm:flex" />
-                </Carousel>
-              </TooltipProvider>
+          {/* Stats */}
+          <section className="py-8 md:py-16 bg-muted/20">
+            <div className="container mx-auto px-4">
+              <h3 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center">Platform Statistics</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 max-w-4xl mx-auto">
+                <Link to="/browse">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Users className="h-5 w-5" />
+                        Total Cases
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl md:text-3xl font-bold">2,847</div>
+                      <p className="text-sm text-muted-foreground">Documented victims</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+                <Link to="/map">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <MapPin className="h-5 w-5" />
+                        Locations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl md:text-3xl font-bold">47</div>
+                      <p className="text-sm text-muted-foreground">Countries documented</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+                <Link to="/browse?filter=verified">
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Users className="h-5 w-5" />
+                        Verified
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl md:text-3xl font-bold">1,893</div>
+                      <p className="text-sm text-muted-foreground">Verified cases</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
             </div>
           </section>
 
@@ -462,26 +474,6 @@ const Index = () => {
           </section>
         </main>
       </div>
-
-      {/* Statistics */}
-      <section className="py-8 md:py-16 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-3 gap-4 md:gap-8 text-center">
-            <div>
-              <div className="text-xl md:text-3xl font-bold mb-1 md:mb-2">1,247</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Cases Documented</div>
-            </div>
-            <div>
-              <div className="text-xl md:text-3xl font-bold mb-1 md:mb-2">89</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Locations</div>
-            </div>
-            <div>
-              <div className="text-xl md:text-3xl font-bold mb-1 md:mb-2">156</div>
-              <div className="text-xs md:text-sm text-muted-foreground">Verified</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

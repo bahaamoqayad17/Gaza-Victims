@@ -37,9 +37,6 @@ export const Footer = () => {
               <Link to="/legal" className="block text-muted-foreground hover:text-foreground">
                 Legal Information
               </Link>
-              <a href="#" className="block text-muted-foreground hover:text-foreground">
-                Support Resources
-              </a>
             </div>
           </div>
 

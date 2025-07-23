@@ -204,7 +204,7 @@ const About = () => {
                     </label>
                     <label className="flex items-center gap-2">
                       <input type="checkbox" className="rounded" />
-                      <span className="text-sm">We would like to help</span>
+                      <span className="text-sm">We would like to help <span className="bg-green-100 text-green-800 px-1 rounded text-xs">Volunteer</span></span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input type="checkbox" className="rounded" />

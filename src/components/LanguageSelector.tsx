@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, createContext, useContext, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Globe } from "lucide-react";
+import { Language } from "@/lib/translations";
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -26,8 +27,30 @@ const languages = [
   { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' }
 ];
 
+// Language context for global state management
+const LanguageContext = createContext<{
+  currentLanguage: Language;
+  setCurrentLanguage: (lang: Language) => void;
+}>({
+  currentLanguage: 'en',
+  setCurrentLanguage: () => {}
+});
+
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
+  
+  return (
+    <LanguageContext.Provider value={{ currentLanguage, setCurrentLanguage }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => useContext(LanguageContext);
+
 export const LanguageSelector = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const { currentLanguage, setCurrentLanguage } = useLanguage();
+  const selectedLanguage = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
   return (
     <Popover>
@@ -46,7 +69,7 @@ export const LanguageSelector = () => {
               variant={selectedLanguage.code === language.code ? "secondary" : "ghost"}
               size="sm"
               className="justify-start gap-2 text-left"
-              onClick={() => setSelectedLanguage(language)}
+              onClick={() => setCurrentLanguage(language.code as Language)}
             >
               <span>{language.flag}</span>
               <span className="truncate">{language.name}</span>

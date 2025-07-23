@@ -90,7 +90,7 @@ const HorizontalTimeline = () => {
     <Card className="w-full p-4 bg-muted/20">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">2023 Timeline</h3>
+        <h3 className="text-sm font-semibold">2025 Cases</h3>
         <span className="text-xs text-muted-foreground">
           (Touch and drag to scroll • {timelineData.reduce((sum, d) => sum + d.cases, 0)} total cases)
         </span>

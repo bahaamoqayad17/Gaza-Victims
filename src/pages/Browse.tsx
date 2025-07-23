@@ -28,6 +28,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/sarah-m",
     lifeStory: "Sarah was a primary school teacher who dedicated her life to educating children in her community. She was known for her kindness and commitment to her students.",
+    deathDetails: "Sarah was killed during a bombing of her residential area. She was in her classroom when the attack occurred.",
     images: [
       "https://images.unsplash.com/photo-1535268647677-300dbf3078d1?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
@@ -47,6 +48,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/ahmed-k",
     lifeStory: "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.'",
+    deathDetails: "Ahmed was caught in a missile strike while delivering aid to a residential building.",
     images: [
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
@@ -66,6 +68,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/maria-l",
     lifeStory: "Maria was a nurse who worked tirelessly during the conflict, often staying beyond her shifts to care for patients.",
+    deathDetails: "Maria died when artillery shells hit the hospital where she worked. She refused to leave her patients behind.",
     images: [
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1452378174528-3024x3024?w=400&h=300&fit=crop",
@@ -85,6 +88,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/chen-w",
     lifeStory: "Chen was a university student studying journalism. He believed in the power of truth and was known for his courage.",
+    deathDetails: "Chen was shot during a peaceful protest while documenting police actions with his camera.",
     images: [
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=300&fit=crop",
@@ -104,6 +108,7 @@ const cases = [
     thirdPartyVerified: true,
     newsLink: "https://example.com/news/elena-r",
     lifeStory: "Elena was a doctor who volunteered at refugee camps. She was passionate about providing medical care to those in need.",
+    deathDetails: "Elena died from exposure to chemical weapons during an attack on a medical facility.",
     images: [
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop",
@@ -123,6 +128,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/david-l",
     lifeStory: "David was a local shop owner who helped distribute food and supplies to elderly residents during the siege.",
+    deathDetails: "David was executed by occupying forces after being found helping civilians evacuate.",
     images: [
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1542190891-2093d38760f2?w=400&h=300&fit=crop",
@@ -142,6 +148,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/fatima-a",
     lifeStory: "Fatima was an art student who used her creativity to bring joy to children in refugee camps.",
+    deathDetails: "Fatima was killed in her family home during a nighttime airstrike.",
     images: [
       "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
@@ -161,6 +168,7 @@ const cases = [
     thirdPartyVerified: true,
     newsLink: "https://example.com/news/michael-t",
     lifeStory: "Michael was a humanitarian worker who specialized in mine clearance. He had already saved countless lives.",
+    deathDetails: "Michael was killed by an unmarked landmine while clearing a path to a school.",
     images: [
       "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=300&fit=crop",
@@ -180,6 +188,7 @@ const cases = [
     thirdPartyVerified: false,
     newsLink: "https://example.com/news/amira-h",
     lifeStory: "Amira was a women's rights activist and teacher who continued to educate girls in secret.",
+    deathDetails: "Amira was shot outside her home by unknown assailants after receiving death threats for her activism.",
     images: [
       "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=300&fit=crop",
@@ -199,6 +208,7 @@ const cases = [
     thirdPartyVerified: true,
     newsLink: "https://example.com/news/carlos-m",
     lifeStory: "Carlos was a community organizer who worked to improve living conditions in his neighborhood.",
+    deathDetails: "Carlos was beaten to death during a peaceful protest demanding better living conditions.",
     images: [
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face",
       "https://images.unsplash.com/photo-1618641986557-1ecd230959aa?w=400&h=300&fit=crop",

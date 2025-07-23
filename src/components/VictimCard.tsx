@@ -72,26 +72,30 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
             <div className="flex justify-between items-start">
               <h4 className="font-semibold text-lg">{victim.name}</h4>
               <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-6 w-6 p-0"
-                  asChild
-                >
-                  <Link to="/report-case">
-                    <AlertTriangle className="h-3 w-3 text-orange-500" />
-                  </Link>
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-6 w-6 p-0"
-                  asChild
-                >
-                  <a href={victim.newsLink} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-3 w-3 text-blue-500" />
-                  </a>
-                </Button>
+                {!clickable && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0"
+                    asChild
+                  >
+                    <Link to="/report">
+                      <AlertTriangle className="h-3 w-3 text-orange-500" />
+                    </Link>
+                  </Button>
+                )}
+                {!clickable && victim.newsLink && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0"
+                    asChild
+                  >
+                    <a href={victim.newsLink} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-3 w-3 text-blue-500" />
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
             

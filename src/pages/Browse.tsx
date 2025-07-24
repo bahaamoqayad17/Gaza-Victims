@@ -275,7 +275,9 @@ const Browse = () => {
   const filteredCases = cases.filter(victim => {
     const matchesSearch = victim.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          victim.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || victim.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || 
+                         statusFilter === "thirdPartyVerified" ? victim.thirdPartyVerified : 
+                         victim.status === statusFilter;
     const matchesCause = causeFilter === "all" || victim.causeOfDeath === causeFilter;
     
     return matchesSearch && matchesStatus && matchesCause;
@@ -320,6 +322,7 @@ const Browse = () => {
                      {status.charAt(0).toUpperCase() + status.slice(1)}
                    </SelectItem>
                  ))}
+                 <SelectItem value="thirdPartyVerified">{t('thirdPartyVerified')}</SelectItem>
                </SelectContent>
              </Select>
 

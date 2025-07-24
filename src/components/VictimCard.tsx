@@ -38,7 +38,6 @@ interface VictimCardProps {
 export const VictimCard = ({ victim, showReportButton = false, clickable = false }: VictimCardProps) => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
-  const [isLifeStoryExpanded, setIsLifeStoryExpanded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   const daysSinceDeath = calculateDaysSince(victim.date);
@@ -55,16 +54,13 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
     setCurrentImageIndex((prev) => (prev - 1 + victim.images.length) % victim.images.length);
   };
 
-  const CardWrapper = clickable ? Link : 'div';
-  const cardProps = clickable ? { to: `/case/${victim.id}` } : {} as any;
-
   return (
     <TooltipProvider>
-      <CardWrapper {...cardProps}>
-        <Card className={`hover:shadow-lg transition-shadow mx-auto max-w-sm ${clickable ? 'cursor-pointer' : ''}`}>
-          <CardContent className="p-3 md:p-4 lg:p-6" onClick={clickable ? undefined : (e) => e.stopPropagation()}>
+      <div className="flex flex-col">
+        <Card className="hover:shadow-lg transition-shadow mx-auto max-w-sm">
+          <CardContent className="p-3 md:p-4 lg:p-6">
             {/* Photo display */}
-            <div className="mb-3 md:mb-4" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-3 md:mb-4">
               <div className="relative">
                 <div className="aspect-[4/3] w-full overflow-hidden bg-muted border rounded">
                   <img 
@@ -119,7 +115,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 )}
               </div>
                 <div className="flex gap-1">
-                  {!clickable && (
+                  {showReportButton && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -131,7 +127,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                       </Link>
                     </Button>
                   )}
-                  {!clickable && victim.newsLink && (
+                  {victim.newsLink && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -273,39 +269,22 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                    </span>
                  </div>
               </div>
-              
-              {/* Who were they expandable section */}
-              <Collapsible open={isLifeStoryExpanded} onOpenChange={setIsLifeStoryExpanded}>
-                <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-2 w-full justify-start">
-                  {isLifeStoryExpanded ? (
-                    <ChevronUp className="h-3 w-3" />
-                  ) : (
-                    <ChevronDown className="h-3 w-3" />
-                  )}
-                   {t('whoWereThey')}
-                 </CollapsibleTrigger>
-                 <CollapsibleContent className="text-xs text-muted-foreground mt-1 space-y-2 animate-in slide-in-from-top-2">
-                   {victim.lifeStory && (
-                     <div>
-                       <span className="font-medium">{t('aboutThem')}:</span>
-                       <p className="mt-1">{victim.lifeStory}</p>
-                     </div>
-                   )}
-                   {victim.deathDetails && (
-                     <div>
-                       <span className="font-medium">{t('howTheyDied')}:</span>
-                       <p className="mt-1">{victim.deathDetails}</p>
-                     </div>
-                   )}
-                   {!victim.lifeStory && !victim.deathDetails && (
-                     <p>{t('informationNotAvailable')}</p>
-                   )}
-                </CollapsibleContent>
-              </Collapsible>
             </div>
           </CardContent>
         </Card>
-      </CardWrapper>
+        
+        {/* Learn more button */}
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="mt-2 mx-auto"
+          asChild
+        >
+          <Link to={`/case/${victim.id}`}>
+            {t('learnMore')}
+          </Link>
+        </Button>
+      </div>
     </TooltipProvider>
   );
 };

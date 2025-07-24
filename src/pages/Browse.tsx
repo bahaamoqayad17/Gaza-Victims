@@ -386,7 +386,6 @@ const Browse = () => {
                 key={victim.id} 
                 victim={victim} 
                 showReportButton={true}
-                clickable={true}
               />
             ))}
           </div>

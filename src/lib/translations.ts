@@ -98,7 +98,8 @@ export const translations = {
     sep: "Sep",
     oct: "Oct",
     nov: "Nov",
-    dec: "Dec"
+    dec: "Dec",
+    learnMore: "Learn More"
   },
   es: {
     archive: "Archivo",
@@ -264,7 +265,8 @@ export const translations = {
     sep: "سبتمبر",
     oct: "أكتوبر",
     nov: "نوفمبر",
-    dec: "ديسمبر"
+    dec: "ديسمبر",
+    learnMore: "اعرف المزيد"
   }
   // Add more languages as needed - keeping it shorter for now but can be expanded
 } as const;

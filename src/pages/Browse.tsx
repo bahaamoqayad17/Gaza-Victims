@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Calendar, MapPin, ArrowLeft, HelpCircle, Download, AlertTriangle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 import { VictimCard } from "@/components/VictimCard";
 import { Footer } from "@/components/Footer";
@@ -262,6 +263,8 @@ const Browse = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [causeFilter, setCauseFilter] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
 
   // Extract unique statuses and causes from cases data
   const uniqueStatuses = [...new Set(cases.map(c => c.status))];
@@ -297,83 +300,83 @@ const Browse = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name, location..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+               <Input
+                 placeholder={t('searchBy')}
+                 value={searchTerm}
+                 onChange={(e) => setSearchTerm(e.target.value)}
+                 className="pl-10"
+               />
             </div>
             
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                {uniqueStatuses.map(status => (
-                  <SelectItem key={status} value={status}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+             <Select value={statusFilter} onValueChange={setStatusFilter}>
+               <SelectTrigger className="w-[180px]">
+                 <SelectValue placeholder="Status" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="all">{t('allStatus')}</SelectItem>
+                 {uniqueStatuses.map(status => (
+                   <SelectItem key={status} value={status}>
+                     {status.charAt(0).toUpperCase() + status.slice(1)}
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
 
-            <Select value={causeFilter} onValueChange={setCauseFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Cause of Death" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Causes</SelectItem>
-                {uniqueCauses.map(cause => (
-                  <SelectItem key={cause} value={cause}>
-                    {cause}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+             <Select value={causeFilter} onValueChange={setCauseFilter}>
+               <SelectTrigger className="w-[180px]">
+                 <SelectValue placeholder="Cause of Death" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="all">{t('allCauses')}</SelectItem>
+                 {uniqueCauses.map(cause => (
+                   <SelectItem key={cause} value={cause}>
+                     {cause}
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
 
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recent">Most Recent</SelectItem>
-                <SelectItem value="alphabetical">Alphabetical</SelectItem>
-                <SelectItem value="age">By Age</SelectItem>
-              </SelectContent>
-            </Select>
+             <Select value={sortBy} onValueChange={setSortBy}>
+               <SelectTrigger className="w-[180px]">
+                 <SelectValue placeholder="Sort by" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="recent">{t('mostRecent')}</SelectItem>
+                 <SelectItem value="alphabetical">{t('alphabetical')}</SelectItem>
+                 <SelectItem value="age">{t('byAge')}</SelectItem>
+               </SelectContent>
+             </Select>
           </div>
         </div>
       </div>
 
       {/* Results */}
       <div className="container mx-auto px-4 py-8">
-        <p className="text-sm text-muted-foreground mb-4">
-          All cases have been vetted at least once by a human who corroborated facts with both official and field sources.
-        </p>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <p className="text-sm text-muted-foreground">
-            {filteredCases.length} cases found
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/upload">Submit Case</Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/download-archive">
-                <Download className="w-4 h-4 mr-2" />
-                Download Archive
-              </Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/map">
-                <MapPin className="w-4 h-4 mr-2" />
-                Map View
-              </Link>
-            </Button>
-          </div>
-        </div>
+         <p className="text-sm text-muted-foreground mb-4">
+           {t('allCasesVetted')}
+         </p>
+         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+           <p className="text-sm text-muted-foreground">
+             {filteredCases.length} {t('casesFound')}
+           </p>
+           <div className="flex flex-col sm:flex-row gap-2">
+             <Button variant="outline" size="sm" asChild>
+               <Link to="/upload">{t('submitCase')}</Link>
+             </Button>
+             <Button variant="outline" size="sm" asChild>
+               <Link to="/download-archive">
+                 <Download className="w-4 h-4 mr-2" />
+                 {t('downloadArchive')}
+               </Link>
+             </Button>
+             <Button variant="outline" size="sm" asChild>
+               <Link to="/map">
+                 <MapPin className="w-4 h-4 mr-2" />
+                 {t('mapView')}
+               </Link>
+             </Button>
+           </div>
+         </div>
 
         <TooltipProvider>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -389,15 +392,15 @@ const Browse = () => {
         </TooltipProvider>
 
         {/* Pagination placeholder */}
-        <div className="flex justify-center mt-12">
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button variant="outline" size="sm">1</Button>
-            <Button variant="outline" size="sm">2</Button>
-            <Button variant="outline" size="sm">3</Button>
-            <Button variant="outline" size="sm">Next</Button>
-          </div>
-        </div>
+         <div className="flex justify-center mt-12">
+           <div className="flex gap-2">
+             <Button variant="outline" size="sm" disabled>{t('previous')}</Button>
+             <Button variant="outline" size="sm">1</Button>
+             <Button variant="outline" size="sm">2</Button>
+             <Button variant="outline" size="sm">3</Button>
+             <Button variant="outline" size="sm">{t('next')}</Button>
+           </div>
+         </div>
       </div>
       
       <Footer />

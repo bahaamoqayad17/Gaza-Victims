@@ -149,104 +149,104 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               <div className="flex flex-wrap gap-1 mb-2 text-xs">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300 cursor-help">Documented</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      This case has been formally documented with submitted evidence and witness accounts.
-                    </p>
-                  </TooltipContent>
+                     <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300 cursor-help">{t('documented')}</span>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                     <p className="max-w-xs text-xs">
+                       {t('documentedDescription')}
+                     </p>
+                   </TooltipContent>
                 </Tooltip>
                 {victim.verified && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300 cursor-help">Verified</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-xs">
-                        A platform moderator corroborated the information provided with official sources as well as the community on the ground.
-                      </p>
-                    </TooltipContent>
+                       <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300 cursor-help">{t('verified')}</span>
+                     </TooltipTrigger>
+                     <TooltipContent>
+                       <p className="max-w-xs text-xs">
+                         {t('verifiedDescription')}
+                       </p>
+                     </TooltipContent>
                   </Tooltip>
                 )}
                 {victim.thirdPartyVerified && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300 cursor-help">Third Party Verified</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs text-xs">
-                        Independent organizations or media outlets have confirmed the details of this case.
-                      </p>
-                    </TooltipContent>
+                       <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300 cursor-help">{t('thirdPartyVerified')}</span>
+                     </TooltipTrigger>
+                     <TooltipContent>
+                       <p className="max-w-xs text-xs">
+                         {t('thirdPartyDescription')}
+                       </p>
+                     </TooltipContent>
                   </Tooltip>
                 )}
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300 cursor-help">Proof of ID</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      Identity documents or official records have been submitted to verify the victim's identity.
-                    </p>
-                  </TooltipContent>
+                     <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300 cursor-help">{t('proofOfId')}</span>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                     <p className="max-w-xs text-xs">
+                       {t('proofOfIdDescription')}
+                     </p>
+                   </TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300 cursor-help">Proof of Death</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      Death certificate, medical records, or other official documentation has been provided to confirm the death.
-                    </p>
-                  </TooltipContent>
+                     <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300 cursor-help">{t('proofOfDeath')}</span>
+                   </TooltipTrigger>
+                   <TooltipContent>
+                     <p className="max-w-xs text-xs">
+                       {t('proofOfDeathDescription')}
+                     </p>
+                   </TooltipContent>
                 </Tooltip>
               </div>
 
               <div className="text-sm text-muted-foreground space-y-1">
                 <div className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
-                  <span>Location of incident: {victim.location}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="ltr-text">Date of incident: {formatDate(victim.date)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">Submitted by: Relative</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">{t('causeOfDeath')}: {victim.causeOfDeath}</span>
-                </div>
-                {victim.perpetrator && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm">Perpetrator: {victim.perpetrator}</span>
-                  </div>
-                )}
-                {victim.newsLink && (
-                  <div className="flex items-center gap-1">
-                    <ExternalLink className="h-3 w-3" />
-                    <span className="text-sm">Incident news story: </span>
-                    <a 
-                      href={victim.newsLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 underline text-xs truncate"
-                    >
-                      {victim.newsLink}
-                    </a>
-                  </div>
-                )}
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">
-                    Enforced legal response: 
-                    <span className={victim.actionTaken === 'pending' ? 'text-red-600' : ''}>
-                      {victim.actionTaken === 'pending' 
-                        ? ` NONE, since ${daysSinceDeath} days`
-                        : ` ${victim.actionTaken}`
-                      }
-                    </span>
-                  </span>
-                </div>
+                   <span>{t('locationOfIncident')}: {victim.location}</span>
+                 </div>
+                 <div className="flex items-center gap-1">
+                   <span className="ltr-text">{t('dateOfIncident')}: {formatDate(victim.date)}</span>
+                 </div>
+                 <div className="flex items-center gap-1">
+                   <span className="text-sm">{t('submittedBy')}: {t('relative')}</span>
+                 </div>
+                 <div className="flex items-center gap-1">
+                   <span className="text-sm">{t('causeOfDeath')}: {victim.causeOfDeath}</span>
+                 </div>
+                 {victim.perpetrator && (
+                   <div className="flex items-center gap-1">
+                     <span className="text-sm">{t('perpetrator')}: {victim.perpetrator}</span>
+                   </div>
+                 )}
+                 {victim.newsLink && (
+                   <div className="flex items-center gap-1">
+                     <ExternalLink className="h-3 w-3" />
+                     <span className="text-sm">{t('incidentNewsStory')}: </span>
+                     <a 
+                       href={victim.newsLink} 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-blue-600 hover:text-blue-800 underline text-xs truncate"
+                     >
+                       {victim.newsLink}
+                     </a>
+                   </div>
+                 )}
+                 <div className="flex items-center gap-1">
+                   <span className="text-sm">
+                     {t('enforcedLegalResponse')}: 
+                     <span className={victim.actionTaken === 'pending' ? 'text-red-600' : ''}>
+                       {victim.actionTaken === 'pending' 
+                         ? ` ${t('noneSince')} ${daysSinceDeath} ${t('days')}`
+                         : ` ${victim.actionTaken}`
+                       }
+                     </span>
+                   </span>
+                 </div>
               </div>
               
               {/* Who were they expandable section */}
@@ -257,24 +257,24 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                   ) : (
                     <ChevronDown className="h-3 w-3" />
                   )}
-                  Who were they?
-                </CollapsibleTrigger>
-                <CollapsibleContent className="text-xs text-muted-foreground mt-1 space-y-2 animate-in slide-in-from-top-2">
-                  {victim.lifeStory && (
-                    <div>
-                      <span className="font-medium">About them:</span>
-                      <p className="mt-1">{victim.lifeStory}</p>
-                    </div>
-                  )}
-                  {victim.deathDetails && (
-                    <div>
-                      <span className="font-medium">How they died:</span>
-                      <p className="mt-1">{victim.deathDetails}</p>
-                    </div>
-                  )}
-                  {!victim.lifeStory && !victim.deathDetails && (
-                    <p>Information not available.</p>
-                  )}
+                   {t('whoWereThey')}
+                 </CollapsibleTrigger>
+                 <CollapsibleContent className="text-xs text-muted-foreground mt-1 space-y-2 animate-in slide-in-from-top-2">
+                   {victim.lifeStory && (
+                     <div>
+                       <span className="font-medium">{t('aboutThem')}:</span>
+                       <p className="mt-1">{victim.lifeStory}</p>
+                     </div>
+                   )}
+                   {victim.deathDetails && (
+                     <div>
+                       <span className="font-medium">{t('howTheyDied')}:</span>
+                       <p className="mt-1">{victim.deathDetails}</p>
+                     </div>
+                   )}
+                   {!victim.lifeStory && !victim.deathDetails && (
+                     <p>{t('informationNotAvailable')}</p>
+                   )}
                 </CollapsibleContent>
               </Collapsible>
             </div>

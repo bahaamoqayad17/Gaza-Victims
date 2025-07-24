@@ -13,6 +13,7 @@ import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 import { VictimCard } from "@/components/VictimCard";
 import { Footer } from "@/components/Footer";
+import sarahPortrait from "@/assets/sarah-portrait.jpg";
 
 // Mock data - expanded to 10 victims
 const cases = [
@@ -35,7 +36,7 @@ const cases = [
       occupation: "A student",
       perpetrator: "Syrian Government Forces",
       images: [
-        "/src/assets/sarah-portrait.jpg",
+        sarahPortrait,
         "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
         "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
       ]

@@ -149,9 +149,14 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               <div className="flex flex-wrap gap-1 mb-2 text-xs">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                     <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300 cursor-help">{t('documented')}</span>
+                     <span 
+                       className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300 cursor-help touch-manipulation"
+                       onClick={(e) => e.stopPropagation()}
+                     >
+                       {t('documented')}
+                     </span>
                    </TooltipTrigger>
-                   <TooltipContent>
+                   <TooltipContent side="top" className="z-50">
                      <p className="max-w-xs text-xs">
                        {t('documentedDescription')}
                      </p>
@@ -160,9 +165,14 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 {victim.verified && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                       <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300 cursor-help">{t('verified')}</span>
+                       <span 
+                         className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300 cursor-help touch-manipulation"
+                         onClick={(e) => e.stopPropagation()}
+                       >
+                         {t('verified')}
+                       </span>
                      </TooltipTrigger>
-                     <TooltipContent>
+                     <TooltipContent side="top" className="z-50">
                        <p className="max-w-xs text-xs">
                          {t('verifiedDescription')}
                        </p>
@@ -172,9 +182,14 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 {victim.thirdPartyVerified && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                       <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300 cursor-help">{t('thirdPartyVerified')}</span>
+                       <span 
+                         className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300 cursor-help touch-manipulation"
+                         onClick={(e) => e.stopPropagation()}
+                       >
+                         {t('thirdPartyVerified')}
+                       </span>
                      </TooltipTrigger>
-                     <TooltipContent>
+                     <TooltipContent side="top" className="z-50">
                        <p className="max-w-xs text-xs">
                          {t('thirdPartyDescription')}
                        </p>
@@ -183,9 +198,14 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 )}
                 <Tooltip>
                   <TooltipTrigger asChild>
-                     <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300 cursor-help">{t('proofOfId')}</span>
+                     <span 
+                       className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300 cursor-help touch-manipulation"
+                       onClick={(e) => e.stopPropagation()}
+                     >
+                       {t('proofOfId')}
+                     </span>
                    </TooltipTrigger>
-                   <TooltipContent>
+                   <TooltipContent side="top" className="z-50">
                      <p className="max-w-xs text-xs">
                        {t('proofOfIdDescription')}
                      </p>
@@ -193,9 +213,14 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                     <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300 cursor-help">{t('proofOfDeath')}</span>
+                     <span 
+                       className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300 cursor-help touch-manipulation"
+                       onClick={(e) => e.stopPropagation()}
+                     >
+                       {t('proofOfDeath')}
+                     </span>
                    </TooltipTrigger>
-                   <TooltipContent>
+                   <TooltipContent side="top" className="z-50">
                      <p className="max-w-xs text-xs">
                        {t('proofOfDeathDescription')}
                      </p>

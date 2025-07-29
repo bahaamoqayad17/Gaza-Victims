@@ -16,6 +16,7 @@ import DownloadArchive from "./pages/DownloadArchive";
 import ReportCase from "./pages/ReportCase";
 import ReportAdditional from "./pages/ReportAdditional";
 import ReviewCase from "./pages/ReviewCase";
+import CaseSubmitted from "./pages/CaseSubmitted";
 import Auth from "./pages/Auth";
 import ModeratorsDashboard from "./pages/ModeratorsDashboard";
 
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/report" element={<ReportCase />} />
             <Route path="/report-additional" element={<ReportAdditional />} />
             <Route path="/review-case" element={<ReviewCase />} />
+            <Route path="/case-submitted" element={<CaseSubmitted />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/moderators" element={<ModeratorsDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

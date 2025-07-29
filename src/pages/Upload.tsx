@@ -9,13 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Shield, Upload as UploadIcon, ArrowLeft, ArrowRight, X, Eye, Download } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const Upload = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
@@ -132,24 +133,26 @@ const Upload = () => {
           </div>
           <Progress value={progress} className="h-2" />
           
-          {/* Review Submitted Case Link */}
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  Already submitted a case?
-                </h4>
-                <p className="text-xs text-blue-600 dark:text-blue-300">
-                  Review your submission, add additional information, or request changes
-                </p>
+          {/* Review Submitted Case Link - Only show on step 1 */}
+          {currentStep === 1 && (
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    Already submitted a case?
+                  </h4>
+                  <p className="text-xs text-blue-600 dark:text-blue-300">
+                    Review your submission, add additional information, or request changes
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/review-case">
+                    Review Submitted Case
+                  </Link>
+                </Button>
               </div>
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/review-case">
-                  Review Submitted Case
-                </Link>
-              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -945,7 +948,18 @@ const Upload = () => {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button disabled={!formData.consentAgreed || !formData.safetyAcknowledged || !captchaValue}>
+                  <Button 
+                    disabled={!formData.consentAgreed || !formData.safetyAcknowledged || !captchaValue}
+                    onClick={() => {
+                      // Generate case number
+                      const year = new Date().getFullYear();
+                      const randomChars = Math.random().toString(36).substring(2, 10).toUpperCase();
+                      const caseNumber = `${year}-${randomChars}`;
+                      
+                      // Navigate to success page with case number
+                      navigate(`/case-submitted?caseNumber=${caseNumber}`);
+                    }}
+                  >
                     Submit Documentation
                   </Button>
                 )}

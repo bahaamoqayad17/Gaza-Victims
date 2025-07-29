@@ -55,6 +55,8 @@ const Upload = () => {
   const [perpetratorEvidence, setPerpetratorEvidence] = useState('');
   const [proofOfIdFiles, setProofOfIdFiles] = useState<File[]>([]);
   const [proofOfDeathFiles, setProofOfDeathFiles] = useState<File[]>([]);
+  const [additionalEvidenceFiles, setAdditionalEvidenceFiles] = useState<File[]>([]);
+  const [isAdditionalEvidenceGraphic, setIsAdditionalEvidenceGraphic] = useState(false);
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
@@ -106,6 +108,10 @@ const Upload = () => {
 
   const removeProofOfDeathFile = (index: number) => {
     setProofOfDeathFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeAdditionalEvidenceFile = (index: number) => {
+    setAdditionalEvidenceFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -673,6 +679,57 @@ const Upload = () => {
                         />
                         <Label htmlFor="graphic" className="text-sm">
                           This evidence contains graphic content
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Additional Evidence</Label>
+                    <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
+                      <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Upload documents, images, videos, audio files, or any other evidence
+                      </p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Include anything captured before, during, or after the incident that is related to this case.
+                      </p>
+                      <Input 
+                        type="file" 
+                        multiple 
+                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+                        className="mt-2"
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          setAdditionalEvidenceFiles(prev => [...prev, ...files]);
+                        }}
+                      />
+                    </div>
+                    {additionalEvidenceFiles.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {additionalEvidenceFiles.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-sm">{file.name}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeAdditionalEvidenceFile(index)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="space-y-3 mt-4">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="additionalEvidenceGraphic" 
+                          checked={isAdditionalEvidenceGraphic}
+                          onCheckedChange={(checked) => setIsAdditionalEvidenceGraphic(checked as boolean)}
+                        />
+                        <Label htmlFor="additionalEvidenceGraphic" className="text-sm">
+                          This additional evidence contains graphic content
                         </Label>
                       </div>
                     </div>

@@ -365,23 +365,26 @@ const Browse = () => {
            <p className="text-sm text-muted-foreground">
              {filteredCases.length} {t('casesFound')}
            </p>
-           <div className="flex flex-col sm:flex-row gap-2">
-             <Button variant="outline" size="sm" asChild>
-               <Link to="/upload">{t('submitDocumentation')}</Link>
-             </Button>
-             <Button variant="outline" size="sm" asChild>
-               <Link to="/download-archive">
-                 <Download className="w-4 h-4 mr-2" />
-                 {t('downloadArchive')}
-               </Link>
-             </Button>
-             <Button variant="outline" size="sm" asChild>
-               <Link to="/map">
-                 <MapPin className="w-4 h-4 mr-2" />
-                 {t('mapView')}
-               </Link>
-             </Button>
-           </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/upload">Submit a Case</Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/review-case">Review Submitted Case</Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/download-archive">
+                  <Download className="w-4 h-4 mr-2" />
+                  {t('downloadArchive')}
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/map">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  {t('mapView')}
+                </Link>
+              </Button>
+            </div>
          </div>
 
         <TooltipProvider>

@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Upload = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -45,6 +46,7 @@ const Upload = () => {
   const [socialMediaPreview, setSocialMediaPreview] = useState<string | null>(null);
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
   const [isGraphicContent, setIsGraphicContent] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
@@ -638,6 +640,15 @@ const Upload = () => {
                       <span className="font-semibold">IMPORTANT SAFETY NOTICE:</span> By proceeding with this submission, you acknowledge that you are taking this action at your own risk and discretion. This platform cannot and does not provide any guarantees regarding your safety, anonymity, or protection from potential consequences. You are strongly advised to take all necessary precautions to protect yourself and consult with appropriate security professionals if you have concerns about your safety.
                     </p>
                   </div>
+
+                  {/* Captcha */}
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test site key - replace with actual key
+                      onChange={(value) => setCaptchaValue(value)}
+                      onExpired={() => setCaptchaValue(null)}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -658,7 +669,7 @@ const Upload = () => {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button disabled={!formData.consentAgreed || !formData.safetyAcknowledged}>
+                  <Button disabled={!formData.consentAgreed || !formData.safetyAcknowledged || !captchaValue}>
                     Submit Documentation
                   </Button>
                 )}

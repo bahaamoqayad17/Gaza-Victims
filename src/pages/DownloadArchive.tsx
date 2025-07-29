@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Download, FileImage, FileVideo, Filter, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const DownloadArchive = () => {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   const [includeMedia, setIncludeMedia] = useState(true);
   const [includePhotos, setIncludePhotos] = useState(true);
   const [includeVideos, setIncludeVideos] = useState(true);
@@ -45,7 +48,7 @@ const DownloadArchive = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Download className="w-5 h-5" />
-                Archive Download Options
+                {t('archiveDownloadOptions')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">

@@ -10,11 +10,14 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, AlertTriangle, Shield, Send, Plus, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const ReportCase = () => {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -87,20 +90,20 @@ const ReportCase = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                Report an Issue
+                {t('reportAnIssue')}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Use this form to report technical issues, content violations, or provide additional information about cases.
+                {t('reportFormDescription')}
               </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Contact Information */}
                 <div className="space-y-4">
-                  <h4 className="font-medium">Contact Information</h4>
+                  <h4 className="font-medium">{t('contactInformation')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">{t('name')}</Label>
                       <Input
                         id="name"
                         value={formData.name}

@@ -4,10 +4,13 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Scale, Shield, Eye, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 
 const Legal = () => {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   return (
     <div className="min-h-screen bg-background">
       <Header />

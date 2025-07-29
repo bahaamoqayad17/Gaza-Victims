@@ -7,10 +7,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, Shield, Users, Globe, Heart, Hand } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 
 const About = () => {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -22,7 +25,7 @@ const About = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Heart className="w-5 h-5 text-red-500" />
-                Our Mission
+                {t('ourMission')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

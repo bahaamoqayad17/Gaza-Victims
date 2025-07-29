@@ -2,36 +2,40 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
+import { useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 
 export const Footer = () => {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   return (
     <footer className="border-t bg-muted/20 mt-auto">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
           <div>
-            <h4 className="font-medium mb-3">Platform</h4>
+            <h4 className="font-medium mb-3">{t('platform')}</h4>
             <div className="space-y-2 text-sm">
               <Link to="/browse" className="block text-muted-foreground hover:text-foreground">
-                Browse Cases
+                {t('browseCases')}
               </Link>
               <Link to="/map" className="block text-muted-foreground hover:text-foreground">
-                Map View
+                {t('mapView')}
               </Link>
               <Link to="/upload" className="block text-muted-foreground hover:text-foreground">
-                Submit Documentation
+                {t('submitDocumentation')}
               </Link>
             </div>
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Information</h4>
+            <h4 className="font-medium mb-3">{t('information')}</h4>
             <div className="space-y-2 text-sm">
               <Link to="/about" className="block text-muted-foreground hover:text-foreground">
-                About Us
+                {t('aboutUs')}
               </Link>
               <Link to="/legal" className="block text-muted-foreground hover:text-foreground">
-                Legal Information
+                {t('legalInformation')}
               </Link>
             </div>
           </div>
@@ -41,10 +45,10 @@ export const Footer = () => {
         <Separator className="my-6" />
 
         <div className="flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground space-y-2 md:space-y-0">
-          <p>© 2025 Archive. All rights reserved.</p>
+          <p>© 2025 {t('archive')}. {t('allRightsReserved')}</p>
           <div className="text-center md:text-right">
-            <p>Dedicated to the memory of victims worldwide.</p>
-            <p className="text-xs">This site is voluntary and non-profit.</p>
+            <p>{t('dedicatedToMemory')}</p>
+            <p className="text-xs">{t('voluntaryNonProfit')}</p>
           </div>
         </div>
 

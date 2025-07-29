@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { useLanguage } from "@/components/LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 
 // Mock data for moderators
 const moderators = [
@@ -115,6 +117,8 @@ const ModeratorsDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
@@ -161,8 +165,8 @@ const ModeratorsDashboard = () => {
         <div className="flex items-center gap-3 mb-8">
           <Shield className="w-8 h-8 text-primary" />
           <div>
-            <h1 className="text-3xl font-bold">Moderators Dashboard</h1>
-            <p className="text-muted-foreground">Manage case verification, moderators, and authentication</p>
+            <h1 className="text-3xl font-bold">{t('moderatorsDashboard')}</h1>
+            <p className="text-muted-foreground">{t('manageCaseVerification')}</p>
           </div>
         </div>
 
@@ -170,7 +174,7 @@ const ModeratorsDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Moderators</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('totalModerators')}</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -181,7 +185,7 @@ const ModeratorsDashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('pendingReviews')}</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -192,7 +196,7 @@ const ModeratorsDashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Cases Verified Today</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('casesVerifiedToday')}</CardTitle>
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -203,7 +207,7 @@ const ModeratorsDashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Verifiers</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('activeVerifiers')}</CardTitle>
               <FileCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -215,8 +219,8 @@ const ModeratorsDashboard = () => {
 
         <Tabs defaultValue="moderators" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="moderators">Moderators</TabsTrigger>
-            <TabsTrigger value="pending-cases">Pending Cases</TabsTrigger>
+            <TabsTrigger value="moderators">{t('moderators')}</TabsTrigger>
+            <TabsTrigger value="pending-cases">{t('pendingCases')}</TabsTrigger>
             <TabsTrigger value="verification-settings">Verification Settings</TabsTrigger>
           </TabsList>
 

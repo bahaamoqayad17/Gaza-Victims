@@ -46,6 +46,7 @@ const recentCases = [{
   actionTaken: "pending",
   verified: true,
   thirdPartyVerified: true,
+  digitalForensicsVerified: true,
   newsLink: "https://example.com/news/ahmed-k",
   lifeStory: "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.' He had been planning to start a family and dreamed of building sustainable housing.",
   deathDetails: "Ahmed was caught in a missile strike while delivering aid to a residential building. Witnesses report he was helping evacuate elderly residents when the second wave of attacks hit the area.",
@@ -103,6 +104,7 @@ const recentCases = [{
   actionTaken: "investigating",
   verified: true,
   thirdPartyVerified: true,
+  digitalForensicsVerified: true,
   newsLink: "https://example.com/news/elena-r",
   lifeStory: "Elena was a doctor who volunteered at refugee camps. She was passionate about providing medical care to those in need and often worked without pay to help families escape conflict zones.",
   deathDetails: "Elena died from exposure to chemical weapons during an attack on a medical facility. She was treating patients when the attack occurred and refused to abandon them.",
@@ -160,6 +162,7 @@ const recentCases = [{
   actionTaken: "pending",
   verified: true,
   thirdPartyVerified: true,
+  digitalForensicsVerified: true,
   newsLink: "https://example.com/news/michael-t",
   lifeStory: "Michael was a humanitarian worker who specialized in mine clearance. He had already saved countless lives by safely removing unexploded ordnance from civilian areas.",
   deathDetails: "Michael was killed by an unmarked landmine while clearing a path to a school. He died instantly, but his work had already made the surrounding area safe for children to return.",
@@ -328,17 +331,17 @@ const Index = () => {
               <div className="mb-8 md:mb-12">
                 <div className="max-w-4xl mx-auto text-center">
                   <p className="text-lg md:text-xl leading-relaxed text-foreground">
-                    As of <span className="font-mono text-red-600 font-bold">23/07/2025</span>, there are{' '}
+                    {t('asOf')} <span className="font-mono text-red-600 font-bold">23/07/2025</span>, {t('thereAre')}{' '}
                     <span className="text-red-600 font-bold">48,405</span>{' '}
-                    <span className="text-red-600 font-bold">reported fatalities</span> in the conflict.
-                    Of those numerous cases, the following (and counting) are without a doubt{' '}
-                    <span className="text-red-600 font-bold">confirmed cases of state murder</span>.
+                    <span className="text-red-600 font-bold">{t('reportedFatalities')}</span> {t('inTheConflict')}.
+                    {t('ofThoseNumerous')}{' '}
+                    <span className="text-red-600 font-bold">{t('confirmedCasesStatemurder')}</span>.
                   </p>
                   <p className="text-lg md:text-xl text-foreground">
-                    We present you with
+                    {t('wePresentYou')}
                   </p>
                   <p className="text-lg md:text-xl text-red-600 font-bold">
-                    HARD EVIDENCE
+                    {t('hardEvidence')}
                   </p>
                 </div>
               </div>
@@ -360,7 +363,7 @@ const Index = () => {
           {/* Interactive Map */}
           <section className="py-8">
             <div className="container mx-auto px-4">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Recent Cases Map</h3>
+              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">{t('recentCasesMap')}</h3>
               <InteractiveMap />
             </div>
           </section>

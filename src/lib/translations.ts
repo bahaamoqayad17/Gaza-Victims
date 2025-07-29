@@ -100,7 +100,17 @@ export const translations = {
     oct: "Oct",
     nov: "Nov",
     dec: "Dec",
-    learnMore: "Learn More"
+    learnMore: "Learn More",
+    // Homepage content
+    asOf: "As of",
+    thereAre: "there are",
+    reportedFatalities: "reported fatalities",
+    inTheConflict: "in the conflict",
+    ofThoseNumerous: "Of those numerous cases, the following (and counting) are without a doubt",
+    confirmedCasesStatemurder: "confirmed cases of state murder",
+    wePresentYou: "We present you with",
+    hardEvidence: "HARD EVIDENCE",
+    recentCasesMap: "Recent Cases Map"
   },
   es: {
     archive: "Archivo",
@@ -268,7 +278,17 @@ export const translations = {
     oct: "أكتوبر",
     nov: "نوفمبر",
     dec: "ديسمبر",
-    learnMore: "اعرف المزيد"
+    learnMore: "اعرف المزيد",
+    // Homepage content in Arabic
+    asOf: "اعتباراً من",
+    thereAre: "هناك",
+    reportedFatalities: "وفيات مُبلغ عنها",
+    inTheConflict: "في النزاع",
+    ofThoseNumerous: "من بين هذه الحالات العديدة، التالية (والعدد في تزايد) هي بلا شك",
+    confirmedCasesStatemurder: "حالات مؤكدة من جرائم قتل الدولة",
+    wePresentYou: "نقدم لكم",
+    hardEvidence: "أدلة دامغة",
+    recentCasesMap: "خريطة الحالات الأخيرة"
   }
   // Add more languages as needed - keeping it shorter for now but can be expanded
 } as const;

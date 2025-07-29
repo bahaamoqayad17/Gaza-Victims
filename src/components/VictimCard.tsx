@@ -184,7 +184,7 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-1 mb-2 text-xs">
+            <div className="flex flex-wrap gap-x-1 gap-y-2 mb-2 text-xs">
               <MobileTooltip content={t('documentedDescription')}>
                 <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">
                   {t('documented')}

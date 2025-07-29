@@ -47,6 +47,8 @@ const Upload = () => {
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
   const [isGraphicContent, setIsGraphicContent] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  const [cause, setCause] = useState('');
+  const [otherCauseDetails, setOtherCauseDetails] = useState('');
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
@@ -383,6 +385,37 @@ const Upload = () => {
                       <Label htmlFor="location">Location</Label>
                       <Input id="location" placeholder="City, Country" />
                     </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="cause">Cause of Death</Label>
+                    <Select value={cause} onValueChange={setCause}>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue placeholder="Select cause of death" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="bombing">Bombing</SelectItem>
+                        <SelectItem value="shooting">Shooting</SelectItem>
+                        <SelectItem value="torture">Torture</SelectItem>
+                        <SelectItem value="intentional-starvation">Intentional Starvation</SelectItem>
+                        <SelectItem value="detention-related">Detention Related Death</SelectItem>
+                        <SelectItem value="forced-disappearance">Forced Disappearance</SelectItem>
+                        <SelectItem value="targeted-killing">Targeted Killing</SelectItem>
+                        <SelectItem value="medical-negligence">Medical Negligence/Denial of Care</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {cause === 'other' && (
+                      <div className="mt-2">
+                        <Label htmlFor="otherCause">Please specify</Label>
+                        <Input 
+                          id="otherCause"
+                          value={otherCauseDetails}
+                          onChange={(e) => setOtherCauseDetails(e.target.value)}
+                          placeholder="Please describe the cause of death"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div>

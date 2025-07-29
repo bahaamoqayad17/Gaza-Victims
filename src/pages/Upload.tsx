@@ -332,7 +332,7 @@ const Upload = () => {
                   </div>
 
                   <div>
-                    <Label>Additional Photos (up to 5)</Label>
+                    <Label>Additional Photos and Videos (up to 5)</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
                       <UploadIcon className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
                       <p className="text-sm text-muted-foreground mb-2">

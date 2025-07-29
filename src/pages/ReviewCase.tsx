@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AlertTriangle, Search, Flag, Trash2 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AlertTriangle, Search, Flag, Trash2, ChevronDown, Upload, X } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { toast } from "sonner";
@@ -18,6 +19,8 @@ const ReviewCase = () => {
   const [deletionReason, setDeletionReason] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [flaggedErrors, setFlaggedErrors] = useState<string[]>([]);
+  const [isDeletionOpen, setIsDeletionOpen] = useState(false);
+  const [additionalFiles, setAdditionalFiles] = useState<File[]>([]);
   
   // Mock case data - in real app would fetch from backend
   const mockCase = {
@@ -66,11 +69,21 @@ const ReviewCase = () => {
   };
 
   const handleAddAdditionalInfo = () => {
-    if (additionalInfo.trim()) {
+    if (additionalInfo.trim() || additionalFiles.length > 0) {
       // In real app would send to backend
       toast.success('Additional information submitted successfully');
       setAdditionalInfo('');
+      setAdditionalFiles([]);
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAdditionalFiles(prev => [...prev, ...files]);
+  };
+
+  const removeFile = (index: number) => {
+    setAdditionalFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleRequestDeletion = () => {
@@ -555,23 +568,72 @@ const ReviewCase = () => {
                       </div>
                     )}
 
-                  {/* Add Additional Information */}
-                  <div>
-                    <Label htmlFor="additionalInfo">Add Additional Information</Label>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Provide any new information or corrections to your original submission
-                    </p>
-                    <Textarea 
-                      id="additionalInfo"
-                      value={additionalInfo}
-                      onChange={(e) => setAdditionalInfo(e.target.value)}
-                      placeholder="Enter additional information, corrections, or updates..."
-                      rows={4}
-                    />
+                   {/* Add Additional Information */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="additionalInfo">Add Additional Information</Label>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Provide any new information or corrections to your original submission
+                      </p>
+                      <Textarea 
+                        id="additionalInfo"
+                        value={additionalInfo}
+                        onChange={(e) => setAdditionalInfo(e.target.value)}
+                        placeholder="Enter additional information, corrections, or updates..."
+                        rows={4}
+                      />
+                    </div>
+
+                    {/* File Upload for Additional Info */}
+                    <div>
+                      <Label>Upload Supporting Files</Label>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Upload any documents, images, or other files that support your additional information
+                      </p>
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handleFileUpload}
+                          className="hidden"
+                          id="additional-file-upload"
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.mp4,.mp3,.wav"
+                        />
+                        <label htmlFor="additional-file-upload" className="cursor-pointer">
+                          <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">
+                            Click to upload files or drag and drop
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Supports: PDF, DOC, DOCX, Images, Videos, Audio files
+                          </p>
+                        </label>
+                      </div>
+                      
+                      {additionalFiles.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium mb-2">Selected Files:</p>
+                          <div className="space-y-2">
+                            {additionalFiles.map((file, index) => (
+                              <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
+                                <span className="text-sm truncate">{file.name}</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeFile(index)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <Button 
                       onClick={handleAddAdditionalInfo}
-                      className="mt-2"
-                      disabled={!additionalInfo.trim()}
+                      disabled={!additionalInfo.trim() && additionalFiles.length === 0}
                     >
                       Submit Additional Information
                     </Button>
@@ -579,53 +641,65 @@ const ReviewCase = () => {
 
                   {/* Request Case Deletion */}
                   <div className="border-t pt-6">
-                    <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
-                      <h4 className="font-semibold text-red-800 dark:text-red-200 mb-3 flex items-center gap-2">
-                        <Trash2 className="h-4 w-4" />
-                        Request Case Deletion
-                      </h4>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="deletionReason">Reason for Deletion Request</Label>
-                          <Textarea 
-                            id="deletionReason"
-                            value={deletionReason}
-                            onChange={(e) => setDeletionReason(e.target.value)}
-                            placeholder="Please explain why you want this case to be deleted..."
-                            rows={3}
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="contactEmail">Contact Email (Optional)</Label>
-                          <Input 
-                            id="contactEmail"
-                            type="email"
-                            value={contactEmail}
-                            onChange={(e) => setContactEmail(e.target.value)}
-                            placeholder="your.email@example.com"
-                          />
-                        </div>
-                        
-                        <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded border border-amber-200 dark:border-amber-800">
-                          <p className="text-sm text-amber-800 dark:text-amber-200">
-                            <AlertTriangle className="h-4 w-4 inline mr-1" />
-                            <strong>Please note:</strong> The platform will review your deletion request carefully. 
-                            We will try to get back to you as soon as possible, but please be patient as this 
-                            process may take some time. Deletion requests are handled on a case-by-case basis.
-                          </p>
-                        </div>
-                        
+                    <Collapsible open={isDeletionOpen} onOpenChange={setIsDeletionOpen}>
+                      <CollapsibleTrigger asChild>
                         <Button 
-                          onClick={handleRequestDeletion}
-                          variant="destructive"
-                          disabled={!deletionReason.trim()}
+                          variant="outline" 
+                          className="w-full justify-between text-red-700 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-950/20"
                         >
-                          Submit Deletion Request
+                          <span className="flex items-center gap-2">
+                            <Trash2 className="h-4 w-4" />
+                            Request Case Deletion
+                          </span>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${isDeletionOpen ? 'rotate-180' : ''}`} />
                         </Button>
-                      </div>
-                    </div>
+                      </CollapsibleTrigger>
+                      
+                      <CollapsibleContent className="mt-4">
+                        <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="deletionReason">Reason for Deletion Request</Label>
+                              <Textarea 
+                                id="deletionReason"
+                                value={deletionReason}
+                                onChange={(e) => setDeletionReason(e.target.value)}
+                                placeholder="Please explain why you want this case to be deleted..."
+                                rows={3}
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor="contactEmail">Contact Email (Optional)</Label>
+                              <Input 
+                                id="contactEmail"
+                                type="email"
+                                value={contactEmail}
+                                onChange={(e) => setContactEmail(e.target.value)}
+                                placeholder="your.email@example.com"
+                              />
+                            </div>
+                            
+                            <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded border border-amber-200 dark:border-amber-800">
+                              <p className="text-sm text-amber-800 dark:text-amber-200">
+                                <AlertTriangle className="h-4 w-4 inline mr-1" />
+                                <strong>Please note:</strong> The platform will review your deletion request carefully. 
+                                We will try to get back to you as soon as possible, but please be patient as this 
+                                process may take some time. Deletion requests are handled on a case-by-case basis.
+                              </p>
+                            </div>
+                            
+                            <Button 
+                              onClick={handleRequestDeletion}
+                              variant="destructive"
+                              disabled={!deletionReason.trim()}
+                            >
+                              Submit Deletion Request
+                            </Button>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </div>
                 </div>
               )}

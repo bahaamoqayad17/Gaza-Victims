@@ -92,7 +92,7 @@ const HorizontalTimeline = () => {
   }, [isDragging]);
 
   return (
-    <Card className="w-full p-4 bg-muted/20">
+    <Card className="w-full p-4 bg-muted/20 overflow-hidden">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-4 w-4" />
         <select 
@@ -111,7 +111,7 @@ const HorizontalTimeline = () => {
       
       <div 
         ref={scrollRef}
-        className={`relative overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className={`relative overflow-x-auto overflow-y-hidden h-28 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

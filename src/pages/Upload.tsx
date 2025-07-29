@@ -496,17 +496,20 @@ const Upload = () => {
                     <Label>Proof of ID</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
                       <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-2">
                         Upload government ID, passport, or identity documents
+                      </p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        You can add multiple photos and videos (up to 20 items). If possible, also take video of the ID document.
                       </p>
                       <Input 
                         type="file" 
                         multiple 
-                        accept="image/*,.pdf,.doc,.docx"
+                        accept="image/*,video/*,.pdf,.doc,.docx"
                         className="mt-2"
                         onChange={(e) => {
                           const files = Array.from(e.target.files || []);
-                          setProofOfIdFiles(prev => [...prev, ...files]);
+                          setProofOfIdFiles(prev => [...prev, ...files].slice(0, 20));
                         }}
                       />
                     </div>
@@ -532,8 +535,11 @@ const Upload = () => {
                     <Label>Proof of Death</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
                       <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-2">
                         Upload death certificate, medical reports, or documentation of death
+                      </p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        You can add multiple photos and videos (up to 20 items). If possible, also take video of the victim's face and body for identification.
                       </p>
                       <Input 
                         type="file" 
@@ -542,7 +548,7 @@ const Upload = () => {
                         className="mt-2"
                         onChange={(e) => {
                           const files = Array.from(e.target.files || []);
-                          setProofOfDeathFiles(prev => [...prev, ...files]);
+                          setProofOfDeathFiles(prev => [...prev, ...files].slice(0, 20));
                         }}
                       />
                     </div>

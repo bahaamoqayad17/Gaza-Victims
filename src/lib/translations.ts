@@ -52,6 +52,7 @@ export const translations = {
     // Report
     reportCase: "Report Case",
     reportAnIssue: "Report an Issue",
+    submitCase: "Submit a Case",
     reportFormDescription: "Use this form to report technical issues, content violations, or provide additional information about cases.",
     contactInformation: "Contact Information",
     yourName: "Your name",
@@ -105,7 +106,7 @@ export const translations = {
     alphabetical: "Alphabetical",
     byAge: "By Age",
     casesFound: "cases found",
-    submitCase: "Submit Case",
+    
     downloadArchive: "Download Archive",
     previous: "Previous",
     next: "Next",
@@ -475,6 +476,7 @@ export const translations = {
     // Report
     reportCase: "بلاغ عن حالة",
     reportAnIssue: "الإبلاغ عن مشكلة",
+    submitCase: "تقديم قضية",
     reportFormDescription: "استخدم هذا النموذج للإبلاغ عن المشاكل التقنية أو انتهاكات المحتوى أو تقديم معلومات إضافية حول القضايا.",
     contactInformation: "معلومات الاتصال",
     yourName: "اسمك",
@@ -528,7 +530,7 @@ export const translations = {
     alphabetical: "أبجدياً",
     byAge: "بالعمر",
     casesFound: "حالة موجودة",
-    submitCase: "تقديم حالة",
+    
     downloadArchive: "تحميل الأرشيف",
     previous: "السابق",
     next: "التالي",

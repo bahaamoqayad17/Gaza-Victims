@@ -367,7 +367,7 @@ const Browse = () => {
            </p>
            <div className="flex flex-col sm:flex-row gap-2">
              <Button variant="outline" size="sm" asChild>
-               <Link to="/upload">{t('submitCase')}</Link>
+               <Link to="/upload">{t('submitDocumentation')}</Link>
              </Button>
              <Button variant="outline" size="sm" asChild>
                <Link to="/download-archive">

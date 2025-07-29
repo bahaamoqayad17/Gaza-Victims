@@ -50,6 +50,9 @@ const Upload = () => {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [cause, setCause] = useState('');
   const [otherCauseDetails, setOtherCauseDetails] = useState('');
+  const [perpetrator, setPerpetrator] = useState('');
+  const [otherPerpetratorDetails, setOtherPerpetratorDetails] = useState('');
+  const [perpetratorEvidence, setPerpetratorEvidence] = useState('');
   const [proofOfIdFiles, setProofOfIdFiles] = useState<File[]>([]);
   const [proofOfDeathFiles, setProofOfDeathFiles] = useState<File[]>([]);
 
@@ -488,6 +491,48 @@ const Upload = () => {
                       id="circumstances" 
                       placeholder="Description of what happened..."
                       rows={4}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="perpetrator">Perpetrator</Label>
+                    <Select value={perpetrator} onValueChange={setPerpetrator}>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue placeholder="Select perpetrator type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="military-forces">Military Forces</SelectItem>
+                        <SelectItem value="police-forces">Police Forces</SelectItem>
+                        <SelectItem value="armed-militia">Armed Militia</SelectItem>
+                        <SelectItem value="terrorist-group">Terrorist Group</SelectItem>
+                        <SelectItem value="criminal-organization">Criminal Organization</SelectItem>
+                        <SelectItem value="government-officials">Government Officials</SelectItem>
+                        <SelectItem value="unknown-perpetrator">Unknown Perpetrator</SelectItem>
+                        <SelectItem value="civilian">Civilian</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {perpetrator === 'other' && (
+                      <div className="mt-2">
+                        <Label htmlFor="otherPerpetrator">Please specify</Label>
+                        <Input 
+                          id="otherPerpetrator"
+                          value={otherPerpetratorDetails}
+                          onChange={(e) => setOtherPerpetratorDetails(e.target.value)}
+                          placeholder="Please describe the perpetrator"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="perpetratorEvidence">How do you know they are the ones who did it?</Label>
+                    <Textarea 
+                      id="perpetratorEvidence"
+                      value={perpetratorEvidence}
+                      onChange={(e) => setPerpetratorEvidence(e.target.value)}
+                      placeholder="Describe the evidence or reasoning that identifies this perpetrator..."
+                      rows={3}
                     />
                   </div>
 

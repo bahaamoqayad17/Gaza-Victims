@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, AlertTriangle, Shield, Send, Upload, Plus, Minus } from "lucide-react";
@@ -27,6 +28,9 @@ const ReportAdditional = () => {
     witnessTes: false,
     correction: false
   });
+  const [consentAgreed, setConsentAgreed] = useState(false);
+  const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,24 +100,22 @@ const ReportAdditional = () => {
                   <h4 className="font-medium">Your Information</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">Name (Optional)</Label>
                       <Input
                         id="name"
                         value={formData.name}
                         onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="Your name"
-                        required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">Email (Optional)</Label>
                       <Input
                         id="email"
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                         placeholder="your.email@example.com"
-                        required
                       />
                     </div>
                   </div>
@@ -236,6 +238,47 @@ const ReportAdditional = () => {
                   </div>
                 </div>
 
+                {/* Consent and Safety Disclaimers */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="consent" 
+                      checked={consentAgreed}
+                      onCheckedChange={(checked) => setConsentAgreed(checked as boolean)}
+                    />
+                    <Label htmlFor="consent" className="text-sm">
+                      I confirm that I have the right to share this information and any media content included
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-start space-x-2">
+                    <Checkbox 
+                      id="safety-acknowledgment" 
+                      checked={safetyAcknowledged}
+                      onCheckedChange={(checked) => setSafetyAcknowledged(checked as boolean)}
+                      required 
+                    />
+                    <Label htmlFor="safety-acknowledgment" className="text-sm leading-relaxed">
+                      <span className="font-medium text-red-600">Safety Acknowledgment:</span> I understand and acknowledge that I am solely responsible for my own safety and security when submitting this documentation. I take full responsibility for any risks associated with my submission, including but not limited to potential retaliation, legal consequences, or other harm. The platform provides no guarantee of protection and assumes no responsibility for any consequences, whether immediate or future, that may arise from my act of submission.
+                    </Label>
+                  </div>
+                </div>
+
+                {/* Warning Notices */}
+                <div className="space-y-3">
+                  <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      ⚠️ Please ensure all information is accurate and that you have the right to share this documentation.
+                    </p>
+                  </div>
+
+                  <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                    <p className="text-xs text-red-800 dark:text-red-200 leading-relaxed">
+                      <span className="font-semibold">IMPORTANT SAFETY NOTICE:</span> By proceeding with this submission, you acknowledge that you are taking this action at your own risk and discretion. This platform cannot and does not provide any guarantees regarding your safety, anonymity, or protection from potential consequences. You are strongly advised to take all necessary precautions to protect yourself and consult with appropriate security professionals if you have concerns about your safety.
+                    </p>
+                  </div>
+                </div>
+
                 {/* Security Notice */}
                 <div className="bg-muted/50 p-4 rounded-lg">
                   <div className="flex items-start gap-2">
@@ -250,13 +293,22 @@ const ReportAdditional = () => {
                   </div>
                 </div>
 
-                {/* reCAPTCHA placeholder */}
-                <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  <p className="text-sm text-muted-foreground">reCAPTCHA verification would appear here</p>
+                {/* reCAPTCHA */}
+                <div className="flex justify-center">
+                  <ReCAPTCHA
+                    sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test site key - replace with actual key
+                    onChange={(value) => setCaptchaValue(value)}
+                    onExpired={() => setCaptchaValue(null)}
+                  />
                 </div>
 
                 {/* Submit Button */}
-                <Button type="submit" className="w-full" size="lg">
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  size="lg"
+                  disabled={!consentAgreed || !safetyAcknowledged || !captchaValue}
+                >
                   <Send className="w-4 w-4 mr-2" />
                   Submit Additional Information
                 </Button>

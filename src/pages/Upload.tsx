@@ -338,6 +338,9 @@ const Upload = () => {
 
                   <div>
                     <Label htmlFor="socialMedia">Social Media Content</Label>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Note: Link photos or videos directly from the victim's social media page and the media will be extracted and added in their profile.
+                    </p>
                     <div className="space-y-2">
                       <div className="flex gap-2">
                         <Input 

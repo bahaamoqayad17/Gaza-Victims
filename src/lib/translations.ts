@@ -95,7 +95,7 @@ export const translations = {
     case: "case",
     totalCases: "total cases",
     touchAndDrag: "Touch and drag to scroll",
-    regularCases: "Regular cases",
+    regularCases: "Cases",
     highCases: "High cases (10+ cases)",
     noCases: "No cases",
     // Browse page translations

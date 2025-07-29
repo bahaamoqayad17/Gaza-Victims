@@ -29,11 +29,11 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
       case '/':
         return t('archive');
       case '/browse':
-        return 'Cases';
+        return t('cases');
       case '/map':
         return t('map');
       case '/upload':
-        return 'Submit';
+        return t('submitDocumentation');
       case '/about':
         return t('about');
       case '/legal':
@@ -89,7 +89,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               <Button variant="outline" size="sm" asChild>
                 <Link to="/auth">
                   <LogIn className="h-4 w-4 mr-1" />
-                  Login
+                    {t('login')}
                 </Link>
               </Button>
               <LanguageSelector />
@@ -105,7 +105,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : 'hover:bg-muted hover:text-foreground'
               }`}
             >
-              Cases
+              {t('cases')}
             </Link>
             <Link 
               to="/map" 
@@ -174,7 +174,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : 'hover:bg-muted hover:text-foreground'
               }`}
             >
-              Cases
+              {t('cases')}
             </Link>
             <Link 
               to="/map" 

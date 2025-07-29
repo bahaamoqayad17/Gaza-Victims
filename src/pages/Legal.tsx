@@ -164,9 +164,53 @@ const Legal = () => {
 
               <Separator />
 
+              <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                <h4 className="font-semibold mb-2 text-red-800 dark:text-red-200">Limitation of Liability</h4>
+                <p className="text-sm leading-relaxed text-red-800 dark:text-red-200">
+                  TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, THE PLATFORM AND ITS OPERATORS, 
+                  ADMINISTRATORS, VOLUNTEERS, AND AFFILIATES (COLLECTIVELY, "THE PLATFORM") EXPLICITLY 
+                  DISCLAIM AND ABSOLVE THEMSELVES OF ALL RESPONSIBILITY, LIABILITY, AND DAMAGES, WHETHER 
+                  DIRECT, INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, OR PUNITIVE, ARISING 
+                  FROM OR RELATED TO THE USE OF THIS PLATFORM, INCLUDING BUT NOT LIMITED TO:
+                </p>
+                <ul className="text-sm space-y-1 text-red-800 dark:text-red-200 mt-2 ml-4">
+                  <li>• Personal injury, harm, or loss of life</li>
+                  <li>• Property damage or financial loss</li>
+                  <li>• Legal consequences or prosecution</li>
+                  <li>• Retaliation, harassment, or persecution</li>
+                  <li>• Breach of confidentiality or privacy</li>
+                  <li>• Emotional distress or psychological harm</li>
+                  <li>• Loss of employment or livelihood</li>
+                  <li>• Any other harm or damage of any nature whatsoever</li>
+                </ul>
+              </div>
+
+              <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+                <h4 className="font-semibold mb-2 text-amber-800 dark:text-amber-200">User Assumption of Risk</h4>
+                <p className="text-sm leading-relaxed text-amber-800 dark:text-amber-200">
+                  BY USING THIS PLATFORM, YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT YOU ARE USING THE 
+                  PLATFORM AT YOUR OWN RISK AND DISCRETION. YOU UNDERSTAND THAT THE PLATFORM CANNOT 
+                  AND DOES NOT PROVIDE ANY GUARANTEES, WARRANTIES, OR ASSURANCES REGARDING YOUR SAFETY, 
+                  SECURITY, ANONYMITY, OR PROTECTION FROM ANY CONSEQUENCES THAT MAY ARISE FROM YOUR USE 
+                  OF THE PLATFORM OR SUBMISSION OF INFORMATION.
+                </p>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-950/20 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+                <h4 className="font-semibold mb-2">Indemnification</h4>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  You agree to indemnify, defend, and hold harmless the Platform from and against any 
+                  and all claims, demands, causes of action, damages, losses, costs, liabilities, and 
+                  expenses (including reasonable attorneys' fees) arising from or relating to your use 
+                  of the Platform, your submission of information, or your violation of these terms.
+                </p>
+              </div>
+
+              <Separator />
+
               <div className="flex justify-center pt-4">
                 <Button asChild>
-                  <Link to="/about#contact">Contact Us</Link>
+                  <Link to="/about#contact">{t('contactUs')}</Link>
                 </Button>
               </div>
             </CardContent>

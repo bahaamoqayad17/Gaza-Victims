@@ -31,7 +31,8 @@ const Upload = () => {
     witnesses: '',
     source: '',
     notes: '',
-    consentAgreed: false
+    consentAgreed: false,
+    safetyAcknowledged: false
   });
   const [familyCounts, setFamilyCounts] = useState({
     daughters: 0,
@@ -403,7 +404,46 @@ const Upload = () => {
               )}
 
               {currentStep === 3 && (
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Evidence Collection Tutorial */}
+                  <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Evidence Collection Tutorial
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border">
+                        <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center mb-2">
+                          <div className="text-center">
+                            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <p className="text-xs text-muted-foreground">Video Tutorial: Safe Evidence Collection</p>
+                            <p className="text-xs text-muted-foreground">Duration: 2:30</p>
+                          </div>
+                        </div>
+                        <Button variant="outline" size="sm" className="w-full">
+                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                          </svg>
+                          Watch Tutorial
+                        </Button>
+                      </div>
+                      <div className="text-sm space-y-2">
+                        <h5 className="font-medium text-blue-900 dark:text-blue-100">Quick Safety Tips:</h5>
+                        <ul className="space-y-1 text-blue-800 dark:text-blue-200 text-xs">
+                          <li>• Use secure, private networks when uploading</li>
+                          <li>• Remove metadata from photos if safety is a concern</li>
+                          <li>• Consider using VPN for additional privacy</li>
+                          <li>• Blur faces of living individuals for their protection</li>
+                          <li>• Document with timestamp and location when safe to do so</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <Label>Evidence Upload</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
@@ -573,11 +613,29 @@ const Upload = () => {
                         I confirm that I have the right to share this information and any media content included
                       </Label>
                     </div>
+                    
+                    <div className="flex items-start space-x-2">
+                      <Checkbox 
+                        id="safety-acknowledgment" 
+                        checked={formData.safetyAcknowledged}
+                        onCheckedChange={(checked) => setFormData(prev => ({...prev, safetyAcknowledged: checked as boolean}))}
+                        required 
+                      />
+                      <Label htmlFor="safety-acknowledgment" className="text-sm leading-relaxed">
+                        <span className="font-medium text-red-600">Safety Acknowledgment:</span> I understand and acknowledge that I am solely responsible for my own safety and security when submitting this documentation. I take full responsibility for any risks associated with my submission, including but not limited to potential retaliation, legal consequences, or other harm. The platform provides no guarantee of protection and assumes no responsibility for any consequences, whether immediate or future, that may arise from my act of submission.
+                      </Label>
+                    </div>
                   </div>
 
                   <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
                     <p className="text-sm text-amber-800 dark:text-amber-200">
                       ⚠️ Please ensure all information is accurate and that you have the right to share this documentation.
+                    </p>
+                  </div>
+
+                  <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                    <p className="text-xs text-red-800 dark:text-red-200 leading-relaxed">
+                      <span className="font-semibold">IMPORTANT SAFETY NOTICE:</span> By proceeding with this submission, you acknowledge that you are taking this action at your own risk and discretion. This platform cannot and does not provide any guarantees regarding your safety, anonymity, or protection from potential consequences. You are strongly advised to take all necessary precautions to protect yourself and consult with appropriate security professionals if you have concerns about your safety.
                     </p>
                   </div>
                 </div>
@@ -600,7 +658,7 @@ const Upload = () => {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button disabled={!formData.consentAgreed}>
+                  <Button disabled={!formData.consentAgreed || !formData.safetyAcknowledged}>
                     Submit Documentation
                   </Button>
                 )}

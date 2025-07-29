@@ -49,6 +49,8 @@ const Upload = () => {
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [cause, setCause] = useState('');
   const [otherCauseDetails, setOtherCauseDetails] = useState('');
+  const [proofOfIdFiles, setProofOfIdFiles] = useState<File[]>([]);
+  const [proofOfDeathFiles, setProofOfDeathFiles] = useState<File[]>([]);
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
@@ -64,6 +66,14 @@ const Upload = () => {
 
   const removeEvidenceFile = (index: number) => {
     setEvidenceFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeProofOfIdFile = (index: number) => {
+    setProofOfIdFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeProofOfDeathFile = (index: number) => {
+    setProofOfDeathFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -483,11 +493,47 @@ const Upload = () => {
                   </div>
 
                   <div>
-                    <Label>Evidence Upload</Label>
+                    <Label>Proof of ID</Label>
                     <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
                       <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                       <p className="text-sm text-muted-foreground">
-                        Upload photos, videos, documents, and other evidence
+                        Upload government ID, passport, or identity documents
+                      </p>
+                      <Input 
+                        type="file" 
+                        multiple 
+                        accept="image/*,.pdf,.doc,.docx"
+                        className="mt-2"
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files || []);
+                          setProofOfIdFiles(prev => [...prev, ...files]);
+                        }}
+                      />
+                    </div>
+                    {proofOfIdFiles.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {proofOfIdFiles.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                            <span className="text-sm">{file.name}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeProofOfIdFile(index)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label>Proof of Death</Label>
+                    <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
+                      <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Upload death certificate, medical reports, or documentation of death
                       </p>
                       <Input 
                         type="file" 
@@ -496,19 +542,19 @@ const Upload = () => {
                         className="mt-2"
                         onChange={(e) => {
                           const files = Array.from(e.target.files || []);
-                          setEvidenceFiles(prev => [...prev, ...files]);
+                          setProofOfDeathFiles(prev => [...prev, ...files]);
                         }}
                       />
                     </div>
-                    {evidenceFiles.length > 0 && (
+                    {proofOfDeathFiles.length > 0 && (
                       <div className="space-y-2 mt-2">
-                        {evidenceFiles.map((file, index) => (
+                        {proofOfDeathFiles.map((file, index) => (
                           <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
                             <span className="text-sm">{file.name}</span>
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => removeEvidenceFile(index)}
+                              onClick={() => removeProofOfDeathFile(index)}
                             >
                               <X className="w-3 h-3" />
                             </Button>
@@ -517,18 +563,6 @@ const Upload = () => {
                       </div>
                     )}
                     <div className="space-y-3 mt-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="proofId" />
-                        <Label htmlFor="proofId" className="text-sm text-green-600">
-                          ✓ Proof of ID added
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox id="proofDeath" />
-                        <Label htmlFor="proofDeath" className="text-sm text-green-600">
-                          ✓ Proof of death added
-                        </Label>
-                      </div>
                       <div className="flex items-center space-x-2">
                         <Checkbox 
                           id="graphic" 

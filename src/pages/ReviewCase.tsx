@@ -29,10 +29,30 @@ const ReviewCase = () => {
     location: 'Gaza City, Palestine',
     date: '2024-01-15',
     cause: 'Bombing',
+    otherCauseDetails: '',
     perpetrator: 'Military Forces',
-    circumstances: 'Was at home with family when bombing occurred.',
+    perpetratorEvidence: 'Witnessed military vehicles in the area during the attack',
+    circumstances: 'Was at home with family when bombing occurred. The house was directly hit.',
+    witnesses: 'Neighbors saw the attack and can provide testimony.',
     submittedBy: 'Family Member',
-    status: 'Under Review'
+    status: 'Under Review',
+    background: 'John was a dedicated teacher who loved his students and community. He had been teaching for over 10 years.',
+    familyRelationships: {
+      wife: true,
+      daughters: 2,
+      sons: 1,
+      mother: true,
+      father: false
+    },
+    portraitPhoto: '/api/placeholder/300/400',
+    additionalPhotos: ['/api/placeholder/200/200', '/api/placeholder/200/200'],
+    socialMediaUrls: ['https://facebook.com/johndoe', 'https://instagram.com/johndoe'],
+    proofOfIdFiles: ['ID_Document.pdf', 'Passport.jpg'],
+    proofOfDeathFiles: ['Death_Certificate.pdf', 'Medical_Report.pdf'],
+    additionalEvidenceFiles: ['Witness_Statement.pdf', 'News_Article.jpg'],
+    newsLinks: ['https://news.example.com/bombing-incident'],
+    source: 'Direct family member',
+    additionalNotes: 'Family is seeking justice and proper documentation of this tragedy.'
   };
 
   const handleSearchCase = () => {
@@ -109,10 +129,10 @@ const ReviewCase = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Case Information Display */}
+                  {/* Basic Victim Information */}
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Case Information</h3>
+                      <h3 className="text-lg font-semibold">Victim Information</h3>
                       <Badge variant="outline">{mockCase.status}</Badge>
                     </div>
                     
@@ -165,6 +185,21 @@ const ReviewCase = () => {
                         
                         <div className="flex items-center justify-between">
                           <div>
+                            <Label className="font-medium">Gender</Label>
+                            <p className="text-sm">{mockCase.gender}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFlagError('gender')}
+                            className={flaggedErrors.includes('gender') ? 'text-red-500' : ''}
+                          >
+                            <Flag className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
                             <Label className="font-medium">Occupation</Label>
                             <p className="text-sm">{mockCase.occupation}</p>
                           </div>
@@ -182,19 +217,111 @@ const ReviewCase = () => {
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <Label className="font-medium">Location</Label>
-                            <p className="text-sm">{mockCase.location}</p>
+                            <Label className="font-medium">Family Relationships</Label>
+                            <div className="text-sm space-y-1">
+                              {mockCase.familyRelationships.wife && <p>• Wife</p>}
+                              {mockCase.familyRelationships.daughters > 0 && <p>• {mockCase.familyRelationships.daughters} Daughter(s)</p>}
+                              {mockCase.familyRelationships.sons > 0 && <p>• {mockCase.familyRelationships.sons} Son(s)</p>}
+                              {mockCase.familyRelationships.mother && <p>• Mother</p>}
+                              {mockCase.familyRelationships.father && <p>• Father</p>}
+                            </div>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleFlagError('location')}
-                            className={flaggedErrors.includes('location') ? 'text-red-500' : ''}
+                            onClick={() => handleFlagError('family')}
+                            className={flaggedErrors.includes('family') ? 'text-red-500' : ''}
                           >
                             <Flag className="h-3 w-3" />
                           </Button>
                         </div>
                         
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="font-medium">Background</Label>
+                            <p className="text-sm">{mockCase.background}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFlagError('background')}
+                            className={flaggedErrors.includes('background') ? 'text-red-500' : ''}
+                          >
+                            <Flag className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Photos and Media */}
+                  <div className="border-t pt-6">
+                    <h3 className="text-lg font-semibold mb-4">Photos and Media</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Portrait Photo</Label>
+                          <div className="mt-2">
+                            <img src={mockCase.portraitPhoto} alt="Portrait" className="w-32 h-40 object-cover rounded border" />
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('portrait')}
+                          className={flaggedErrors.includes('portrait') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Additional Photos</Label>
+                          <div className="flex gap-2 mt-2">
+                            {mockCase.additionalPhotos.map((photo, index) => (
+                              <img key={index} src={photo} alt={`Additional ${index + 1}`} className="w-20 h-20 object-cover rounded border" />
+                            ))}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('additionalPhotos')}
+                          className={flaggedErrors.includes('additionalPhotos') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Social Media URLs</Label>
+                          <div className="text-sm space-y-1">
+                            {mockCase.socialMediaUrls.map((url, index) => (
+                              <p key={index}>• {url}</p>
+                            ))}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('socialMedia')}
+                          className={flaggedErrors.includes('socialMedia') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Incident Details */}
+                  <div className="border-t pt-6">
+                    <h3 className="text-lg font-semibold mb-4">Incident Details</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Date of Incident</Label>
@@ -205,6 +332,21 @@ const ReviewCase = () => {
                             size="sm"
                             onClick={() => handleFlagError('date')}
                             className={flaggedErrors.includes('date') ? 'text-red-500' : ''}
+                          >
+                            <Flag className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="font-medium">Location</Label>
+                            <p className="text-sm">{mockCase.location}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFlagError('location')}
+                            className={flaggedErrors.includes('location') ? 'text-red-500' : ''}
                           >
                             <Flag className="h-3 w-3" />
                           </Button>
@@ -240,7 +382,168 @@ const ReviewCase = () => {
                           </Button>
                         </div>
                       </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="font-medium">Perpetrator Evidence</Label>
+                            <p className="text-sm">{mockCase.perpetratorEvidence}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFlagError('perpetratorEvidence')}
+                            className={flaggedErrors.includes('perpetratorEvidence') ? 'text-red-500' : ''}
+                          >
+                            <Flag className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="font-medium">Circumstances</Label>
+                            <p className="text-sm">{mockCase.circumstances}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFlagError('circumstances')}
+                            className={flaggedErrors.includes('circumstances') ? 'text-red-500' : ''}
+                          >
+                            <Flag className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label className="font-medium">Witness Information</Label>
+                            <p className="text-sm">{mockCase.witnesses}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleFlagError('witnesses')}
+                            className={flaggedErrors.includes('witnesses') ? 'text-red-500' : ''}
+                          >
+                            <Flag className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Documentation and Evidence */}
+                  <div className="border-t pt-6">
+                    <h3 className="text-lg font-semibold mb-4">Documentation and Evidence</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Proof of ID Files</Label>
+                          <div className="text-sm space-y-1">
+                            {mockCase.proofOfIdFiles.map((file, index) => (
+                              <p key={index}>• {file}</p>
+                            ))}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('proofOfId')}
+                          className={flaggedErrors.includes('proofOfId') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Proof of Death Files</Label>
+                          <div className="text-sm space-y-1">
+                            {mockCase.proofOfDeathFiles.map((file, index) => (
+                              <p key={index}>• {file}</p>
+                            ))}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('proofOfDeath')}
+                          className={flaggedErrors.includes('proofOfDeath') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Additional Evidence Files</Label>
+                          <div className="text-sm space-y-1">
+                            {mockCase.additionalEvidenceFiles.map((file, index) => (
+                              <p key={index}>• {file}</p>
+                            ))}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('additionalEvidence')}
+                          className={flaggedErrors.includes('additionalEvidence') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">News Article Links</Label>
+                          <div className="text-sm space-y-1">
+                            {mockCase.newsLinks.map((link, index) => (
+                              <p key={index}>• <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{link}</a></p>
+                            ))}
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('newsLinks')}
+                          className={flaggedErrors.includes('newsLinks') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Source of Information</Label>
+                          <p className="text-sm">{mockCase.source}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('source')}
+                          className={flaggedErrors.includes('source') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="font-medium">Additional Notes</Label>
+                          <p className="text-sm">{mockCase.additionalNotes}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFlagError('additionalNotes')}
+                          className={flaggedErrors.includes('additionalNotes') ? 'text-red-500' : ''}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                     
                     {flaggedErrors.length > 0 && (
                       <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
@@ -251,7 +554,6 @@ const ReviewCase = () => {
                         </p>
                       </div>
                     )}
-                  </div>
 
                   {/* Add Additional Information */}
                   <div>

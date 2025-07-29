@@ -42,8 +42,9 @@ const Upload = () => {
     sisters: 0
   });
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
-  const [socialMediaUrl, setSocialMediaUrl] = useState('');
+  const [socialMediaUrls, setSocialMediaUrls] = useState<string[]>(['']);
   const [socialMediaPreview, setSocialMediaPreview] = useState<string | null>(null);
+  const [newsLinks, setNewsLinks] = useState<string[]>(['']);
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
   const [isGraphicContent, setIsGraphicContent] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
@@ -55,9 +56,37 @@ const Upload = () => {
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
 
-  const handleSocialMediaFetch = async () => {
+  const handleSocialMediaFetch = async (index: number) => {
     // Mock implementation - in real app would use social media APIs
-    setSocialMediaPreview(socialMediaUrl);
+    setSocialMediaPreview(socialMediaUrls[index]);
+  };
+
+  const addSocialMediaUrl = () => {
+    if (socialMediaUrls.length < 10) {
+      setSocialMediaUrls(prev => [...prev, '']);
+    }
+  };
+
+  const removeSocialMediaUrl = (index: number) => {
+    setSocialMediaUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateSocialMediaUrl = (index: number, value: string) => {
+    setSocialMediaUrls(prev => prev.map((url, i) => i === index ? value : url));
+  };
+
+  const addNewsLink = () => {
+    if (newsLinks.length < 10) {
+      setNewsLinks(prev => [...prev, '']);
+    }
+  };
+
+  const removeNewsLink = (index: number) => {
+    setNewsLinks(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateNewsLink = (index: number, value: string) => {
+    setNewsLinks(prev => prev.map((link, i) => i === index ? value : link));
   };
 
   const removeAdditionalPhoto = (index: number) => {
@@ -352,17 +381,39 @@ const Upload = () => {
                       Note: Link photos or videos directly from the victim's social media page and the media will be extracted and added in their profile.
                     </p>
                     <div className="space-y-2">
-                      <div className="flex gap-2">
-                        <Input 
-                          id="socialMedia"
-                          placeholder="Paste URL from social media post (Instagram, Facebook, etc.)"
-                          value={socialMediaUrl}
-                          onChange={(e) => setSocialMediaUrl(e.target.value)}
-                        />
-                        <Button type="button" onClick={handleSocialMediaFetch}>
-                          <Download className="w-4 h-4" />
+                      {socialMediaUrls.map((url, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Input 
+                            placeholder="Paste URL from social media post (Instagram, Facebook, etc.)"
+                            value={url}
+                            onChange={(e) => updateSocialMediaUrl(index, e.target.value)}
+                          />
+                          <Button type="button" onClick={() => handleSocialMediaFetch(index)}>
+                            <Download className="w-4 h-4" />
+                          </Button>
+                          {socialMediaUrls.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeSocialMediaUrl(index)}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      {socialMediaUrls.length < 10 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addSocialMediaUrl}
+                          className="w-full"
+                        >
+                          + Add another social media link
                         </Button>
-                      </div>
+                      )}
                       {socialMediaPreview && (
                         <div className="border rounded p-2">
                           <p className="text-sm text-muted-foreground mb-2">Preview:</p>
@@ -603,11 +654,39 @@ const Upload = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="newsLink">News Article Link (Optional)</Label>
-                    <Input 
-                      id="newsLink" 
-                      placeholder="Link to news article about this case"
-                    />
+                    <Label>News Article Links (Optional)</Label>
+                    <div className="space-y-2">
+                      {newsLinks.map((link, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Input 
+                            placeholder="Link to news article about this case"
+                            value={link}
+                            onChange={(e) => updateNewsLink(index, e.target.value)}
+                          />
+                          {newsLinks.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeNewsLink(index)}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      {newsLinks.length < 10 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addNewsLink}
+                          className="w-full"
+                        >
+                          + Add another news article link
+                        </Button>
+                      )}
+                    </div>
                   </div>
 
                   <div>

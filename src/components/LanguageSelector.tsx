@@ -61,7 +61,7 @@ export const LanguageSelector = () => {
           <span className="hidden md:inline">{selectedLanguage.code.toUpperCase()}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-48 p-2" align="end">
+      <PopoverContent className="w-48 p-2 max-h-64 overflow-y-auto" align="end">
         <div className="grid gap-1">
           {languages.map((language) => (
             <Button

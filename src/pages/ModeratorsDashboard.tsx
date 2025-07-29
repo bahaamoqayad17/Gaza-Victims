@@ -98,6 +98,16 @@ const pendingCases = [
     priority: "high",
     submittedDate: "2023-12-15",
     currentReviewer: "David Chen"
+  },
+  {
+    id: "004",
+    name: "Elena R.",
+    location: "Damascus, Syria",
+    submittedBy: "Medical Records",
+    status: "digital_forensics_verification",
+    priority: "medium",
+    submittedDate: "2023-12-12",
+    currentReviewer: "Forensics Team"
   }
 ];
 

@@ -23,6 +23,7 @@ interface VictimCardProps {
     actionTaken: string;
     verified?: boolean;
     thirdPartyVerified?: boolean;
+    digitalForensicsVerified?: boolean;
     newsLink?: string;
     lifeStory?: string;
     deathDetails?: string;
@@ -158,6 +159,13 @@ export const VictimCard = ({ victim, showReportButton = false, clickable = false
                 <MobileTooltip content={t('thirdPartyDescription')}>
                   <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">
                     {t('thirdPartyVerified')}
+                  </span>
+                </MobileTooltip>
+              )}
+              {victim.digitalForensicsVerified && (
+                <MobileTooltip content={t('digitalForensicsDescription')}>
+                  <span className="bg-cyan-100 text-cyan-800 px-2 py-0.5 border border-cyan-300">
+                    {t('digitalForensicsVerified')}
                   </span>
                 </MobileTooltip>
               )}

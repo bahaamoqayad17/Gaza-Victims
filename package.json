@@ -1,0 +1,49 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"nodemon --exec ts-node -r tsconfig-paths/register server.ts\" \"graphql-codegen --config codegen.ts && graphql-codegen --watch\"",
+    "prod": "set NODE_ENV=production&& nodemon server.ts",
+    "seed": "ts-node ./Seeder/DataBaseSeeder.ts --seed",
+    "fresh": "ts-node ./Seeder/DataBaseSeeder.ts --delete && ts-node ./Seeder/DataBaseSeeder.ts --seed",
+    "codegen": "graphql-codegen --config codegen.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.7.5",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.20",
+    "validator": "^13.7.0"
+  },
+  "description": "",
+  "devDependencies": {
+    "@graphql-codegen/cli": "5.0.7",
+    "@tsconfig/node22": "^22.0.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/graphql": "^14.2.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.1.0",
+    "@types/validator": "^13.15.2",
+    "concurrently": "^9.2.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3",
+    "@graphql-codegen/typescript-document-nodes": "4.0.16",
+    "@graphql-codegen/typescript-mongodb": "3.0.1",
+    "@graphql-codegen/typescript-resolvers": "4.5.1",
+    "@graphql-codegen/typescript": "4.1.6",
+    "@graphql-codegen/introspection": "4.0.3"
+  }
+}

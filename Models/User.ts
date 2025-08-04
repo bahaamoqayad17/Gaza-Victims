@@ -39,6 +39,8 @@ const Schema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  passwordResetOTP: String,
+  passwordResetOTPExpires: Date,
 });
 Schema.pre("save", async function (next) {
   // Only run this function if password was actually modified

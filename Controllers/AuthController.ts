@@ -3,119 +3,143 @@ import User from "@/Models/User";
 import CatchAsync from "@/Utils/CatchAsync";
 import AppError from "@/Utils/AppError";
 
-interface CustomJwtPayload extends JwtPayload {
-  id: string;
-}
-
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
     expiresIn: "30d",
   });
 };
 
-const createSendToken = (user: any, statusCode: number, req: any, res: any) => {
+// GraphQL-specific functions
+export const createSendToken = (user: any) => {
   const token = signToken(user._id);
 
   // Remove password from output
   user.password = undefined;
 
-  res.status(statusCode).json({
+  return {
     status: "success",
     token,
     data: {
       user,
     },
-  });
+  };
 };
 
-export const register = CatchAsync(async (req: any, res: any, next: any) => {
+export const register = async (input: {
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}) => {
   const user = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+    name: input.name,
+    email: input.email,
+    password: input.password,
+    passwordConfirm: input.passwordConfirm,
   });
-  createSendToken(user, 201, req, res);
-});
+  return createSendToken(user);
+};
 
-export const login = CatchAsync(async (req: any, res: any, next: any) => {
-  const { email, password } = req.body;
+export const login = async (input: { email: string; password: string }) => {
+  const { email, password } = input;
 
   // 1) Check if email and password exist
   if (!email || !password) {
-    return next(new AppError("Please provide email and password!", 400));
+    throw new Error("Please provide email and password!");
   }
+
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError("Incorrect email or password", 401));
+    throw new Error("Incorrect email or password");
   }
 
   // 3) If everything ok, send token to client
-  createSendToken(user, 200, req, res);
-});
-
-export const logout = (req: any, res: any) => {
-  res.cookie("jwt", "loggedout", {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-  res.status(200).json({ status: "success" });
+  return createSendToken(user);
 };
 
-export const protect = CatchAsync(async (req: any, res: any, next: any) => {
-  // 1) Getting token and check of it's there
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-  if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in to get access", 401)
-    );
+export const forgotPassword = async (input: { email: string }) => {
+  const { email } = input;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("No user found with that email");
   }
 
-  // 2) Verification token
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET as string
-  ) as CustomJwtPayload;
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
-  // 3) Check if user still exists
-  const currentUser = await User.findById(decoded.id as string);
-  if (!currentUser) {
-    return next(
-      new AppError(
-        "The user belonging to this token does no longer exist.",
-        401
-      )
-    );
-  }
+  user.passwordResetOTP = otp;
+  user.passwordResetOTPExpires = Date.now() + 10 * 60 * 1000;
+  await user.save({ validateBeforeSave: false });
 
-  //   4) Check if user changed password after the token was issued
-  if (currentUser.changedPasswordAfter(decoded.iat as number)) {
-    return next(
-      new AppError("User recently changed password! Please log in again.", 401)
-    );
-  }
-
-  // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = currentUser;
-  res.locals.user = currentUser;
-  next();
-});
-
-export const restrictTo = (...roles: any[]) => {
-  return (req: any, res: any, next: any) => {
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new AppError("You do not have permission to perform this action", 403)
-      );
-    }
-    next();
+  // Note: In a real implementation, you would send the OTP via email
+  // For now, we'll just return success
+  return {
+    status: "success",
+    message: "OTP sent to email",
   };
 };
+
+export const verifyOTP = async (input: { email: string; otp: string }) => {
+  const { email, otp } = input;
+  const user = await User.findOne({
+    email,
+    passwordResetOTP: otp,
+    passwordResetOTPExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new Error("Invalid or expired OTP");
+  }
+
+  user.passwordResetOTP = undefined;
+  user.passwordResetOTPExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  return {
+    status: "success",
+    message: "OTP verified. You can reset your password now.",
+  };
+};
+
+export const resetPassword = async (input: {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}) => {
+  const { email, password, passwordConfirm } = input;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("User not verified or does not exist");
+  }
+
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  await user.save({ validateBeforeSave: false });
+
+  return createSendToken(user);
+};
+
+export const withAuth =
+  (resolver: any, roles: string[] = []) =>
+  async (parent: any, args: any, context: any, info: any) => {
+    try {
+      const token = context.req.headers.authorization?.split(" ")[1]; // Extract Bearer token
+
+      if (!token) throw new Error("Not authenticated! Token missing.");
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+      context.user = decoded; // Attach user data to context
+
+      // // If roles are specified, check if the user has at least one of them
+      // if (roles.length > 0 && !roles.includes(decoded.role as string)) {
+      //   throw new Error("Unauthorized. Insufficient permissions.");
+      // }
+
+      return resolver(parent, args, context, info); // Call the original resolver
+    } catch (error) {
+      throw new Error("Unauthorized. Invalid or missing token.");
+    }
+  };

@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -15,20 +15,132 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Upload: { input: any; output: any; }
+};
+
+export type AuthData = {
+  __typename?: 'AuthData';
+  user: User;
+};
+
+export type AuthResponse = {
+  __typename?: 'AuthResponse';
+  data: AuthData;
+  status: Scalars['String']['output'];
+  token: Scalars['String']['output'];
 };
 
 export type Case = {
   __typename?: 'Case';
   _id: Scalars['ID']['output'];
-  caseNumber: Scalars['String']['output'];
-  victimAge: Scalars['Int']['output'];
-  victimName: Scalars['String']['output'];
+  actionTaken?: Maybe<Scalars['String']['output']>;
+  additionalAttachments?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  additionalEvidence?: Maybe<Scalars['String']['output']>;
+  additionalEvidenceGraphic?: Maybe<Scalars['Boolean']['output']>;
+  age: Scalars['Int']['output'];
+  causeOfDeath?: Maybe<Scalars['String']['output']>;
+  circumstances?: Maybe<Scalars['String']['output']>;
+  consentAgreed: Scalars['Boolean']['output'];
+  createdAt: Scalars['String']['output'];
+  date?: Maybe<Scalars['String']['output']>;
+  evidenceDescription?: Maybe<Scalars['String']['output']>;
+  gender: Scalars['String']['output'];
+  isDigitalForensicsVerified: Scalars['Boolean']['output'];
+  isThirdPartyVerified: Scalars['Boolean']['output'];
+  isVerified: Scalars['Boolean']['output'];
+  leftBehind?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  location?: Maybe<Location>;
+  locationName?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  newsLinks?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  notes?: Maybe<Scalars['String']['output']>;
+  occupation?: Maybe<Scalars['String']['output']>;
+  perpetrator?: Maybe<Scalars['String']['output']>;
+  portraitPhoto?: Maybe<Scalars['String']['output']>;
+  proofOfDeath?: Maybe<Scalars['String']['output']>;
+  proofOfDeathGraphic?: Maybe<Scalars['Boolean']['output']>;
+  proofOfId?: Maybe<Scalars['String']['output']>;
+  relationshipToVictim?: Maybe<Scalars['String']['output']>;
+  safetyAcknowledged: Scalars['Boolean']['output'];
+  socialMediaLinks?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  sourceOfInformation?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  story?: Maybe<Scalars['String']['output']>;
+  submittedBy: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  witness_information?: Maybe<Scalars['String']['output']>;
+};
+
+export type CaseInput = {
+  age: Scalars['Int']['input'];
+  causeOfDeath?: InputMaybe<Scalars['String']['input']>;
+  circumstances?: InputMaybe<Scalars['String']['input']>;
+  consentAgreed: Scalars['Boolean']['input'];
+  date?: InputMaybe<Scalars['String']['input']>;
+  evidenceDescription?: InputMaybe<Scalars['String']['input']>;
+  gender: Scalars['String']['input'];
+  leftBehind?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  location?: InputMaybe<LocationInput>;
+  locationName?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  newsLinks?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  notes?: InputMaybe<Scalars['String']['input']>;
+  occupation?: InputMaybe<Scalars['String']['input']>;
+  perpetrator?: InputMaybe<Scalars['String']['input']>;
+  relationshipToVictim?: InputMaybe<Scalars['String']['input']>;
+  safetyAcknowledged: Scalars['Boolean']['input'];
+  socialMediaLinks?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  sourceOfInformation?: InputMaybe<Scalars['String']['input']>;
+  story?: InputMaybe<Scalars['String']['input']>;
+  submittedBy: Scalars['String']['input'];
+  witness_information?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ForgotPasswordInput = {
+  email: Scalars['String']['input'];
+};
+
+export type Location = {
+  __typename?: 'Location';
+  lat?: Maybe<Scalars['String']['output']>;
+  lng?: Maybe<Scalars['String']['output']>;
+};
+
+export type LocationInput = {
+  lat?: InputMaybe<Scalars['String']['input']>;
+  lng?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type LoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type MessageResponse = {
+  __typename?: 'MessageResponse';
+  message: Scalars['String']['output'];
+  status: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createCase?: Maybe<Case>;
   createUser?: Maybe<User>;
-  login?: Maybe<Scalars['String']['output']>;
+  forgotPassword: MessageResponse;
+  login: AuthResponse;
+  register: AuthResponse;
+  resetPassword: AuthResponse;
+  verifyOTP: MessageResponse;
+};
+
+
+export type MutationCreateCaseArgs = {
+  additionalEvidence?: InputMaybe<Scalars['Upload']['input']>;
+  additionalPhotos?: InputMaybe<Array<InputMaybe<Scalars['Upload']['input']>>>;
+  caseData: CaseInput;
+  portraitPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  proofOfDeath?: InputMaybe<Scalars['Upload']['input']>;
+  proofOfId?: InputMaybe<Scalars['Upload']['input']>;
 };
 
 
@@ -40,20 +152,59 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  input: ForgotPasswordInput;
+};
+
+
 export type MutationLoginArgs = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  input: LoginInput;
+};
+
+
+export type MutationRegisterArgs = {
+  input: RegisterInput;
+};
+
+
+export type MutationResetPasswordArgs = {
+  input: ResetPasswordInput;
+};
+
+
+export type MutationVerifyOtpArgs = {
+  input: VerifyOtpInput;
 };
 
 export type Query = {
   __typename?: 'Query';
+  case?: Maybe<Case>;
+  cases?: Maybe<Array<Maybe<Case>>>;
   user?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
 };
 
 
+export type QueryCaseArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type RegisterInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  passwordConfirm: Scalars['String']['input'];
+};
+
+export type ResetPasswordInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  passwordConfirm: Scalars['String']['input'];
 };
 
 export type User = {
@@ -63,6 +214,11 @@ export type User = {
   name: Scalars['String']['output'];
   passwordChangedAt?: Maybe<Scalars['String']['output']>;
   role: Scalars['String']['output'];
+};
+
+export type VerifyOtpInput = {
+  email: Scalars['String']['input'];
+  otp: Scalars['String']['input'];
 };
 
 export type AdditionalEntityFields = {
@@ -141,28 +297,52 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AuthData: ResolverTypeWrapper<AuthData>;
+  AuthResponse: ResolverTypeWrapper<AuthResponse>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
   Case: ResolverTypeWrapper<Case>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
-  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  CaseInput: CaseInput;
+  ForgotPasswordInput: ForgotPasswordInput;
+  Location: ResolverTypeWrapper<Location>;
+  LocationInput: LocationInput;
+  LoginInput: LoginInput;
+  MessageResponse: ResolverTypeWrapper<MessageResponse>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RegisterInput: RegisterInput;
+  ResetPasswordInput: ResetPasswordInput;
+  Upload: ResolverTypeWrapper<Scalars['Upload']['output']>;
   User: ResolverTypeWrapper<User>;
+  VerifyOTPInput: VerifyOtpInput;
   AdditionalEntityFields: AdditionalEntityFields;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AuthData: AuthData;
+  AuthResponse: AuthResponse;
+  String: Scalars['String']['output'];
   Case: Case;
   ID: Scalars['ID']['output'];
-  String: Scalars['String']['output'];
+  Boolean: Scalars['Boolean']['output'];
   Int: Scalars['Int']['output'];
+  CaseInput: CaseInput;
+  ForgotPasswordInput: ForgotPasswordInput;
+  Location: Location;
+  LocationInput: LocationInput;
+  LoginInput: LoginInput;
+  MessageResponse: MessageResponse;
   Mutation: {};
   Query: {};
+  RegisterInput: RegisterInput;
+  ResetPasswordInput: ResetPasswordInput;
+  Upload: Scalars['Upload']['output'];
   User: User;
+  VerifyOTPInput: VerifyOtpInput;
   AdditionalEntityFields: AdditionalEntityFields;
-  Boolean: Scalars['Boolean']['output'];
 };
 
 export type UnionDirectiveArgs = {
@@ -212,23 +392,91 @@ export type MapDirectiveArgs = {
 
 export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
+export type AuthDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthData'] = ResolversParentTypes['AuthData']> = {
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AuthResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']> = {
+  data?: Resolver<ResolversTypes['AuthData'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CaseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Case'] = ResolversParentTypes['Case']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  caseNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  victimAge?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  victimName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  actionTaken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  additionalAttachments?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  additionalEvidence?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  additionalEvidenceGraphic?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  age?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  causeOfDeath?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  circumstances?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  consentAgreed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  evidenceDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  gender?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isDigitalForensicsVerified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isThirdPartyVerified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isVerified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  leftBehind?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['Location']>, ParentType, ContextType>;
+  locationName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  newsLinks?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  occupation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  perpetrator?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  portraitPhoto?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  proofOfDeath?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  proofOfDeathGraphic?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  proofOfId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  relationshipToVictim?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  safetyAcknowledged?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  socialMediaLinks?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  sourceOfInformation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  story?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  submittedBy?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  witness_information?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LocationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Location'] = ResolversParentTypes['Location']> = {
+  lat?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lng?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MessageResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['MessageResponse'] = ResolversParentTypes['MessageResponse']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createCase?: Resolver<Maybe<ResolversTypes['Case']>, ParentType, ContextType, RequireFields<MutationCreateCaseArgs, 'caseData'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'name' | 'password' | 'passwordConfirm'>>;
-  login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
+  forgotPassword?: Resolver<ResolversTypes['MessageResponse'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'input'>>;
+  login?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
+  register?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
+  resetPassword?: Resolver<ResolversTypes['AuthResponse'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'input'>>;
+  verifyOTP?: Resolver<ResolversTypes['MessageResponse'], ParentType, ContextType, RequireFields<MutationVerifyOtpArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  case?: Resolver<Maybe<ResolversTypes['Case']>, ParentType, ContextType, RequireFields<QueryCaseArgs, 'id'>>;
+  cases?: Resolver<Maybe<Array<Maybe<ResolversTypes['Case']>>>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };
+
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -240,9 +488,14 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  AuthData?: AuthDataResolvers<ContextType>;
+  AuthResponse?: AuthResponseResolvers<ContextType>;
   Case?: CaseResolvers<ContextType>;
+  Location?: LocationResolvers<ContextType>;
+  MessageResponse?: MessageResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
 };
 

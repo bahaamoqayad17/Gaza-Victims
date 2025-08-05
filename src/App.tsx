@@ -31,7 +31,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/upload" element={<Upload />} />
+            {/* <Route path="/upload" element={<Upload />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/case/:id" element={<CaseDetail />} />
             <Route path="/map" element={<Map />} />
@@ -43,7 +43,7 @@ const App = () => (
             <Route path="/review-case" element={<ReviewCase />} />
             <Route path="/case-submitted" element={<CaseSubmitted />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/moderators" element={<ModeratorsDashboard />} />
+            <Route path="/moderators" element={<ModeratorsDashboard />} /> */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

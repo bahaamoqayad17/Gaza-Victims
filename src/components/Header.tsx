@@ -17,42 +17,42 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
 
   // Set RTL for Arabic and Farsi
   useEffect(() => {
-    if (currentLanguage === 'ar' || currentLanguage === 'fa') {
-      document.body.setAttribute('dir', 'rtl');
+    if (currentLanguage === "ar" || currentLanguage === "fa") {
+      document.body.setAttribute("dir", "rtl");
     } else {
-      document.body.setAttribute('dir', 'ltr');
+      document.body.setAttribute("dir", "ltr");
     }
   }, [currentLanguage]);
 
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/':
-        return t('archive');
-      case '/browse':
-        return t('cases');
-      case '/map':
-        return t('map');
-      case '/upload':
-        return t('submitDocumentation');
-      case '/about':
-        return t('about');
-      case '/legal':
-        return 'Legal Information';
-      case '/download':
-        return 'Download Archive';
-      case '/report':
-        return t('reportCase');
+      case "/":
+        return t("archive");
+      case "/browse":
+        return t("cases");
+      case "/map":
+        return t("map");
+      case "/upload":
+        return t("submitDocumentation");
+      case "/about":
+        return t("about");
+      case "/legal":
+        return "Legal Information";
+      case "/download":
+        return "Download Archive";
+      case "/report":
+        return t("reportCase");
       default:
-        if (location.pathname.startsWith('/case/')) {
-          return 'Case Details';
+        if (location.pathname.startsWith("/case/")) {
+          return "Case Details";
         }
-        return t('archive');
+        return t("archive");
     }
   };
 
   const isActivePage = (path: string) => {
-    if (path === '/' && location.pathname === '/') return true;
-    if (path !== '/' && location.pathname.startsWith(path)) return true;
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.startsWith(path)) return true;
     return false;
   };
 
@@ -75,9 +75,13 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               )}
               <Link to="/" className="flex items-center gap-2">
                 <h1 className="text-lg font-bold truncate">
-                  {location.pathname === '/' ? getPageTitle() : (
+                  {location.pathname === "/" ? (
+                    getPageTitle()
+                  ) : (
                     <>
-                      <span className="text-muted-foreground">{t('archive')}</span>
+                      <span className="text-muted-foreground">
+                        {t("archive")}
+                      </span>
                       <span className="text-muted-foreground mx-2">•</span>
                       <span>{getPageTitle()}</span>
                     </>
@@ -89,7 +93,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               <Button variant="outline" size="sm" asChild>
                 <Link to="/auth">
                   <LogIn className="h-4 w-4 mr-1" />
-                    {t('login')}
+                  {t("login")}
                 </Link>
               </Button>
               <LanguageSelector />
@@ -97,45 +101,45 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
           </div>
           {/* Mobile navigation - second line */}
           <div className="flex justify-center items-center gap-4 pb-3 text-sm font-medium border-t pt-2">
-            <Link 
-              to="/browse" 
+            <Link
+              to="/browse"
               className={`px-2 py-1 rounded transition-colors ${
-                isActivePage('/browse') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/browse")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('cases')}
+              {t("cases")}
             </Link>
-            <Link 
-              to="/map" 
+            <Link
+              to="/map"
               className={`px-2 py-1 rounded transition-colors ${
-                isActivePage('/map') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/map")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('map')}
+              {t("map")}
             </Link>
-            <Link 
-              to="/upload" 
+            <Link
+              to="/upload"
               className={`px-2 py-1 rounded transition-colors ${
-                isActivePage('/upload') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/upload")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('submit')}
+              {t("submit")}
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               className={`px-2 py-1 rounded transition-colors ${
-                isActivePage('/about') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/about")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('about')}
+              {t("about")}
             </Link>
           </div>
         </div>
@@ -155,9 +159,13 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
             )}
             <Link to="/" className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">
-                {location.pathname === '/' ? t('archive') : (
+                {location.pathname === "/" ? (
+                  t("archive")
+                ) : (
                   <>
-                    <span className="text-muted-foreground">{t('archive')}</span>
+                    <span className="text-muted-foreground">
+                      {t("archive")}
+                    </span>
                     <span className="text-muted-foreground mx-2">•</span>
                     <span>{getPageTitle()}</span>
                   </>
@@ -166,50 +174,50 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
             </Link>
           </div>
           <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
-            <Link 
-              to="/browse" 
+            <Link
+              to="/browse"
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
-                isActivePage('/browse') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/browse")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('cases')}
+              {t("cases")}
             </Link>
-            <Link 
-              to="/map" 
+            <Link
+              to="/map"
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
-                isActivePage('/map') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/map")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('map')}
+              {t("map")}
             </Link>
-            <Link 
-              to="/upload" 
+            <Link
+              to="/upload"
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
-                isActivePage('/upload') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/upload")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('submit')}
+              {t("submit")}
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors hidden md:inline-block ${
-                isActivePage('/about') 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'hover:bg-muted hover:text-foreground'
+                isActivePage("/about")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t('about')}
+              {t("about")}
             </Link>
             <Button variant="outline" size="sm" asChild>
               <Link to="/auth">
                 <LogIn className="h-4 w-4 mr-1" />
-                {t('login')}
+                {t("login")}
               </Link>
             </Button>
             <LanguageSelector />

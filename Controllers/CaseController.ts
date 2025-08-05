@@ -87,6 +87,11 @@ export const createCaseWithFiles = async (caseData: any, files: any) => {
   }
 };
 
+export const getCasesLocations = async () => {
+  const locations = await Case.find().select("location");
+  return locations;
+};
+
 export const getCase = show(Case);
 export const updateCase = update(Case);
 export const deleteCase = deleteModel(Case);

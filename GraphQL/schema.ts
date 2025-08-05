@@ -66,11 +66,6 @@ export const typeDefs = gql`
     updatedAt: String!
   }
 
-  type Location {
-    lat: String
-    lng: String
-  }
-
   input CaseInput {
     name: String!
     age: Int!
@@ -128,11 +123,17 @@ export const typeDefs = gql`
     passwordConfirm: String!
   }
 
+  type Location {
+    lat: String
+    lng: String
+  }
+
   type Query {
     users: [User]
     user(id: ID!): User
     cases: [Case]
     case(id: ID!): Case
+    casesLocations: [Location]
   }
 
   type Mutation {

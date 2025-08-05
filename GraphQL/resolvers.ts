@@ -1,6 +1,9 @@
 import User from "@/Models/User";
 import Case from "@/Models/Case";
-import { createCaseWithFiles } from "@/Controllers/CaseController";
+import {
+  createCaseWithFiles,
+  getCasesLocations,
+} from "@/Controllers/CaseController";
 import {
   register,
   login,
@@ -15,6 +18,7 @@ export const resolvers: any = {
       await User.findById(args.id).select("-password -passwordConfirm"),
     cases: async () => await Case.find(),
     case: async (_: any, args: { id: string }) => await Case.findById(args.id),
+    casesLocations: async () => await getCasesLocations(),
   },
 
   Mutation: {

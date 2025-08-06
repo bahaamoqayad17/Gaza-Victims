@@ -1,63 +1,67 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield, Upload as UploadIcon, ArrowLeft, ArrowRight, X, Eye, Download } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { Shield, ArrowLeft, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import ReCAPTCHA from "react-google-recaptcha";
+import ReviewSubmittedCase from "@/components/UploadSteps/ReviewSubmittedCase";
+import FirstStep from "@/components/UploadSteps/FirstStep";
+import SecondStep from "@/components/UploadSteps/SecondStep";
+import ThirdStep from "@/components/UploadSteps/ThirdStep";
+import FourthStep from "@/components/UploadSteps/FourthStep";
+import SubmittionSummary from "@/components/UploadSteps/SubmittionSummary";
 
 const Upload = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
-  
+
   // Form state
   const [formData, setFormData] = useState({
-    name: '',
-    age: '',
-    occupation: '',
-    background: '',
-    date: '',
-    location: '',
-    circumstances: '',
-    witnesses: '',
-    source: '',
-    notes: '',
+    name: "",
+    age: "",
+    occupation: "",
+    background: "",
+    date: "",
+    location: "",
+    circumstances: "",
+    witnesses: "",
+    source: "",
+    notes: "",
     consentAgreed: false,
-    safetyAcknowledged: false
+    safetyAcknowledged: false,
   });
   const [familyCounts, setFamilyCounts] = useState({
     daughters: 0,
     sons: 0,
     brothers: 0,
-    sisters: 0
+    sisters: 0,
   });
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
-  const [socialMediaUrls, setSocialMediaUrls] = useState<string[]>(['']);
-  const [socialMediaPreview, setSocialMediaPreview] = useState<string | null>(null);
-  const [newsLinks, setNewsLinks] = useState<string[]>(['']);
+  const [socialMediaUrls, setSocialMediaUrls] = useState<string[]>([""]);
+  const [socialMediaPreview, setSocialMediaPreview] = useState<string | null>(
+    null
+  );
+  const [newsLinks, setNewsLinks] = useState<string[]>([""]);
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
   const [isGraphicContent, setIsGraphicContent] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
-  const [cause, setCause] = useState('');
-  const [otherCauseDetails, setOtherCauseDetails] = useState('');
-  const [perpetrator, setPerpetrator] = useState('');
-  const [otherPerpetratorDetails, setOtherPerpetratorDetails] = useState('');
-  const [perpetratorEvidence, setPerpetratorEvidence] = useState('');
+  const [cause, setCause] = useState("");
+  const [otherCauseDetails, setOtherCauseDetails] = useState("");
+  const [perpetrator, setPerpetrator] = useState("");
+  const [otherPerpetratorDetails, setOtherPerpetratorDetails] = useState("");
+  const [perpetratorEvidence, setPerpetratorEvidence] = useState("");
   const [proofOfIdFiles, setProofOfIdFiles] = useState<File[]>([]);
   const [proofOfDeathFiles, setProofOfDeathFiles] = useState<File[]>([]);
-  const [additionalEvidenceFiles, setAdditionalEvidenceFiles] = useState<File[]>([]);
-  const [isAdditionalEvidenceGraphic, setIsAdditionalEvidenceGraphic] = useState(false);
+  const [additionalEvidenceFiles, setAdditionalEvidenceFiles] = useState<
+    File[]
+  >([]);
+  const [isAdditionalEvidenceGraphic, setIsAdditionalEvidenceGraphic] =
+    useState(false);
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, totalSteps));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
@@ -69,50 +73,52 @@ const Upload = () => {
 
   const addSocialMediaUrl = () => {
     if (socialMediaUrls.length < 10) {
-      setSocialMediaUrls(prev => [...prev, '']);
+      setSocialMediaUrls((prev) => [...prev, ""]);
     }
   };
 
   const removeSocialMediaUrl = (index: number) => {
-    setSocialMediaUrls(prev => prev.filter((_, i) => i !== index));
+    setSocialMediaUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateSocialMediaUrl = (index: number, value: string) => {
-    setSocialMediaUrls(prev => prev.map((url, i) => i === index ? value : url));
+    setSocialMediaUrls((prev) =>
+      prev.map((url, i) => (i === index ? value : url))
+    );
   };
 
   const addNewsLink = () => {
     if (newsLinks.length < 10) {
-      setNewsLinks(prev => [...prev, '']);
+      setNewsLinks((prev) => [...prev, ""]);
     }
   };
 
   const removeNewsLink = (index: number) => {
-    setNewsLinks(prev => prev.filter((_, i) => i !== index));
+    setNewsLinks((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateNewsLink = (index: number, value: string) => {
-    setNewsLinks(prev => prev.map((link, i) => i === index ? value : link));
+    setNewsLinks((prev) => prev.map((link, i) => (i === index ? value : link)));
   };
 
   const removeAdditionalPhoto = (index: number) => {
-    setAdditionalPhotos(prev => prev.filter((_, i) => i !== index));
+    setAdditionalPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeEvidenceFile = (index: number) => {
-    setEvidenceFiles(prev => prev.filter((_, i) => i !== index));
+    setEvidenceFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeProofOfIdFile = (index: number) => {
-    setProofOfIdFiles(prev => prev.filter((_, i) => i !== index));
+    setProofOfIdFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeProofOfDeathFile = (index: number) => {
-    setProofOfDeathFiles(prev => prev.filter((_, i) => i !== index));
+    setProofOfDeathFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeAdditionalEvidenceFile = (index: number) => {
-    setAdditionalEvidenceFiles(prev => prev.filter((_, i) => i !== index));
+    setAdditionalEvidenceFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -132,27 +138,9 @@ const Upload = () => {
             </span>
           </div>
           <Progress value={progress} className="h-2" />
-          
+
           {/* Review Submitted Case Link - Only show on step 1 */}
-          {currentStep === 1 && (
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                    Already submitted a case?
-                  </h4>
-                  <p className="text-xs text-blue-600 dark:text-blue-300">
-                    Review your submission, add additional information, or request changes
-                  </p>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/review-case">
-                    Review Submitted Case
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          )}
+          {currentStep === 1 && <ReviewSubmittedCase />}
         </div>
       </div>
 
@@ -171,791 +159,109 @@ const Upload = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               {currentStep === 1 && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" placeholder="Full name" />
-                    </div>
-                    <div>
-                      <Label htmlFor="age">Age</Label>
-                      <Input id="age" type="number" placeholder="Age" />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="gender">Gender</Label>
-                      <select id="gender" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                        <option value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </select>
-                    </div>
-                    <div>
-                      <Label htmlFor="occupation">Occupation</Label>
-                      <Input id="occupation" placeholder="Occupation or role" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>They leave behind</Label>
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="father" />
-                          <Label htmlFor="father" className="text-sm">Father</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="mother" />
-                          <Label htmlFor="mother" className="text-sm">Mother</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="wife" />
-                          <Label htmlFor="wife" className="text-sm">Wife</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="husband" />
-                          <Label htmlFor="husband" className="text-sm">Husband</Label>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 gap-3">
-                        <div className="flex items-center justify-between p-2 border rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="daughter" />
-                            <Label htmlFor="daughter" className="text-sm">Daughter(s)</Label>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, daughters: Math.max(0, prev.daughters - 1)}))}
-                            >
-                              -
-                            </Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.daughters}</span>
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, daughters: prev.daughters + 1}))}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between p-2 border rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="son" />
-                            <Label htmlFor="son" className="text-sm">Son(s)</Label>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, sons: Math.max(0, prev.sons - 1)}))}
-                            >
-                              -
-                            </Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.sons}</span>
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, sons: prev.sons + 1}))}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between p-2 border rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="brother" />
-                            <Label htmlFor="brother" className="text-sm">Brother(s)</Label>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, brothers: Math.max(0, prev.brothers - 1)}))}
-                            >
-                              -
-                            </Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.brothers}</span>
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, brothers: prev.brothers + 1}))}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between p-2 border rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="sister" />
-                            <Label htmlFor="sister" className="text-sm">Sister(s)</Label>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, sisters: Math.max(0, prev.sisters - 1)}))}
-                            >
-                              -
-                            </Button>
-                            <span className="mx-2 text-sm min-w-[20px] text-center">{familyCounts.sisters}</span>
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-6 w-6 p-0"
-                              onClick={() => setFamilyCounts(prev => ({...prev, sisters: prev.sisters + 1}))}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="grandfather" />
-                          <Label htmlFor="grandfather" className="text-sm">Grandfather</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="grandmother" />
-                          <Label htmlFor="grandmother" className="text-sm">Grandmother</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="other" />
-                          <Label htmlFor="other" className="text-sm">Other Relative</Label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="photo">Portrait Photo</Label>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
-                      <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Upload a dignified portrait photo
-                      </p>
-                      <Input type="file" accept="image/*" className="mt-2" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>Additional Photos and Videos (up to 5)</Label>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center">
-                      <UploadIcon className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Upload additional photos showing the person's life
-                      </p>
-                      <Input 
-                        type="file" 
-                        accept="image/*" 
-                        multiple 
-                        className="mt-2"
-                        onChange={(e) => {
-                          const files = Array.from(e.target.files || []);
-                          setAdditionalPhotos(prev => [...prev, ...files].slice(0, 5));
-                        }}
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      ⚠️ Note: Any other person appearing in photos must consent or be blurred prior to uploading
-                    </p>
-                    {additionalPhotos.length > 0 && (
-                      <div className="grid grid-cols-3 gap-2 mt-2">
-                        {additionalPhotos.map((file, index) => (
-                          <div key={index} className="relative">
-                            <img 
-                              src={URL.createObjectURL(file)} 
-                              alt={`Additional ${index + 1}`}
-                              className="w-full h-20 object-cover rounded"
-                            />
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              className="absolute top-1 right-1 h-6 w-6 p-0"
-                              onClick={() => removeAdditionalPhoto(index)}
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="socialMedia">Social Media Content</Label>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Note: Link photos or videos directly from the victim's social media page and the media will be extracted and added in their profile.
-                    </p>
-                    <div className="space-y-2">
-                      {socialMediaUrls.map((url, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input 
-                            placeholder="Paste URL from social media post (Instagram, Facebook, etc.)"
-                            value={url}
-                            onChange={(e) => updateSocialMediaUrl(index, e.target.value)}
-                          />
-                          <Button type="button" onClick={() => handleSocialMediaFetch(index)}>
-                            <Download className="w-4 h-4" />
-                          </Button>
-                          {socialMediaUrls.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removeSocialMediaUrl(index)}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                      {socialMediaUrls.length < 10 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={addSocialMediaUrl}
-                          className="w-full"
-                        >
-                          + Add another social media link
-                        </Button>
-                      )}
-                      {socialMediaPreview && (
-                        <div className="border rounded p-2">
-                          <p className="text-sm text-muted-foreground mb-2">Preview:</p>
-                          <img src={socialMediaPreview} alt="Social media preview" className="w-full max-w-xs rounded" />
-                          <Button size="sm" variant="outline" className="mt-2">
-                            <Eye className="w-3 h-3 mr-1" />
-                            Blur faces
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="background">Background</Label>
-                    <Textarea 
-                      id="background" 
-                      placeholder="Brief background about the victim's life..."
-                      rows={3}
-                    />
-                  </div>
-                </div>
+                <FirstStep
+                  addSocialMediaUrl={addSocialMediaUrl}
+                  removeSocialMediaUrl={removeSocialMediaUrl}
+                  updateSocialMediaUrl={updateSocialMediaUrl}
+                  socialMediaUrls={socialMediaUrls}
+                  setAdditionalPhotos={setAdditionalPhotos}
+                  setFamilyCounts={setFamilyCounts}
+                  removeAdditionalPhoto={removeAdditionalPhoto}
+                  socialMediaPreview={socialMediaPreview}
+                  familyCounts={familyCounts}
+                  additionalPhotos={additionalPhotos}
+                  handleSocialMediaFetch={handleSocialMediaFetch}
+                />
               )}
 
               {currentStep === 2 && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Date of Incident (DD/MM/YYYY)</Label>
-                      <Input id="date" type="date" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="location">Location</Label>
-                      <Input id="location" placeholder="City, Country" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="cause">Cause of Death</Label>
-                    <Select value={cause} onValueChange={setCause}>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Select cause of death" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="bombing">Bombing</SelectItem>
-                        <SelectItem value="shooting">Shooting</SelectItem>
-                        <SelectItem value="torture">Torture</SelectItem>
-                        <SelectItem value="intentional-starvation">Intentional Starvation</SelectItem>
-                        <SelectItem value="detention-related">Detention Related Death</SelectItem>
-                        <SelectItem value="forced-disappearance">Forced Disappearance</SelectItem>
-                        <SelectItem value="targeted-killing">Targeted Killing</SelectItem>
-                        <SelectItem value="medical-negligence">Medical Negligence/Denial of Care</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {cause === 'other' && (
-                      <div className="mt-2">
-                        <Label htmlFor="otherCause">Please specify</Label>
-                        <Input 
-                          id="otherCause"
-                          value={otherCauseDetails}
-                          onChange={(e) => setOtherCauseDetails(e.target.value)}
-                          placeholder="Please describe the cause of death"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="circumstances">Circumstances</Label>
-                    <Textarea 
-                      id="circumstances" 
-                      placeholder="Description of what happened..."
-                      rows={4}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="perpetrator">Perpetrator</Label>
-                    <Select value={perpetrator} onValueChange={setPerpetrator}>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Select perpetrator type" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="military-forces">Military Forces</SelectItem>
-                        <SelectItem value="police-forces">Police Forces</SelectItem>
-                        <SelectItem value="armed-militia">Armed Militia</SelectItem>
-                        <SelectItem value="terrorist-group">Terrorist Group</SelectItem>
-                        <SelectItem value="criminal-organization">Criminal Organization</SelectItem>
-                        <SelectItem value="government-officials">Government Officials</SelectItem>
-                        <SelectItem value="unknown-perpetrator">Unknown Perpetrator</SelectItem>
-                        <SelectItem value="civilian">Civilian</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {perpetrator === 'other' && (
-                      <div className="mt-2">
-                        <Label htmlFor="otherPerpetrator">Please specify</Label>
-                        <Input 
-                          id="otherPerpetrator"
-                          value={otherPerpetratorDetails}
-                          onChange={(e) => setOtherPerpetratorDetails(e.target.value)}
-                          placeholder="Please describe the perpetrator"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="perpetratorEvidence">How do you know they are the ones who did it?</Label>
-                    <Textarea 
-                      id="perpetratorEvidence"
-                      value={perpetratorEvidence}
-                      onChange={(e) => setPerpetratorEvidence(e.target.value)}
-                      placeholder="Describe the evidence or reasoning that identifies this perpetrator..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="witnesses">Witness Information (Optional)</Label>
-                    <Textarea 
-                      id="witnesses" 
-                      placeholder="Any witness accounts or references..."
-                      rows={2}
-                    />
-                  </div>
-                </div>
+                <SecondStep
+                  cause={cause}
+                  setCause={setCause}
+                  otherCauseDetails={otherCauseDetails}
+                  setOtherCauseDetails={setOtherCauseDetails}
+                  perpetrator={perpetrator}
+                  otherPerpetratorDetails={otherPerpetratorDetails}
+                  setOtherPerpetratorDetails={setOtherPerpetratorDetails}
+                  perpetratorEvidence={perpetratorEvidence}
+                  setPerpetratorEvidence={setPerpetratorEvidence}
+                  setPerpetrator={setPerpetrator}
+                />
               )}
 
               {currentStep === 3 && (
-                <div className="space-y-6">
-                  {/* Evidence Collection Tutorial */}
-                  <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      Evidence Collection Tutorial
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border">
-                        <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center mb-2">
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                            <p className="text-xs text-muted-foreground">Video Tutorial: Safe Evidence Collection</p>
-                            <p className="text-xs text-muted-foreground">Duration: 2:30</p>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" className="w-full">
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                          </svg>
-                          Watch Tutorial
-                        </Button>
-                      </div>
-                      <div className="text-sm space-y-2">
-                        <h5 className="font-medium text-blue-900 dark:text-blue-100">Quick Safety Tips:</h5>
-                        <ul className="space-y-1 text-blue-800 dark:text-blue-200 text-xs">
-                          <li>• Use secure, private networks when uploading</li>
-                          <li>• Remove metadata from photos if safety is a concern</li>
-                          <li>• Consider using VPN for additional privacy</li>
-                          <li>• Blur faces of living individuals for their protection</li>
-                          <li>• Document with timestamp and location when safe to do so</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>Proof of ID</Label>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
-                      <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Upload government ID, passport, or identity documents
-                      </p>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        You can add multiple photos and videos (up to 20 items). If possible, also take video of the ID document.
-                      </p>
-                      <Input 
-                        type="file" 
-                        multiple 
-                        accept="image/*,video/*,.pdf,.doc,.docx"
-                        className="mt-2"
-                        onChange={(e) => {
-                          const files = Array.from(e.target.files || []);
-                          setProofOfIdFiles(prev => [...prev, ...files].slice(0, 20));
-                        }}
-                      />
-                    </div>
-                    {proofOfIdFiles.length > 0 && (
-                      <div className="space-y-2 mt-2">
-                        {proofOfIdFiles.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
-                            <span className="text-sm">{file.name}</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeProofOfIdFile(index)}
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label>Proof of Death</Label>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
-                      <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Upload death certificate, medical reports, or documentation of death
-                      </p>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        You can add multiple photos and videos (up to 20 items). If possible, also take video of the victim's face and body for identification.
-                      </p>
-                      <Input 
-                        type="file" 
-                        multiple 
-                        accept="image/*,video/*,.pdf,.doc,.docx,.txt"
-                        className="mt-2"
-                        onChange={(e) => {
-                          const files = Array.from(e.target.files || []);
-                          setProofOfDeathFiles(prev => [...prev, ...files].slice(0, 20));
-                        }}
-                      />
-                    </div>
-                    {proofOfDeathFiles.length > 0 && (
-                      <div className="space-y-2 mt-2">
-                        {proofOfDeathFiles.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
-                            <span className="text-sm">{file.name}</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeProofOfDeathFile(index)}
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="space-y-3 mt-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox 
-                          id="graphic" 
-                          checked={isGraphicContent}
-                          onCheckedChange={(checked) => setIsGraphicContent(checked as boolean)}
-                        />
-                        <Label htmlFor="graphic" className="text-sm">
-                          This evidence contains graphic content
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>Additional Evidence</Label>
-                    <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
-                      <UploadIcon className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Upload documents, images, videos, audio files, or any other evidence
-                      </p>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        Include anything captured before, during, or after the incident that is related to this case.
-                      </p>
-                      <Input 
-                        type="file" 
-                        multiple 
-                        accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip,.rar"
-                        className="mt-2"
-                        onChange={(e) => {
-                          const files = Array.from(e.target.files || []);
-                          setAdditionalEvidenceFiles(prev => [...prev, ...files]);
-                        }}
-                      />
-                    </div>
-                    {additionalEvidenceFiles.length > 0 && (
-                      <div className="space-y-2 mt-2">
-                        {additionalEvidenceFiles.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
-                            <span className="text-sm">{file.name}</span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => removeAdditionalEvidenceFile(index)}
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="space-y-3 mt-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox 
-                          id="additionalEvidenceGraphic" 
-                          checked={isAdditionalEvidenceGraphic}
-                          onCheckedChange={(checked) => setIsAdditionalEvidenceGraphic(checked as boolean)}
-                        />
-                        <Label htmlFor="additionalEvidenceGraphic" className="text-sm">
-                          This additional evidence contains graphic content
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="source">Source of Information</Label>
-                    <Input id="source" placeholder="How you obtained this information" />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="relationship">To the victim you are:</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your relationship" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="relative">Relative</SelectItem>
-                        <SelectItem value="eyewitness">Eye witness</SelectItem>
-                        <SelectItem value="journalist">Journalist</SelectItem>
-                        <SelectItem value="volunteer">Volunteer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>News Article Links (Optional)</Label>
-                    <div className="space-y-2">
-                      {newsLinks.map((link, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input 
-                            placeholder="Link to news article about this case"
-                            value={link}
-                            onChange={(e) => updateNewsLink(index, e.target.value)}
-                          />
-                          {newsLinks.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removeNewsLink(index)}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                      {newsLinks.length < 10 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={addNewsLink}
-                          className="w-full"
-                        >
-                          + Add another news article link
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="notes">Additional Notes</Label>
-                    <Textarea 
-                      id="notes" 
-                      placeholder="Any additional relevant information..."
-                      rows={3}
-                    />
-                  </div>
-                </div>
+                <ThirdStep
+                  proofOfIdFiles={proofOfIdFiles}
+                  setProofOfIdFiles={setProofOfIdFiles}
+                  removeProofOfIdFile={removeProofOfIdFile}
+                  proofOfDeathFiles={proofOfDeathFiles}
+                  setProofOfDeathFiles={setProofOfDeathFiles}
+                  removeProofOfDeathFile={removeProofOfDeathFile}
+                  isGraphicContent={isGraphicContent}
+                  setIsGraphicContent={setIsGraphicContent}
+                  additionalEvidenceFiles={additionalEvidenceFiles}
+                  setAdditionalEvidenceFiles={setAdditionalEvidenceFiles}
+                  removeAdditionalEvidenceFile={removeAdditionalEvidenceFile}
+                  isAdditionalEvidenceGraphic={isAdditionalEvidenceGraphic}
+                  setIsAdditionalEvidenceGraphic={
+                    setIsAdditionalEvidenceGraphic
+                  }
+                  newsLinks={newsLinks}
+                  updateNewsLink={updateNewsLink}
+                  removeNewsLink={removeNewsLink}
+                  addNewsLink={addNewsLink}
+                />
               )}
 
               {currentStep === 4 && (
-                <div className="space-y-6">
-                  <h4 className="font-semibold">Case Preview</h4>
-                  
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Victim Information</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <p><span className="font-medium">Name:</span> {formData.name || 'Not provided'}</p>
-                      <p><span className="font-medium">Age:</span> {formData.age || 'Not provided'}</p>
-                      <p><span className="font-medium">Occupation:</span> {formData.occupation || 'Not provided'}</p>
-                      <p><span className="font-medium">Background:</span> {formData.background || 'Not provided'}</p>
-                      {additionalPhotos.length > 0 && (
-                        <div>
-                          <span className="font-medium">Additional Photos:</span> {additionalPhotos.length} uploaded
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Incident Details</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <p><span className="font-medium">Date:</span> {formData.date || 'Not provided'}</p>
-                      <p><span className="font-medium">Location:</span> {formData.location || 'Not provided'}</p>
-                      <p><span className="font-medium">Circumstances:</span> {formData.circumstances || 'Not provided'}</p>
-                      <p><span className="font-medium">Witnesses:</span> {formData.witnesses || 'Not provided'}</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Evidence</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <p><span className="font-medium">Files:</span> {evidenceFiles.length} uploaded</p>
-                      <p><span className="font-medium">Graphic Content:</span> {isGraphicContent ? 'Yes' : 'No'}</p>
-                      <p><span className="font-medium">Source:</span> {formData.source || 'Not provided'}</p>
-                      <p><span className="font-medium">Notes:</span> {formData.notes || 'Not provided'}</p>
-                    </CardContent>
-                  </Card>
-                </div>
+                <FourthStep
+                  formData={formData}
+                  additionalPhotos={additionalPhotos}
+                  evidenceFiles={evidenceFiles}
+                  isGraphicContent={isGraphicContent}
+                />
               )}
 
               {currentStep === 5 && (
-                <div className="space-y-4">
-                  <div className="bg-muted/50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Submission Summary</h4>
-                    <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• Your identity remains completely anonymous</li>
-                      <li>• All files are encrypted during transmission</li>
-                      <li>• Case will be reviewed before publication</li>
-                      <li>• You will receive a reference number for tracking</li>
-                    </ul>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="consent" 
-                        checked={formData.consentAgreed}
-                        onCheckedChange={(checked) => setFormData(prev => ({...prev, consentAgreed: checked as boolean}))}
-                      />
-                      <Label htmlFor="consent" className="text-sm">
-                        I confirm that I have the right to share this information and any media content included
-                      </Label>
-                    </div>
-                    
-                    <div className="flex items-start space-x-2">
-                      <Checkbox 
-                        id="safety-acknowledgment" 
-                        checked={formData.safetyAcknowledged}
-                        onCheckedChange={(checked) => setFormData(prev => ({...prev, safetyAcknowledged: checked as boolean}))}
-                        required 
-                      />
-                      <Label htmlFor="safety-acknowledgment" className="text-sm leading-relaxed">
-                        <span className="font-medium text-red-600">Safety Acknowledgment:</span> I understand and acknowledge that I am solely responsible for my own safety and security when submitting this documentation. I take full responsibility for any risks associated with my submission, including but not limited to potential retaliation, legal consequences, or other harm. The platform provides no guarantee of protection and assumes no responsibility for any consequences, whether immediate or future, that may arise from my act of submission.
-                      </Label>
-                    </div>
-                  </div>
-
-                  <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
-                      ⚠️ Please ensure all information is accurate and that you have the right to share this documentation.
-                    </p>
-                  </div>
-
-                  <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
-                    <p className="text-xs text-red-800 dark:text-red-200 leading-relaxed">
-                      <span className="font-semibold">IMPORTANT SAFETY NOTICE:</span> By proceeding with this submission, you acknowledge that you are taking this action at your own risk and discretion. This platform cannot and does not provide any guarantees regarding your safety, anonymity, or protection from potential consequences. You are strongly advised to take all necessary precautions to protect yourself and consult with appropriate security professionals if you have concerns about your safety.
-                    </p>
-                  </div>
-
-                  {/* Captcha */}
-                  <div className="flex justify-center">
-                    <ReCAPTCHA
-                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test site key - replace with actual key
-                      onChange={(value) => setCaptchaValue(value)}
-                      onExpired={() => setCaptchaValue(null)}
-                    />
-                  </div>
-                </div>
+                <SubmittionSummary
+                  formData={formData}
+                  setFormData={setFormData}
+                  setCaptchaValue={setCaptchaValue}
+                />
               )}
 
               {/* Navigation */}
               <div className="flex justify-between pt-6 border-t">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={prevStep}
                   disabled={currentStep === 1}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Previous
                 </Button>
-                
+
                 {currentStep < totalSteps ? (
                   <Button onClick={nextStep}>
                     Next
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button 
-                    disabled={!formData.consentAgreed || !formData.safetyAcknowledged || !captchaValue}
+                  <Button
+                    disabled={
+                      !formData.consentAgreed ||
+                      !formData.safetyAcknowledged ||
+                      !captchaValue
+                    }
                     onClick={() => {
                       // Generate case number
                       const year = new Date().getFullYear();
-                      const randomChars = Math.random().toString(36).substring(2, 10).toUpperCase();
+                      const randomChars = Math.random()
+                        .toString(36)
+                        .substring(2, 10)
+                        .toUpperCase();
                       const caseNumber = `${year}-${randomChars}`;
-                      
+
                       // Navigate to success page with case number
                       navigate(`/case-submitted?caseNumber=${caseNumber}`);
                     }}
@@ -968,7 +274,7 @@ const Upload = () => {
           </Card>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

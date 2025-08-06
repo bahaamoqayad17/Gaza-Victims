@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ApolloProvider } from "@apollo/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/components/LanguageSelector";
 import Index from "./pages/Index";
@@ -19,38 +20,41 @@ import ReviewCase from "./pages/ReviewCase";
 import CaseSubmitted from "./pages/CaseSubmitted";
 import Auth from "./pages/Auth";
 import ModeratorsDashboard from "./pages/ModeratorsDashboard";
+import client from "./graphql/client";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <LanguageProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            {/* <Route path="/upload" element={<Upload />} />
-            <Route path="/browse" element={<Browse />} />
-            <Route path="/case/:id" element={<CaseDetail />} />
-            <Route path="/map" element={<Map />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/legal" element={<Legal />} />
-            <Route path="/download-archive" element={<DownloadArchive />} />
-            <Route path="/report" element={<ReportCase />} />
-            <Route path="/report-additional" element={<ReportAdditional />} />
-            <Route path="/review-case" element={<ReviewCase />} />
-            <Route path="/case-submitted" element={<CaseSubmitted />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/moderators" element={<ModeratorsDashboard />} /> */}
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </LanguageProvider>
-  </QueryClientProvider>
+  <ApolloProvider client={client}>
+    <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/browse" element={<Browse />} />
+              {/* <Route path="/case/:id" element={<CaseDetail />} />
+              <Route path="/map" element={<Map />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/download-archive" element={<DownloadArchive />} />
+              <Route path="/report" element={<ReportCase />} />
+              <Route path="/report-additional" element={<ReportAdditional />} />
+              <Route path="/review-case" element={<ReviewCase />} />
+              <Route path="/case-submitted" element={<CaseSubmitted />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/moderators" element={<ModeratorsDashboard />} /> */}
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </LanguageProvider>
+    </QueryClientProvider>
+  </ApolloProvider>
 );
 
 export default App;

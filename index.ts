@@ -17,9 +17,8 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.all("*", (req, res, next) => {
-  next(new AppError("Can't find " + req.originalUrl + " on this server", 404));
-});
+// Note: The catch-all route will be added AFTER GraphQL middleware is applied in server.ts
+// This prevents it from interfering with the /graphql endpoint
 
 app.use(GlobalErrorHandler);
 

@@ -1,7 +1,5 @@
-import { create, show, update, deleteModel } from "./FactoryHandler";
 import Case from "@/Models/Case";
 import { uploadMultipleFilesToS3, uploadFileToS3 } from "@/Utils/s3-utils";
-import { Request, Response } from "express";
 
 export const getAllCases = async () => {
   const cases = await Case.find();
@@ -92,6 +90,7 @@ export const getCasesLocations = async () => {
   return locations;
 };
 
-export const getCase = show(Case);
-export const updateCase = update(Case);
-export const deleteCase = deleteModel(Case);
+export const getCase = async (id: string) => {
+  const caseData = await Case.findById(id);
+  return caseData;
+};

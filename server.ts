@@ -4,6 +4,7 @@ import app from "@/index";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "@/GraphQL/schema";
 import { resolvers } from "@/GraphQL/resolvers";
+import AppError from "@/Utils/AppError";
 
 process.on("uncaughtException", (err: Error) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
@@ -22,10 +23,18 @@ async function startServer() {
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
+      introspection: true,
     });
 
     await apolloServer.start();
     apolloServer.applyMiddleware({ app: app as any, path: "/graphql" });
+
+    // Add catch-all route AFTER GraphQL middleware is applied
+    app.all("*", (req, res, next) => {
+      next(
+        new AppError("Can't find " + req.originalUrl + " on this server", 404)
+      );
+    });
 
     const port = process.env.PORT || 4000;
     const server = app.listen(port, () => {

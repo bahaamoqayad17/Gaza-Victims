@@ -130,7 +130,6 @@ export const typeDefs = gql`
 
   type Query {
     users: [User]
-    user(id: ID!): User
     cases: [Case]
     case(id: ID!): Case
     casesLocations: [Location]
@@ -142,12 +141,7 @@ export const typeDefs = gql`
     forgotPassword(input: ForgotPasswordInput!): MessageResponse!
     verifyOTP(input: VerifyOTPInput!): MessageResponse!
     resetPassword(input: ResetPasswordInput!): AuthResponse!
-    createUser(
-      name: String!
-      email: String!
-      password: String!
-      passwordConfirm: String!
-    ): User
+    addUser(input: RegisterInput!): User
     createCase(
       caseData: CaseInput!
       portraitPhoto: Upload

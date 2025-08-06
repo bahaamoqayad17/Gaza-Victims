@@ -1,8 +1,8 @@
-import User from "@/Models/User";
-import Case from "@/Models/Case";
 import {
   createCaseWithFiles,
+  getAllCases,
   getCasesLocations,
+  getCase,
 } from "@/Controllers/CaseController";
 import {
   register,
@@ -11,13 +11,12 @@ import {
   verifyOTP,
   resetPassword,
 } from "@/Controllers/AuthController";
+import { addUser, getAllUsers } from "@/Controllers/UserController";
 export const resolvers: any = {
   Query: {
-    users: async () => await User.find().select("-password -passwordConfirm"),
-    user: async (_: any, args: { id: string }) =>
-      await User.findById(args.id).select("-password -passwordConfirm"),
-    cases: async () => await Case.find(),
-    case: async (_: any, args: { id: string }) => await Case.findById(args.id),
+    users: async () => await getAllUsers(),
+    cases: async () => await getAllCases(),
+    case: async (_: any, args: { id: string }) => await getCase(args.id),
     casesLocations: async () => await getCasesLocations(),
   },
 
@@ -84,7 +83,7 @@ export const resolvers: any = {
       return await resetPassword(args.input);
     },
 
-    createUser: async (
+    addUser: async (
       _: any,
       args: {
         input: {
@@ -94,11 +93,7 @@ export const resolvers: any = {
           passwordConfirm: string;
         };
       }
-    ) => {
-      const user = await User.create(args);
-      user.password = ""; // clear sensitive data
-      return user;
-    },
+    ) => await addUser(args.input),
 
     createCase: async (_: any, args: any) => {
       const {

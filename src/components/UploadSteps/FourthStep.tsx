@@ -1,40 +1,51 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "../LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 
 export default function FourthStep({
+  form,
   formData,
   additionalPhotos,
   evidenceFiles,
   isGraphicContent,
+}: {
+  form?: unknown;
+  formData: Record<string, unknown>;
+  additionalPhotos: File[];
+  evidenceFiles: File[];
+  isGraphicContent: boolean;
 }) {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   return (
     <div className="space-y-6">
-      <h4 className="font-semibold">Case Preview</h4>
+      <h4 className="font-semibold">{t("casePreview")}</h4>
 
       <Card>
         <CardHeader>
-          <CardTitle>Victim Information</CardTitle>
+          <CardTitle>{t("victimInformation")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p>
-            <span className="font-medium">Name:</span>{" "}
-            {formData.name || "Not provided"}
+            <span className="font-medium">{t("name")}:</span>{" "}
+            {(formData.name as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Age:</span>{" "}
-            {formData.age || "Not provided"}
+            <span className="font-medium">{t("age")}:</span>{" "}
+            {(formData.age as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Occupation:</span>{" "}
-            {formData.occupation || "Not provided"}
+            <span className="font-medium">{t("occupation")}:</span>{" "}
+            {(formData.occupation as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Background:</span>{" "}
-            {formData.background || "Not provided"}
+            <span className="font-medium">{t("background")}:</span>{" "}
+            {(formData.background as string) || t("notProvided")}
           </p>
           {additionalPhotos.length > 0 && (
             <div>
-              <span className="font-medium">Additional Photos:</span>{" "}
-              {additionalPhotos.length} uploaded
+              <span className="font-medium">{t("additionalPhotos")}:</span>{" "}
+              {additionalPhotos.length} {t("uploaded")}
             </div>
           )}
         </CardContent>
@@ -42,48 +53,48 @@ export default function FourthStep({
 
       <Card>
         <CardHeader>
-          <CardTitle>Incident Details</CardTitle>
+          <CardTitle>{t("incidentDetails")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p>
-            <span className="font-medium">Date:</span>{" "}
-            {formData.date || "Not provided"}
+            <span className="font-medium">{t("date")}:</span>{" "}
+            {(formData.date as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Location:</span>{" "}
-            {formData.location || "Not provided"}
+            <span className="font-medium">{t("location")}:</span>{" "}
+            {(formData.location as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Circumstances:</span>{" "}
-            {formData.circumstances || "Not provided"}
+            <span className="font-medium">{t("circumstances")}:</span>{" "}
+            {(formData.circumstances as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Witnesses:</span>{" "}
-            {formData.witnesses || "Not provided"}
+            <span className="font-medium">{t("witnesses")}:</span>{" "}
+            {(formData.witnesses as string) || t("notProvided")}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Evidence</CardTitle>
+          <CardTitle>{t("evidence")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p>
-            <span className="font-medium">Files:</span> {evidenceFiles.length}{" "}
-            uploaded
+            <span className="font-medium">{t("files")}:</span>{" "}
+            {evidenceFiles.length} {t("uploaded")}
           </p>
           <p>
-            <span className="font-medium">Graphic Content:</span>{" "}
-            {isGraphicContent ? "Yes" : "No"}
+            <span className="font-medium">{t("graphicContent")}:</span>{" "}
+            {isGraphicContent ? t("yes") : t("no")}
           </p>
           <p>
-            <span className="font-medium">Source:</span>{" "}
-            {formData.source || "Not provided"}
+            <span className="font-medium">{t("source")}:</span>{" "}
+            {(formData.source as string) || t("notProvided")}
           </p>
           <p>
-            <span className="font-medium">Notes:</span>{" "}
-            {formData.notes || "Not provided"}
+            <span className="font-medium">{t("notes")}:</span>{" "}
+            {(formData.notes as string) || t("notProvided")}
           </p>
         </CardContent>
       </Card>

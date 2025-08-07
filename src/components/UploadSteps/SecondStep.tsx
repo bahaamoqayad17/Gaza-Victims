@@ -8,8 +8,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { UseFormReturn } from "react-hook-form";
+import { Step2FormData } from "@/lib/validationSchemas";
+import { useLanguage } from "../LanguageSelector";
+import { useTranslation } from "@/lib/translations";
 
 export default function SecondStep({
+  form,
   cause,
   setCause,
   otherCauseDetails,
@@ -20,126 +33,223 @@ export default function SecondStep({
   perpetratorEvidence,
   setPerpetratorEvidence,
   setPerpetrator,
+}: {
+  form: UseFormReturn<Step2FormData>;
+  cause: string;
+  setCause: (cause: string) => void;
+  otherCauseDetails: string;
+  setOtherCauseDetails: (details: string) => void;
+  perpetrator: string;
+  otherPerpetratorDetails: string;
+  setOtherPerpetratorDetails: (details: string) => void;
+  perpetratorEvidence: string;
+  setPerpetratorEvidence: (evidence: string) => void;
+  setPerpetrator: (perpetrator: string) => void;
 }) {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation(currentLanguage);
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="date">Date of Incident (DD/MM/YYYY)</Label>
-          <Input id="date" type="date" />
+    <Form {...form}>
+      <form className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("dateOfIncident")}</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("location")}</FormLabel>
+                <FormControl>
+                  <Input placeholder="City, Country" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
-          <Input id="location" placeholder="City, Country" />
-        </div>
-      </div>
 
-      <div>
-        <Label htmlFor="cause">Cause of Death</Label>
-        <Select value={cause} onValueChange={setCause}>
-          <SelectTrigger className="bg-background">
-            <SelectValue placeholder="Select cause of death" />
-          </SelectTrigger>
-          <SelectContent className="bg-background border shadow-lg z-50">
-            <SelectItem value="bombing">Bombing</SelectItem>
-            <SelectItem value="shooting">Shooting</SelectItem>
-            <SelectItem value="torture">Torture</SelectItem>
-            <SelectItem value="intentional-starvation">
-              Intentional Starvation
-            </SelectItem>
-            <SelectItem value="detention-related">
-              Detention Related Death
-            </SelectItem>
-            <SelectItem value="forced-disappearance">
-              Forced Disappearance
-            </SelectItem>
-            <SelectItem value="targeted-killing">Targeted Killing</SelectItem>
-            <SelectItem value="medical-negligence">
-              Medical Negligence/Denial of Care
-            </SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
+        <FormField
+          control={form.control}
+          name="cause"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("causeOfDeath")}</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setCause(value);
+                  }}
+                >
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder={t("selectCauseOfDeath")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="bombing">{t("bombing")}</SelectItem>
+                    <SelectItem value="shooting">{t("shooting")}</SelectItem>
+                    <SelectItem value="torture">{t("torture")}</SelectItem>
+                    <SelectItem value="intentional-starvation">
+                      {t("intentionalStarvation")}
+                    </SelectItem>
+                    <SelectItem value="detention-related">
+                      {t("detentionRelatedDeath")}
+                    </SelectItem>
+                    <SelectItem value="forced-disappearance">
+                      {t("forcedDisappearance")}
+                    </SelectItem>
+                    <SelectItem value="targeted-killing">
+                      {t("targetedKilling")}
+                    </SelectItem>
+                    <SelectItem value="medical-negligence">
+                      {t("medicalNegligence")}
+                    </SelectItem>
+                    <SelectItem value="other">{t("other")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {cause === "other" && (
           <div className="mt-2">
-            <Label htmlFor="otherCause">Please specify</Label>
+            <Label htmlFor="otherCause">{t("pleaseSpecify")}</Label>
             <Input
               id="otherCause"
               value={otherCauseDetails}
               onChange={(e) => setOtherCauseDetails(e.target.value)}
-              placeholder="Please describe the cause of death"
+              placeholder={t("pleaseDescribeTheCauseOfDeath")}
             />
           </div>
         )}
-      </div>
 
-      <div>
-        <Label htmlFor="circumstances">Circumstances</Label>
-        <Textarea
-          id="circumstances"
-          placeholder="Description of what happened..."
-          rows={4}
+        <FormField
+          control={form.control}
+          name="circumstances"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("circumstances")}</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder={t("descriptionOfWhatHappened")}
+                  rows={4}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <div>
-        <Label htmlFor="perpetrator">Perpetrator</Label>
-        <Select value={perpetrator} onValueChange={setPerpetrator}>
-          <SelectTrigger className="bg-background">
-            <SelectValue placeholder="Select perpetrator type" />
-          </SelectTrigger>
-          <SelectContent className="bg-background border shadow-lg z-50">
-            <SelectItem value="military-forces">Military Forces</SelectItem>
-            <SelectItem value="police-forces">Police Forces</SelectItem>
-            <SelectItem value="armed-militia">Armed Militia</SelectItem>
-            <SelectItem value="terrorist-group">Terrorist Group</SelectItem>
-            <SelectItem value="criminal-organization">
-              Criminal Organization
-            </SelectItem>
-            <SelectItem value="government-officials">
-              Government Officials
-            </SelectItem>
-            <SelectItem value="unknown-perpetrator">
-              Unknown Perpetrator
-            </SelectItem>
-            <SelectItem value="civilian">Civilian</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
+        <FormField
+          control={form.control}
+          name="perpetrator"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("perpetrator")}</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setPerpetrator(value);
+                  }}
+                >
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder={t("selectPerpetratorType")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="military-forces">
+                      {t("militaryForces")}
+                    </SelectItem>
+                    <SelectItem value="police-forces">
+                      {t("policeForces")}
+                    </SelectItem>
+                    <SelectItem value="armed-militia">
+                      {t("armedMilitia")}
+                    </SelectItem>
+                    <SelectItem value="terrorist-group">
+                      {t("terroristGroup")}
+                    </SelectItem>
+                    <SelectItem value="criminal-organization">
+                      {t("criminalOrganization")}
+                    </SelectItem>
+                    <SelectItem value="government-officials">
+                      {t("governmentOfficials")}
+                    </SelectItem>
+                    <SelectItem value="unknown-perpetrator">
+                      {t("unknownPerpetrator")}
+                    </SelectItem>
+                    <SelectItem value="civilian">{t("civilian")}</SelectItem>
+                    <SelectItem value="other">{t("other")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {perpetrator === "other" && (
           <div className="mt-2">
-            <Label htmlFor="otherPerpetrator">Please specify</Label>
+            <Label htmlFor="otherPerpetrator">{t("pleaseSpecify")}</Label>
             <Input
               id="otherPerpetrator"
               value={otherPerpetratorDetails}
               onChange={(e) => setOtherPerpetratorDetails(e.target.value)}
-              placeholder="Please describe the perpetrator"
+              placeholder={t("pleaseDescribeThePerpetrator")}
             />
           </div>
         )}
-      </div>
 
-      <div>
-        <Label htmlFor="perpetratorEvidence">
-          How do you know they are the ones who did it?
-        </Label>
-        <Textarea
-          id="perpetratorEvidence"
-          value={perpetratorEvidence}
-          onChange={(e) => setPerpetratorEvidence(e.target.value)}
-          placeholder="Describe the evidence or reasoning that identifies this perpetrator..."
-          rows={3}
+        <FormField
+          control={form.control}
+          name="perpetratorEvidence"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("howDoYouKnowTheyAreTheOnesWhoDidIt")}</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder={t("describeTheEvidenceOrReasoning")}
+                  rows={3}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <div>
-        <Label htmlFor="witnesses">Witness Information (Optional)</Label>
-        <Textarea
-          id="witnesses"
-          placeholder="Any witness accounts or references..."
-          rows={2}
+        <FormField
+          control={form.control}
+          name="witnesses"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("witnessInformation")}</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder={t("anyWitnessAccountsOrReferences")}
+                  rows={2}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 }

@@ -6,9 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, AlertTriangle, Shield, Send, Upload, Plus, Minus } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Shield, Send, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -26,7 +32,7 @@ const ReportAdditional = () => {
     urgency: "medium",
     newEvidence: false,
     witnessTes: false,
-    correction: false
+    correction: false,
   });
   const [consentAgreed, setConsentAgreed] = useState(false);
   const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
@@ -40,14 +46,14 @@ const ReportAdditional = () => {
 
   const handleCorrectionTypeChange = (type: string, checked: boolean) => {
     if (checked) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        correctionType: [...prev.correctionType, type]
+        correctionType: [...prev.correctionType, type],
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        correctionType: prev.correctionType.filter(t => t !== type)
+        correctionType: prev.correctionType.filter((t) => t !== type),
       }));
     }
   };
@@ -74,7 +80,8 @@ const ReportAdditional = () => {
                 Report Additional Information
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Submit additional evidence, witness testimony, or corrections to help improve case documentation.
+                Submit additional evidence, witness testimony, or corrections to
+                help improve case documentation.
               </p>
             </CardHeader>
             <CardContent>
@@ -87,7 +94,12 @@ const ReportAdditional = () => {
                     <Input
                       id="case-id"
                       value={formData.caseId}
-                      onChange={(e) => setFormData(prev => ({ ...prev, caseId: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          caseId: e.target.value,
+                        }))
+                      }
                       placeholder="e.g., FAR-2025-001"
                     />
                   </div>
@@ -104,7 +116,12 @@ const ReportAdditional = () => {
                       <Input
                         id="name"
                         value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
                         placeholder="Your name"
                       />
                     </div>
@@ -114,24 +131,46 @@ const ReportAdditional = () => {
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
                         placeholder="your.email@example.com"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="contact">Alternative Contact (Optional)</Label>
+                      <Label htmlFor="contact">
+                        Alternative Contact (Optional)
+                      </Label>
                       <Input
                         id="contact"
                         value={formData.contact}
-                        onChange={(e) => setFormData(prev => ({ ...prev, contact: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            contact: e.target.value,
+                          }))
+                        }
                         placeholder="Phone or other contact method"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="relationship">Relationship to Victim</Label>
-                      <Select value={formData.relationship} onValueChange={(value) => setFormData(prev => ({ ...prev, relationship: value }))}>
+                      <Label htmlFor="relationship">
+                        Relationship to Victim
+                      </Label>
+                      <Select
+                        value={formData.relationship}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            relationship: value,
+                          }))
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select relationship" />
                         </SelectTrigger>
@@ -139,8 +178,12 @@ const ReportAdditional = () => {
                           <SelectItem value="family">Family Member</SelectItem>
                           <SelectItem value="friend">Friend</SelectItem>
                           <SelectItem value="witness">Witness</SelectItem>
-                          <SelectItem value="community">Community Member</SelectItem>
-                          <SelectItem value="organization">Organization Representative</SelectItem>
+                          <SelectItem value="community">
+                            Community Member
+                          </SelectItem>
+                          <SelectItem value="organization">
+                            Organization Representative
+                          </SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
@@ -158,25 +201,46 @@ const ReportAdditional = () => {
                       <Checkbox
                         id="new-evidence"
                         checked={formData.newEvidence}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, newEvidence: checked as boolean }))}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            newEvidence: checked as boolean,
+                          }))
+                        }
                       />
-                      <Label htmlFor="new-evidence">New Evidence (documents, photos, videos)</Label>
+                      <Label htmlFor="new-evidence">
+                        New Evidence (documents, photos, videos)
+                      </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="witness-testimony"
                         checked={formData.witnessTes}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, witnessTes: checked as boolean }))}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            witnessTes: checked as boolean,
+                          }))
+                        }
                       />
-                      <Label htmlFor="witness-testimony">Witness Testimony</Label>
+                      <Label htmlFor="witness-testimony">
+                        Witness Testimony
+                      </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="correction"
                         checked={formData.correction}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, correction: checked as boolean }))}
+                        onCheckedChange={(checked) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            correction: checked as boolean,
+                          }))
+                        }
                       />
-                      <Label htmlFor="correction">Correction to Existing Information</Label>
+                      <Label htmlFor="correction">
+                        Correction to Existing Information
+                      </Label>
                     </div>
                   </div>
                 </div>
@@ -186,31 +250,49 @@ const ReportAdditional = () => {
                 {/* Additional Information */}
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="additional-info">Additional Information</Label>
+                    <Label htmlFor="additional-info">
+                      Additional Information
+                    </Label>
                     <Textarea
                       id="additional-info"
                       value={formData.additionalInfo}
-                      onChange={(e) => setFormData(prev => ({ ...prev, additionalInfo: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          additionalInfo: e.target.value,
+                        }))
+                      }
                       placeholder="Please provide detailed information..."
                       rows={6}
                       required
                     />
                   </div>
-                  
+
                   {formData.newEvidence && (
                     <div className="space-y-2">
-                      <Label htmlFor="evidence-description">Evidence Description</Label>
+                      <Label htmlFor="evidence-description">
+                        Evidence Description
+                      </Label>
                       <Textarea
                         id="evidence-description"
                         value={formData.evidenceDescription}
-                        onChange={(e) => setFormData(prev => ({ ...prev, evidenceDescription: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            evidenceDescription: e.target.value,
+                          }))
+                        }
                         placeholder="Describe the evidence you're submitting..."
                         rows={3}
                       />
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                         <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-                        <p className="text-sm text-gray-600">File upload functionality would be implemented here</p>
-                        <p className="text-xs text-gray-400 mt-1">Accepted formats: PDF, DOCX, JPG, PNG, MP4</p>
+                        <p className="text-sm text-gray-600">
+                          File upload functionality would be implemented here
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Accepted formats: PDF, DOCX, JPG, PNG, MP4
+                        </p>
                       </div>
                     </div>
                   )}
@@ -223,15 +305,28 @@ const ReportAdditional = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="urgency">Urgency Level</Label>
-                      <Select value={formData.urgency} onValueChange={(value) => setFormData(prev => ({ ...prev, urgency: value }))}>
+                      <Select
+                        value={formData.urgency}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({ ...prev, urgency: value }))
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="low">Low - General additional information</SelectItem>
-                          <SelectItem value="medium">Medium - Important details</SelectItem>
-                          <SelectItem value="high">High - Critical corrections</SelectItem>
-                          <SelectItem value="urgent">Urgent - Time-sensitive evidence</SelectItem>
+                          <SelectItem value="low">
+                            Low - General additional information
+                          </SelectItem>
+                          <SelectItem value="medium">
+                            Medium - Important details
+                          </SelectItem>
+                          <SelectItem value="high">
+                            High - Critical corrections
+                          </SelectItem>
+                          <SelectItem value="urgent">
+                            Urgent - Time-sensitive evidence
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -241,25 +336,44 @@ const ReportAdditional = () => {
                 {/* Consent and Safety Disclaimers */}
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="consent" 
+                    <Checkbox
+                      id="consent"
                       checked={consentAgreed}
-                      onCheckedChange={(checked) => setConsentAgreed(checked as boolean)}
+                      onCheckedChange={(checked) =>
+                        setConsentAgreed(checked as boolean)
+                      }
                     />
                     <Label htmlFor="consent" className="text-sm">
-                      I confirm that I have the right to share this information and any media content included
+                      I confirm that I have the right to share this information
+                      and any media content included
                     </Label>
                   </div>
-                  
+
                   <div className="flex items-start space-x-2">
-                    <Checkbox 
-                      id="safety-acknowledgment" 
+                    <Checkbox
+                      id="safety-acknowledgment"
                       checked={safetyAcknowledged}
-                      onCheckedChange={(checked) => setSafetyAcknowledged(checked as boolean)}
-                      required 
+                      onCheckedChange={(checked) =>
+                        setSafetyAcknowledged(checked as boolean)
+                      }
+                      required
                     />
-                    <Label htmlFor="safety-acknowledgment" className="text-sm leading-relaxed">
-                      <span className="font-medium text-red-600">Safety Acknowledgment:</span> I understand and acknowledge that I am solely responsible for my own safety and security when submitting this documentation. I take full responsibility for any risks associated with my submission, including but not limited to potential retaliation, legal consequences, or other harm. The platform provides no guarantee of protection and assumes no responsibility for any consequences, whether immediate or future, that may arise from my act of submission.
+                    <Label
+                      htmlFor="safety-acknowledgment"
+                      className="text-sm leading-relaxed"
+                    >
+                      <span className="font-medium text-red-600">
+                        Safety Acknowledgment:
+                      </span>{" "}
+                      I understand and acknowledge that I am solely responsible
+                      for my own safety and security when submitting this
+                      documentation. I take full responsibility for any risks
+                      associated with my submission, including but not limited
+                      to potential retaliation, legal consequences, or other
+                      harm. The platform provides no guarantee of protection and
+                      assumes no responsibility for any consequences, whether
+                      immediate or future, that may arise from my act of
+                      submission.
                     </Label>
                   </div>
                 </div>
@@ -268,13 +382,24 @@ const ReportAdditional = () => {
                 <div className="space-y-3">
                   <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
                     <p className="text-sm text-amber-800 dark:text-amber-200">
-                      ⚠️ Please ensure all information is accurate and that you have the right to share this documentation.
+                      ⚠️ Please ensure all information is accurate and that you
+                      have the right to share this documentation.
                     </p>
                   </div>
 
                   <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
                     <p className="text-xs text-red-800 dark:text-red-200 leading-relaxed">
-                      <span className="font-semibold">IMPORTANT SAFETY NOTICE:</span> By proceeding with this submission, you acknowledge that you are taking this action at your own risk and discretion. This platform cannot and does not provide any guarantees regarding your safety, anonymity, or protection from potential consequences. You are strongly advised to take all necessary precautions to protect yourself and consult with appropriate security professionals if you have concerns about your safety.
+                      <span className="font-semibold">
+                        IMPORTANT SAFETY NOTICE:
+                      </span>{" "}
+                      By proceeding with this submission, you acknowledge that
+                      you are taking this action at your own risk and
+                      discretion. This platform cannot and does not provide any
+                      guarantees regarding your safety, anonymity, or protection
+                      from potential consequences. You are strongly advised to
+                      take all necessary precautions to protect yourself and
+                      consult with appropriate security professionals if you
+                      have concerns about your safety.
                     </p>
                   </div>
                 </div>
@@ -286,8 +411,10 @@ const ReportAdditional = () => {
                     <div className="text-sm">
                       <p className="font-medium mb-1">Security & Privacy</p>
                       <p className="text-muted-foreground">
-                        All submissions are handled confidentially. We use encryption to protect sensitive information 
-                        and will verify all additional information before adding it to the case record.
+                        All submissions are handled confidentially. We use
+                        encryption to protect sensitive information and will
+                        verify all additional information before adding it to
+                        the case record.
                       </p>
                     </div>
                   </div>
@@ -296,18 +423,20 @@ const ReportAdditional = () => {
                 {/* reCAPTCHA */}
                 <div className="flex justify-center">
                   <ReCAPTCHA
-                    sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test site key - replace with actual key
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                     onChange={(value) => setCaptchaValue(value)}
                     onExpired={() => setCaptchaValue(null)}
                   />
                 </div>
 
                 {/* Submit Button */}
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+                <Button
+                  type="submit"
+                  className="w-full"
                   size="lg"
-                  disabled={!consentAgreed || !safetyAcknowledged || !captchaValue}
+                  disabled={
+                    !consentAgreed || !safetyAcknowledged || !captchaValue
+                  }
                 >
                   <Send className="w-4 w-4 mr-2" />
                   Submit Additional Information

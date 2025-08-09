@@ -107,38 +107,6 @@ const Upload = () => {
   const getAdditionalEvidenceFile = () =>
     additionalEvidenceFiles.length > 0 ? additionalEvidenceFiles[0] : null;
 
-  // Function to validate and prepare files for upload
-  const prepareFileForUpload = (file: File | null): File | null => {
-    if (!file) return null;
-
-    // Ensure the file is a valid File object
-    if (!(file instanceof File)) {
-      console.error("Invalid file object:", file);
-      return null;
-    }
-
-    // Check if file has required properties
-    if (!file.name || !file.size || !file.type) {
-      console.error("File missing required properties:", file);
-      return null;
-    }
-
-    // Check file size (optional: add reasonable limits)
-    if (file.size === 0) {
-      console.error("File is empty:", file);
-      return null;
-    }
-
-    console.log("File prepared for upload:", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-    });
-
-    return file;
-  };
-
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
 
@@ -341,9 +309,7 @@ const Upload = () => {
 
       if (result?.data?.case?._id) {
         // Generate case number from the returned ID
-        const caseNumber = `${new Date().getFullYear()}-${result.data.case._id
-          .slice(-8)
-          .toUpperCase()}`;
+        const caseNumber = result.data.case._id;
 
         const description = t("caseNumberGenerated") + ": " + caseNumber;
 

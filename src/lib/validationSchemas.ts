@@ -98,9 +98,42 @@ export const uploadFormSchema = z.object({
   captchaValue: z.string().min(1, "captchaRequired"),
 });
 
+// Contact form validation schema
+export const contactSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters long"),
+  email: z.string().email("Please provide a valid email address"),
+  mobile_number: z.string().min(10, "Please provide a valid mobile number"),
+  message: z.string().min(10, "Message must be at least 10 characters long"),
+  type: z.string().optional(),
+  recaptcha: z
+    .boolean()
+    .refine((val) => val === true, "Please verify that you are not a robot"),
+});
+
+// Auth validation schemas
+export const loginSchema = z.object({
+  email: z.string().email("Please provide a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export const registerSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters long"),
+    email: z.string().email("Please provide a valid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    passwordConfirm: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Passwords don't match",
+    path: ["passwordConfirm"],
+  });
+
 export type Step1FormData = z.infer<typeof step1Schema>;
 export type Step2FormData = z.infer<typeof step2Schema>;
 export type Step3FormData = z.infer<typeof step3Schema>;
 export type Step4FormData = z.infer<typeof step4Schema>;
 export type Step5FormData = z.infer<typeof step5Schema>;
 export type UploadFormData = z.infer<typeof uploadFormSchema>;
+export type ContactFormData = z.infer<typeof contactSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;

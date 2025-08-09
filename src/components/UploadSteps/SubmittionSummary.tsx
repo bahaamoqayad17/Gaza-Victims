@@ -1,5 +1,4 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import ReCAPTCHA from "react-google-recaptcha";
 import {
   Form,
@@ -154,7 +153,7 @@ export default function SubmittionSummary({
               <FormControl>
                 <div className="flex justify-center">
                   <ReCAPTCHA
-                    sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test site key - replace with actual key
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                     onChange={(value) => {
                       field.onChange(value);
                       setCaptchaValue(value);

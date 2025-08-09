@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,6 +7,8 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/components/LanguageSelector";
 import { store } from "@/store/store";
+import { loadUserFromStorage } from "@/store/slices/authSlice";
+import { AuthGuard } from "@/components/AuthGuard";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Browse from "./pages/Browse";
@@ -24,8 +27,17 @@ import ModeratorsDashboard from "./pages/ModeratorsDashboard";
 
 const queryClient = new QueryClient();
 
+// Component to initialize auth state from localStorage
+const AuthInitializer = () => {
+  useEffect(() => {
+    store.dispatch(loadUserFromStorage());
+  }, []);
+  return null;
+};
+
 const App = () => (
   <Provider store={store}>
+    <AuthInitializer />
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <TooltipProvider>
@@ -37,16 +49,37 @@ const App = () => (
               <Route path="/upload" element={<Upload />} />
               <Route path="/browse" element={<Browse />} />
               <Route path="/case-submitted" element={<CaseSubmitted />} />
-              {/* <Route path="/case/:id" element={<CaseDetail />} />
               <Route path="/map" element={<Map />} />
+              {/* <Route path="/case/:id" element={<CaseDetail />} />
               <Route path="/about" element={<About />} />
               <Route path="/legal" element={<Legal />} />
               <Route path="/download-archive" element={<DownloadArchive />} />
               <Route path="/report" element={<ReportCase />} />
               <Route path="/report-additional" element={<ReportAdditional />} />
               <Route path="/review-case" element={<ReviewCase />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/moderators" element={<ModeratorsDashboard />} /> */}
+              <Route
+                path="/auth"
+                element={
+                  <AuthGuard requireAuth={false} redirectAuthenticatedTo="/">
+                    <Auth />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="/moderators"
+                element={
+                  <AuthGuard
+                    allowedRoles={[
+                      "admin",
+                      "moderator",
+                      "senior_moderator",
+                      "third_party",
+                    ]}
+                  >
+                    <ModeratorsDashboard />
+                  </AuthGuard>
+                }
+              /> */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

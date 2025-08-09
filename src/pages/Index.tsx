@@ -393,16 +393,19 @@ const Index = () => {
         {/* Sidebar */}
         <aside
           className={`
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 
+          ${
+            sidebarOpen
+              ? "translate-x-0 rtl:translate-x-0"
+              : "-translate-x-full rtl:translate-x-full"
+          }
+          md:translate-x-0 md:rtl:translate-x-0
           fixed md:relative 
           z-50 md:z-auto
           w-64 md:w-48 lg:w-56 
-          border-r bg-background md:bg-muted/20 
+          border-r rtl:border-r-0 rtl:border-l 
+          bg-background md:bg-muted/20 
           min-h-screen 
           transition-transform duration-300 ease-in-out
-          rtl:border-r-0 rtl:border-l rtl:translate-x-full rtl:-translate-x-0
-          ${sidebarOpen ? "rtl:translate-x-0" : "rtl:translate-x-full"}
         `}
         >
           <div className="p-3 lg:p-4">

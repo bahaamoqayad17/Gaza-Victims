@@ -69,7 +69,7 @@ export async function uploadFileToS3(
     Key: key,
     Body: file,
     ContentType: contentType,
-    ACL: "public-read",
+    // Removed ACL: "public-read" - modern S3 buckets use bucket policies instead
   });
 
   try {

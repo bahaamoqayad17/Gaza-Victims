@@ -58,7 +58,6 @@ const Schema = new mongoose.Schema(
       type: String,
       required: true,
       default: "pending",
-      index: true,
     },
 
     submittedBy: {

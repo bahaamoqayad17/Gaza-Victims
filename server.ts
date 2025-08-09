@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import app from "@/index";
-import { ApolloServer } from "apollo-server-express";
-import { typeDefs } from "@/GraphQL/schema";
-import { resolvers } from "@/GraphQL/resolvers";
 import AppError from "@/Utils/AppError";
+import apiRoutes from "@/Routes/index";
 
 process.on("uncaughtException", (err: Error) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
@@ -20,16 +18,10 @@ async function startServer() {
     await mongoose.connect(process.env.DATABASE_URL!);
     console.log("✅ DB connection successful!");
 
-    const apolloServer = new ApolloServer({
-      typeDefs,
-      resolvers,
-      introspection: true,
-    });
+    // Add REST API routes
+    app.use("/api", apiRoutes);
 
-    await apolloServer.start();
-    apolloServer.applyMiddleware({ app: app as any, path: "/graphql" });
-
-    // Add catch-all route AFTER GraphQL middleware is applied
+    // Add catch-all route AFTER REST API middleware is applied
     app.all("*", (req, res, next) => {
       next(
         new AppError("Can't find " + req.originalUrl + " on this server", 404)
@@ -39,9 +31,7 @@ async function startServer() {
     const port = process.env.PORT || 4000;
     const server = app.listen(port, () => {
       console.log(`🚀 App running on port ${port}...`);
-      console.log(
-        `🚀 GraphQL ready at http://localhost:${port}${apolloServer.graphqlPath}`
-      );
+      console.log(`🚀 REST API ready at http://localhost:${port}/api`);
     });
 
     process.on("unhandledRejection", (err: Error) => {

@@ -1,7 +1,6 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
 import User from "@/Models/User";
-import CatchAsync from "@/Utils/CatchAsync";
-import AppError from "@/Utils/AppError";
 
 const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -9,62 +8,74 @@ const signToken = (id: string) => {
   });
 };
 
-// GraphQL-specific functions
-export const createSendToken = (user: any) => {
+// Helper function for token creation
+export const createSendToken = (
+  user: any,
+  statusCode: number,
+  res: Response
+) => {
   const token = signToken(user._id);
 
   // Remove password from output
   user.password = undefined;
 
-  return {
+  res.status(statusCode).json({
     status: "success",
     token,
     data: {
       user,
     },
-  };
-};
-
-export const register = async (input: {
-  name: string;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-}) => {
-  const user = await User.create({
-    name: input.name,
-    email: input.email,
-    password: input.password,
-    passwordConfirm: input.passwordConfirm,
   });
-  return createSendToken(user);
 };
 
-export const login = async (input: { email: string; password: string }) => {
-  const { email, password } = input;
+// REST API Controllers
+export const registerController = async (req: Request, res: Response) => {
+  const { name, email, password, passwordConfirm } = req.body;
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+    passwordConfirm,
+  });
+
+  createSendToken(user, 201, res);
+};
+
+export const loginController = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
   // 1) Check if email and password exist
   if (!email || !password) {
-    throw new Error("Please provide email and password!");
+    return res.status(400).json({
+      status: "fail",
+      message: "Please provide email and password!",
+    });
   }
 
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.correctPassword(password, user.password))) {
-    throw new Error("Incorrect email or password");
+    return res.status(401).json({
+      status: "fail",
+      message: "Incorrect email or password",
+    });
   }
 
   // 3) If everything ok, send token to client
-  return createSendToken(user);
+  createSendToken(user, 200, res);
 };
 
-export const forgotPassword = async (input: { email: string }) => {
-  const { email } = input;
+export const forgotPasswordController = async (req: Request, res: Response) => {
+  const { email } = req.body;
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("No user found with that email");
+    return res.status(404).json({
+      status: "fail",
+      message: "No user found with that email",
+    });
   }
 
   const otp = Math.floor(1000 + Math.random() * 9000).toString();
@@ -75,14 +86,14 @@ export const forgotPassword = async (input: { email: string }) => {
 
   // Note: In a real implementation, you would send the OTP via email
   // For now, we'll just return success
-  return {
+  res.status(200).json({
     status: "success",
     message: "OTP sent to email",
-  };
+  });
 };
 
-export const verifyOTP = async (input: { email: string; otp: string }) => {
-  const { email, otp } = input;
+export const verifyOTPController = async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
   const user = await User.findOne({
     email,
     passwordResetOTP: otp,
@@ -90,56 +101,36 @@ export const verifyOTP = async (input: { email: string; otp: string }) => {
   });
 
   if (!user) {
-    throw new Error("Invalid or expired OTP");
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid or expired OTP",
+    });
   }
 
   user.passwordResetOTP = undefined;
   user.passwordResetOTPExpires = undefined;
   await user.save({ validateBeforeSave: false });
 
-  return {
+  res.status(200).json({
     status: "success",
     message: "OTP verified. You can reset your password now.",
-  };
+  });
 };
 
-export const resetPassword = async (input: {
-  email: string;
-  password: string;
-  passwordConfirm: string;
-}) => {
-  const { email, password, passwordConfirm } = input;
+export const resetPasswordController = async (req: Request, res: Response) => {
+  const { email, password, passwordConfirm } = req.body;
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("User not verified or does not exist");
+    return res.status(400).json({
+      status: "fail",
+      message: "User not verified or does not exist",
+    });
   }
 
   user.password = password;
   user.passwordConfirm = passwordConfirm;
   await user.save({ validateBeforeSave: false });
 
-  return createSendToken(user);
+  createSendToken(user, 200, res);
 };
-
-export const withAuth =
-  (resolver: any, roles: string[] = []) =>
-  async (parent: any, args: any, context: any, info: any) => {
-    try {
-      const token = context.req.headers.authorization?.split(" ")[1]; // Extract Bearer token
-
-      if (!token) throw new Error("Not authenticated! Token missing.");
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-      context.user = decoded; // Attach user data to context
-
-      // // If roles are specified, check if the user has at least one of them
-      // if (roles.length > 0 && !roles.includes(decoded.role as string)) {
-      //   throw new Error("Unauthorized. Insufficient permissions.");
-      // }
-
-      return resolver(parent, args, context, info); // Call the original resolver
-    } catch (error) {
-      throw new Error("Unauthorized. Invalid or missing token.");
-    }
-  };

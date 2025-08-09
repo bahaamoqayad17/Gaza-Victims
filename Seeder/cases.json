@@ -1,1 +1,473 @@
-[]
+[
+    {
+        "name": "Sarah M.",
+        "age": 8,
+        "gender": "Female",
+        "occupation": "Student",
+        "story": "Sarah was a bright 8-year-old who loved painting and playing with her dolls. Her teacher remembers her as a curious child who always asked thoughtful questions. 'She wanted to be an artist when she grew up,' her mother recalls through tears.",
+        "leftBehind": [
+            "mother",
+            "father",
+            "two younger brothers"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1494790108755-2616b612b3e5?w=400&h=300&fit=crop&crop=face"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "36.2021",
+            "lng": "37.1343"
+        },
+        "locationName": "Aleppo",
+        "causeOfDeath": "Bombing",
+        "circumstances": "Sarah was killed during a bombing of her residential area. She was playing in her room when the attack occurred. Her family tried to reach the shelter but didn't make it in time.",
+        "perpetrator": "Syrian Government Forces",
+        "evidenceDescription": "",
+        "witness_information": "",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Family testimony",
+        "newsLinks": [
+            "https://example.com/news/sarah-m"
+        ],
+        "notes": "",
+        "date": "2025-07-20T00:00:00.000Z",
+        "status": "documented",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "family member",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": false,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Ahmed K.",
+        "age": 34,
+        "gender": "Male",
+        "occupation": "Engineer",
+        "story": "Ahmed was an engineer who spent his weekends volunteering at local shelters. His wife describes him as someone who 'always put others first.' He had been planning to start a family and dreamed of building sustainable housing.",
+        "leftBehind": [
+            "wife",
+            "elderly parents"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1501286353178-1ec881214838?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "49.9935",
+            "lng": "36.2304"
+        },
+        "locationName": "Kharkiv",
+        "causeOfDeath": "Bombing",
+        "circumstances": "Ahmed was caught in a missile strike while delivering aid to a residential building. Witnesses report he was helping evacuate elderly residents when the second wave of attacks hit the area.",
+        "perpetrator": "Russian Armed Forces",
+        "evidenceDescription": "",
+        "witness_information": "Witnesses saw him helping evacuate elderly residents",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Witness testimony",
+        "newsLinks": [
+            "https://example.com/news/ahmed-k"
+        ],
+        "notes": "",
+        "date": "2025-07-19T00:00:00.000Z",
+        "status": "verified",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "witness",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": true,
+        "isDigitalForensicsVerified": true,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Maria L.",
+        "age": 42,
+        "gender": "Female",
+        "occupation": "Nurse",
+        "story": "Maria was a nurse who worked tirelessly during the conflict, often staying beyond her shifts to care for patients. Her daughter remembers her saying, 'Healing is the only way to fight darkness.' She loved gardening and classical music.",
+        "leftBehind": [
+            "teenage daughter",
+            "sister"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1452378174528-3024x3024?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "47.0956",
+            "lng": "37.5431"
+        },
+        "locationName": "Mariupol",
+        "causeOfDeath": "Shelling",
+        "circumstances": "Maria died when artillery shells hit the hospital where she worked. She was in the intensive care unit attending to critical patients when the attack began. She refused to leave her patients behind.",
+        "perpetrator": "Russian Armed Forces",
+        "evidenceDescription": "",
+        "witness_information": "Hospital staff witnessed the attack",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Hospital records",
+        "newsLinks": [
+            "https://example.com/news/maria-l"
+        ],
+        "notes": "",
+        "date": "2025-07-18T00:00:00.000Z",
+        "status": "investigating",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "colleague",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": false,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Chen W.",
+        "age": 25,
+        "gender": "Male",
+        "occupation": "Journalism student",
+        "story": "Chen was a university student studying journalism. He believed in the power of truth and was known for his courage in standing up for justice. His friends describe him as someone who never backed down from doing what was right.",
+        "leftBehind": [
+            "parents",
+            "younger sister"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "16.8661",
+            "lng": "96.1951"
+        },
+        "locationName": "Yangon",
+        "causeOfDeath": "Civil Unrest",
+        "circumstances": "Chen was shot during a peaceful protest while documenting police actions with his camera. Witnesses say he was clearly identified as press but was targeted nonetheless.",
+        "perpetrator": "Myanmar Military",
+        "evidenceDescription": "",
+        "witness_information": "Multiple protesters witnessed the shooting",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Witness testimony",
+        "newsLinks": [
+            "https://example.com/news/chen-w"
+        ],
+        "notes": "",
+        "date": "2025-07-17T00:00:00.000Z",
+        "status": "documented",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "friend",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": false,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Elena R.",
+        "age": 31,
+        "gender": "Female",
+        "occupation": "Doctor",
+        "story": "Elena was a doctor who volunteered at refugee camps. She was passionate about providing medical care to those in need and often worked without pay to help families escape conflict zones.",
+        "leftBehind": [
+            "husband",
+            "twin daughters"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "33.5138",
+            "lng": "36.2765"
+        },
+        "locationName": "Damascus",
+        "causeOfDeath": "Chemical attack",
+        "circumstances": "Elena died from exposure to chemical weapons during an attack on a medical facility. She was treating patients when the attack occurred and refused to abandon them.",
+        "perpetrator": "Syrian Government Forces",
+        "evidenceDescription": "",
+        "witness_information": "Medical staff witnessed the chemical attack",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Medical records",
+        "newsLinks": [
+            "https://example.com/news/elena-r"
+        ],
+        "notes": "",
+        "date": "2025-07-16T00:00:00.000Z",
+        "status": "verified",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "colleague",
+        "actionTaken": "investigating",
+        "isVerified": true,
+        "isThirdPartyVerified": true,
+        "isDigitalForensicsVerified": true,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "David L.",
+        "age": 45,
+        "gender": "Male",
+        "occupation": "Shop owner",
+        "story": "David was a local shop owner who helped distribute food and supplies to elderly residents during the siege. His neighbors remember him as a kind man who always helped others, even when resources were scarce.",
+        "leftBehind": [
+            "wife",
+            "elderly mother"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1542190891-2093d38760f2?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "50.5015",
+            "lng": "30.2034"
+        },
+        "locationName": "Bucha",
+        "causeOfDeath": "Execution",
+        "circumstances": "David was executed by occupying forces after being found helping civilians evacuate. His body was discovered with his hands tied behind his back.",
+        "perpetrator": "Russian Armed Forces",
+        "evidenceDescription": "",
+        "witness_information": "Neighbors witnessed his capture",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Neighbor testimony",
+        "newsLinks": [
+            "https://example.com/news/david-l"
+        ],
+        "notes": "",
+        "date": "2025-07-15T00:00:00.000Z",
+        "status": "documented",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "neighbor",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": false,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Fatima A.",
+        "age": 19,
+        "gender": "Female",
+        "occupation": "Art student",
+        "story": "Fatima was an art student who used her creativity to bring joy to children in refugee camps. She taught art classes and organized cultural events to help preserve Palestinian heritage.",
+        "leftBehind": [
+            "parents",
+            "younger brother"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "31.3547",
+            "lng": "34.3088"
+        },
+        "locationName": "Gaza",
+        "causeOfDeath": "Airstrike",
+        "circumstances": "Fatima was killed in her family home during a nighttime airstrike. The building collapsed, trapping her and several family members inside.",
+        "perpetrator": "Israeli Defense Forces",
+        "evidenceDescription": "",
+        "witness_information": "Family members survived to witness",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Family testimony",
+        "newsLinks": [
+            "https://example.com/news/fatima-a"
+        ],
+        "notes": "",
+        "date": "2025-07-14T00:00:00.000Z",
+        "status": "investigating",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "family member",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": false,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Michael T.",
+        "age": 38,
+        "gender": "Male",
+        "occupation": "Humanitarian worker",
+        "story": "Michael was a humanitarian worker who specialized in mine clearance. He had already saved countless lives by safely removing unexploded ordnance from civilian areas.",
+        "leftBehind": [
+            "wife",
+            "two children"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "48.0159",
+            "lng": "37.8031"
+        },
+        "locationName": "Donetsk",
+        "causeOfDeath": "Landmine",
+        "circumstances": "Michael was killed by an unmarked landmine while clearing a path to a school. He died instantly, but his work had already made the surrounding area safe for children to return.",
+        "perpetrator": "Russian Armed Forces",
+        "evidenceDescription": "",
+        "witness_information": "Team members witnessed the explosion",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Humanitarian organization records",
+        "newsLinks": [
+            "https://example.com/news/michael-t"
+        ],
+        "notes": "",
+        "date": "2025-07-13T00:00:00.000Z",
+        "status": "verified",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "colleague",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": true,
+        "isDigitalForensicsVerified": true,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Amira H.",
+        "age": 26,
+        "gender": "Female",
+        "occupation": "Teacher and activist",
+        "story": "Amira was a women's rights activist and teacher who continued to educate girls in secret after schools were closed. She believed education was the key to freedom and never stopped fighting for women's rights.",
+        "leftBehind": [
+            "mother",
+            "three sisters"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "34.5553",
+            "lng": "69.2075"
+        },
+        "locationName": "Kabul",
+        "causeOfDeath": "Targeted killing",
+        "circumstances": "Amira was shot outside her home by unknown assailants. She had received death threats for her activism but refused to leave the country, saying her work was too important.",
+        "perpetrator": "Taliban",
+        "evidenceDescription": "",
+        "witness_information": "Neighbors witnessed the shooting",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Family and neighbor testimony",
+        "newsLinks": [
+            "https://example.com/news/amira-h"
+        ],
+        "notes": "",
+        "date": "2025-07-12T00:00:00.000Z",
+        "status": "documented",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "family member",
+        "actionTaken": "investigating",
+        "isVerified": true,
+        "isThirdPartyVerified": false,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    },
+    {
+        "name": "Carlos M.",
+        "age": 52,
+        "gender": "Male",
+        "occupation": "Community organizer",
+        "story": "Carlos was a community organizer who worked to improve living conditions in his neighborhood. He organized food distribution programs and advocated for basic services like clean water and electricity.",
+        "leftBehind": [
+            "wife",
+            "teenage son"
+        ],
+        "portraitPhoto": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face",
+        "additionalAttachments": [
+            "https://images.unsplash.com/photo-1618641986557-1ecd230959aa?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400&h=300&fit=crop"
+        ],
+        "socialMediaLinks": [],
+        "location": {
+            "lat": "10.4806",
+            "lng": "-66.9036"
+        },
+        "locationName": "Caracas",
+        "causeOfDeath": "Police brutality",
+        "circumstances": "Carlos was beaten to death during a peaceful protest demanding better living conditions. Multiple witnesses identified the officers involved, but no arrests have been made.",
+        "perpetrator": "Venezuelan Police",
+        "evidenceDescription": "",
+        "witness_information": "Multiple protesters witnessed the attack",
+        "proofOfId": "",
+        "proofOfDeath": "",
+        "proofOfDeathGraphic": false,
+        "additionalEvidence": "",
+        "additionalEvidenceGraphic": false,
+        "sourceOfInformation": "Witness testimony",
+        "newsLinks": [
+            "https://example.com/news/carlos-m"
+        ],
+        "notes": "",
+        "date": "2025-07-11T00:00:00.000Z",
+        "status": "verified",
+        "submittedBy": "anonymous",
+        "relationshipToVictim": "community member",
+        "actionTaken": "pending",
+        "isVerified": true,
+        "isThirdPartyVerified": true,
+        "isDigitalForensicsVerified": false,
+        "consentAgreed": true,
+        "safetyAcknowledged": true
+    }
+]

@@ -5,6 +5,9 @@ import {
   PutObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Initialize S3 client
 export const s3Client = new S3Client({
@@ -15,7 +18,9 @@ export const s3Client = new S3Client({
   },
 });
 
-export const BUCKET_NAME = process.env.AWS_BUCKET_NAME!;
+export const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
+
+// S3 configuration loaded successfully
 
 export interface SignedUrlOptions {
   expiresIn?: number; // in seconds, default 3600 (1 hour)

@@ -473,5 +473,10 @@
     "occupation": "المهنة",
     "uploadNewsLinks": "ارفع أي روابط إخبارية (روابط للمقالات الإخبارية أو التقارير حول الحادث)",
     "uploadOfficialLinks": "ارفع أي روابط رسمية (روابط للبيانات الرسمية، تقارير الشرطة، أو السجلات الحكومية)",
-    "uploadAdditionalNotes": "ارفع أي ملاحظات إضافية (معلومات إضافية)"
+    "uploadAdditionalNotes": "ارفع أي ملاحظات إضافية (معلومات إضافية)",
+    "caseNumberGenerated": "تم إنشاء رقم القضية",
+    "caseSubmittedSuccessfully": "تم تقديم القضية بنجاح",
+    "pleaseCheckFormAndTryAgain": "يرجى التحقق من النموذج والمحاولة مرة أخرى",
+    "submissionError": "خطأ في التقديم",
+    "submitting": "جاري التقديم..."
 }

@@ -473,5 +473,17 @@
     "occupation": "Occupation",
     "uploadNewsLinks": "Upload any news links (links to news articles or reports about the incident)",
     "uploadOfficialLinks": "Upload any official links (links to official statements, police reports, or government records)",
-    "uploadAdditionalNotes": "Upload any additional notes (additional information)"
+    "uploadAdditionalNotes": "Upload any additional notes (additional information)",
+    "caseSubmittedSuccessfully": "Case submitted successfully",
+    "caseNumberGenerated": "Case number generated",
+    "submissionError": "Submission error",
+    "pleaseCheckFormAndTryAgain": "Please check the form and try again",
+    "submitting": "Submitting...",
+    "exampleCase": "Example Case",
+    "evidence": "Evidence",
+    "provided": "provided",
+    "familyLeftBehind": "Family left behind",
+    "daughters": "daughters",
+    "sons": "sons",
+    "socialMediaLinks": "Social media links"
 }

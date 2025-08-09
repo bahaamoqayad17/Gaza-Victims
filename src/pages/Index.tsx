@@ -26,9 +26,7 @@ import { InteractiveMap } from "@/components/InteractiveMap";
 import { useTranslation } from "@/lib/translations";
 import { formatDate } from "@/lib/dateUtils";
 import sarahPortrait from "@/assets/sarah-portrait.jpg";
-import { GET_ALL_CASES } from "@/graphql/queries";
-import { useQuery } from "@apollo/client";
-import GraphQLDebug from "@/components/GraphQLDebug";
+import { useGetHomePageDataQuery } from "@/store/api/apiSlice";
 
 // Mock victim data for demonstration
 const recentCases = [
@@ -361,10 +359,13 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState("2025");
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
-  const { data, loading, error } = useQuery(GET_ALL_CASES);
+  const { data, isLoading, error } = useGetHomePageDataQuery({
+    page: 1,
+    limit: 10,
+  });
 
   // Add debugging
-  console.log(data?.cases);
+  console.log(data?.data);
 
   return (
     <div className="min-h-screen bg-background">
@@ -373,10 +374,12 @@ const Index = () => {
         showSidebar={true}
       />
 
-      {/* Temporary Debug Component */}
-      {/* <div className="container mx-auto px-4 py-4">
-        <GraphQLDebug />
-      </div> */}
+      {/* Debug: Show loading state */}
+      {isLoading && (
+        <div className="container mx-auto px-4 py-4">
+          <div className="text-center">Loading homepage data...</div>
+        </div>
+      )}
 
       <div className="flex relative">
         {/* Mobile sidebar overlay */}

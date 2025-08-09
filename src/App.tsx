@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ApolloProvider } from "@apollo/client";
+import { Provider } from "react-redux";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/components/LanguageSelector";
+import { store } from "@/store/store";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Browse from "./pages/Browse";
@@ -20,12 +21,11 @@ import ReviewCase from "./pages/ReviewCase";
 import CaseSubmitted from "./pages/CaseSubmitted";
 import Auth from "./pages/Auth";
 import ModeratorsDashboard from "./pages/ModeratorsDashboard";
-import client from "./graphql/client";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ApolloProvider client={client}>
+  <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <TooltipProvider>
@@ -36,6 +36,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/upload" element={<Upload />} />
               <Route path="/browse" element={<Browse />} />
+              <Route path="/case-submitted" element={<CaseSubmitted />} />
               {/* <Route path="/case/:id" element={<CaseDetail />} />
               <Route path="/map" element={<Map />} />
               <Route path="/about" element={<About />} />
@@ -44,7 +45,6 @@ const App = () => (
               <Route path="/report" element={<ReportCase />} />
               <Route path="/report-additional" element={<ReportAdditional />} />
               <Route path="/review-case" element={<ReviewCase />} />
-              <Route path="/case-submitted" element={<CaseSubmitted />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/moderators" element={<ModeratorsDashboard />} /> */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -54,7 +54,7 @@ const App = () => (
         </TooltipProvider>
       </LanguageProvider>
     </QueryClientProvider>
-  </ApolloProvider>
+  </Provider>
 );
 
 export default App;

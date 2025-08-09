@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Shield, ArrowLeft, ArrowRight } from "lucide-react";
+import { Shield, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -27,19 +28,27 @@ import {
   type Step4FormData,
   type Step5FormData,
 } from "@/lib/validationSchemas";
+import { useCreateCaseMutation } from "@/store/api/apiSlice";
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
+import { useToast } from "@/hooks/use-toast";
 
 const Upload = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redux RTK Query mutation
+  const [createCase, { isLoading: isCreating }] = useCreateCaseMutation();
 
   // Form state
   const [formData, setFormData] = useState({
     name: "",
     age: "",
+    gender: "",
     occupation: "",
     background: "",
     date: "",
@@ -47,15 +56,26 @@ const Upload = () => {
     circumstances: "",
     witnesses: "",
     source: "",
+    relationshipToVictim: "",
     notes: "",
     consentAgreed: false,
     safetyAcknowledged: false,
   });
+  const [portraitPhoto, setPortraitPhoto] = useState<File | null>(null);
   const [familyCounts, setFamilyCounts] = useState({
+    // Countable family members
     daughters: 0,
     sons: 0,
     brothers: 0,
     sisters: 0,
+    // Single family members (boolean)
+    wife: false,
+    husband: false,
+    mother: false,
+    father: false,
+    grandfather: false,
+    grandmother: false,
+    other: false,
   });
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [socialMediaUrls, setSocialMediaUrls] = useState<string[]>([""]);
@@ -78,6 +98,46 @@ const Upload = () => {
   >([]);
   const [isAdditionalEvidenceGraphic, setIsAdditionalEvidenceGraphic] =
     useState(false);
+
+  // Helper functions to get single files for schema compliance
+  const getProofOfIdFile = () =>
+    proofOfIdFiles.length > 0 ? proofOfIdFiles[0] : null;
+  const getProofOfDeathFile = () =>
+    proofOfDeathFiles.length > 0 ? proofOfDeathFiles[0] : null;
+  const getAdditionalEvidenceFile = () =>
+    additionalEvidenceFiles.length > 0 ? additionalEvidenceFiles[0] : null;
+
+  // Function to validate and prepare files for upload
+  const prepareFileForUpload = (file: File | null): File | null => {
+    if (!file) return null;
+
+    // Ensure the file is a valid File object
+    if (!(file instanceof File)) {
+      console.error("Invalid file object:", file);
+      return null;
+    }
+
+    // Check if file has required properties
+    if (!file.name || !file.size || !file.type) {
+      console.error("File missing required properties:", file);
+      return null;
+    }
+
+    // Check file size (optional: add reasonable limits)
+    if (file.size === 0) {
+      console.error("File is empty:", file);
+      return null;
+    }
+
+    console.log("File prepared for upload:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+    });
+
+    return file;
+  };
 
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
@@ -108,6 +168,217 @@ const Upload = () => {
     mode: "onChange",
   });
 
+  // Function to sync form data for preview
+  const syncFormData = () => {
+    const step1Data = step1Form.getValues();
+    const step2Data = step2Form.getValues();
+    const step3Data = step3Form.getValues();
+
+    setFormData({
+      name: step1Data.name || "",
+      age: step1Data.age || "",
+      gender: step1Data.gender || "",
+      occupation: step1Data.occupation || "",
+      background: step1Data.background || "",
+      date: step2Data.date || "",
+      location: step2Data.location || "",
+      circumstances: step2Data.circumstances || "",
+      witnesses: step2Data.witnesses || "",
+      source: step3Data.source || "",
+      relationshipToVictim: step3Data.relationshipToVictim || "",
+      notes: step3Data.notes || "",
+      consentAgreed: false,
+      safetyAcknowledged: false,
+    });
+  };
+
+  // Function to prepare case data for submission
+  const prepareCaseData = () => {
+    // Get form data from all steps
+    const step1Data = step1Form.getValues();
+    const step2Data = step2Form.getValues();
+    const step3Data = step3Form.getValues();
+    const step5Data = step5Form.getValues();
+
+    // Prepare left behind family array
+    const leftBehind = [];
+
+    // Add countable family members
+    if (familyCounts.daughters > 0)
+      leftBehind.push(
+        `${familyCounts.daughters} daughter${
+          familyCounts.daughters > 1 ? "s" : ""
+        }`
+      );
+    if (familyCounts.sons > 0)
+      leftBehind.push(
+        `${familyCounts.sons} son${familyCounts.sons > 1 ? "s" : ""}`
+      );
+    if (familyCounts.brothers > 0)
+      leftBehind.push(
+        `${familyCounts.brothers} brother${
+          familyCounts.brothers > 1 ? "s" : ""
+        }`
+      );
+    if (familyCounts.sisters > 0)
+      leftBehind.push(
+        `${familyCounts.sisters} sister${familyCounts.sisters > 1 ? "s" : ""}`
+      );
+
+    // Add single family members (boolean checkboxes)
+    if (familyCounts.wife) leftBehind.push("wife");
+    if (familyCounts.husband) leftBehind.push("husband");
+    if (familyCounts.mother) leftBehind.push("mother");
+    if (familyCounts.father) leftBehind.push("father");
+    if (familyCounts.grandfather) leftBehind.push("grandfather");
+    if (familyCounts.grandmother) leftBehind.push("grandmother");
+    if (familyCounts.other) leftBehind.push("other relatives");
+
+    // Prepare social media links (filter out empty ones)
+    const socialMediaLinks = socialMediaUrls.filter((url) => url.trim() !== "");
+
+    // Prepare news links (filter out empty ones)
+    const filteredNewsLinks = newsLinks.filter((link) => link.trim() !== "");
+
+    // Determine cause of death (handle "other" option)
+    const causeOfDeath = cause === "other" ? otherCauseDetails : cause;
+
+    // Determine perpetrator (handle "other" option)
+    const perpetratorInfo =
+      perpetrator === "other" ? otherPerpetratorDetails : perpetrator;
+
+    const caseData = {
+      name: step1Data.name,
+      age: parseInt(step1Data.age),
+      gender: step1Data.gender,
+      occupation: step1Data.occupation || "",
+      story: step1Data.background || "",
+      leftBehind,
+      socialMediaLinks,
+      locationName: step2Data.location,
+      causeOfDeath,
+      circumstances: step2Data.circumstances,
+      perpetrator: perpetratorInfo,
+      evidenceDescription: perpetratorEvidence,
+      witness_information: step2Data.witnesses || "",
+      sourceOfInformation: step3Data.source,
+      newsLinks: filteredNewsLinks,
+      notes: step3Data.notes || "",
+      date: step2Data.date,
+      submittedBy: "anonymous", // Since this is anonymous submission
+      relationshipToVictim: step3Data.relationshipToVictim,
+      consentAgreed: step5Data.consentAgreed,
+      safetyAcknowledged: step5Data.safetyAcknowledged,
+    };
+
+    return caseData;
+  };
+
+  // Function to handle case submission
+  const submitCase = async () => {
+    setIsSubmitting(true);
+    try {
+      const caseData = prepareCaseData();
+
+      console.log("Preparing case submission with data:", caseData);
+
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+
+      // Add all case data fields
+      Object.entries(caseData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            // Handle arrays by stringifying them
+            formData.append(key, JSON.stringify(value));
+          } else if (typeof value === "object") {
+            // Handle objects by stringifying them
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      // Add files to FormData
+      if (portraitPhoto && portraitPhoto instanceof File) {
+        formData.append("portraitPhoto", portraitPhoto);
+        console.log("Adding portrait photo:", portraitPhoto.name);
+      }
+
+      // Add additional photos
+      additionalPhotos.forEach((photo, index) => {
+        if (photo instanceof File) {
+          formData.append("additionalPhotos", photo);
+        }
+      });
+
+      // Add proof of ID file
+      const proofOfIdFile = getProofOfIdFile();
+      if (proofOfIdFile && proofOfIdFile instanceof File) {
+        formData.append("proofOfId", proofOfIdFile);
+        console.log("Adding proof of ID:", proofOfIdFile.name);
+      }
+
+      // Add proof of death file
+      const proofOfDeathFile = getProofOfDeathFile();
+      if (proofOfDeathFile && proofOfDeathFile instanceof File) {
+        formData.append("proofOfDeath", proofOfDeathFile);
+        console.log("Adding proof of death:", proofOfDeathFile.name);
+      }
+
+      // Add additional evidence file
+      const additionalEvidenceFile = getAdditionalEvidenceFile();
+      if (additionalEvidenceFile && additionalEvidenceFile instanceof File) {
+        formData.append("additionalEvidence", additionalEvidenceFile);
+        console.log("Adding additional evidence:", additionalEvidenceFile.name);
+      }
+
+      console.log("FormData prepared for submission");
+
+      // Submit using Redux RTK Query
+      const result = await createCase(formData).unwrap();
+
+      if (result?.data?.case?._id) {
+        // Generate case number from the returned ID
+        const caseNumber = `${new Date().getFullYear()}-${result.data.case._id
+          .slice(-8)
+          .toUpperCase()}`;
+
+        const description = t("caseNumberGenerated") + ": " + caseNumber;
+
+        toast({
+          title: t("caseSubmittedSuccessfully"),
+          description,
+        });
+
+        // Navigate to success page with case number
+        navigate(`/case-submitted?caseNumber=${caseNumber}`);
+      }
+    } catch (error: unknown) {
+      console.error("Error submitting case:", error);
+
+      // More detailed error logging
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : t("pleaseCheckFormAndTryAgain");
+      toast({
+        title: t("submissionError"),
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const nextStep = async () => {
     let isValid = false;
 
@@ -128,6 +399,7 @@ const Upload = () => {
       case 3:
         isValid = await step3Form.trigger();
         if (isValid) {
+          syncFormData(); // Sync data for preview
           setCurrentStep(Math.min(currentStep + 1, totalSteps));
         }
         break;
@@ -142,16 +414,8 @@ const Upload = () => {
 
         console.log(step5Form.formState.errors);
         if (isValid) {
-          // Generate case number
-          const year = new Date().getFullYear();
-          const randomChars = Math.random()
-            .toString(36)
-            .substring(2, 10)
-            .toUpperCase();
-          const caseNumber = `${year}-${randomChars}`;
-
-          // Navigate to success page with case number
-          navigate(`/case-submitted?caseNumber=${caseNumber}`);
+          // Submit the case instead of just navigating
+          await submitCase();
         }
         break;
     }
@@ -265,6 +529,8 @@ const Upload = () => {
                   familyCounts={familyCounts}
                   additionalPhotos={additionalPhotos}
                   handleSocialMediaFetch={handleSocialMediaFetch}
+                  portraitPhoto={portraitPhoto}
+                  setPortraitPhoto={setPortraitPhoto}
                 />
               )}
 
@@ -316,6 +582,17 @@ const Upload = () => {
                   additionalPhotos={additionalPhotos}
                   evidenceFiles={evidenceFiles}
                   isGraphicContent={isGraphicContent}
+                  portraitPhoto={portraitPhoto}
+                  proofOfIdFiles={proofOfIdFiles}
+                  proofOfDeathFiles={proofOfDeathFiles}
+                  additionalEvidenceFiles={additionalEvidenceFiles}
+                  familyCounts={familyCounts}
+                  socialMediaUrls={socialMediaUrls}
+                  newsLinks={newsLinks}
+                  cause={cause}
+                  otherCauseDetails={otherCauseDetails}
+                  perpetrator={perpetrator}
+                  otherPerpetratorDetails={otherPerpetratorDetails}
                 />
               )}
 
@@ -353,7 +630,16 @@ const Upload = () => {
                     )}
                   </Button>
                 ) : (
-                  <Button onClick={nextStep}>{t("submitDocumentation")}</Button>
+                  <Button
+                    onClick={nextStep}
+                    disabled={isSubmitting}
+                    className="flex items-center gap-2"
+                  >
+                    {isSubmitting && (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    )}
+                    {isSubmitting ? t("submitting") : t("submitDocumentation")}
+                  </Button>
                 )}
               </div>
             </CardContent>

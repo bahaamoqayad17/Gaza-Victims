@@ -40,8 +40,7 @@ import { Header } from "@/components/Header";
 import { VictimCard } from "@/components/VictimCard";
 import { Footer } from "@/components/Footer";
 import sarahPortrait from "@/assets/sarah-portrait.jpg";
-import { GET_ALL_CASES } from "@/graphql/queries";
-import { useQuery } from "@apollo/client";
+import { useGetAllCasesQuery } from "@/store/api/apiSlice";
 
 // Mock data - expanded to 10 victims
 const cases = [
@@ -317,9 +316,9 @@ const Browse = () => {
   const [sortBy, setSortBy] = useState("recent");
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
-  const { data, loading, error } = useQuery(GET_ALL_CASES);
+  const { data, isLoading, error } = useGetAllCasesQuery({});
 
-  console.log(data?.cases);
+  console.log(data?.data?.cases);
 
   // Extract unique statuses and causes from cases data
   const uniqueStatuses = [...new Set(cases.map((c) => c.status))];

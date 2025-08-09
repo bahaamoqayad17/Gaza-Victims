@@ -20,6 +20,22 @@ import { Step1FormData } from "@/lib/validationSchemas";
 import { useTranslation } from "@/lib/translations";
 import { useLanguage } from "../LanguageSelector";
 
+interface FamilyCounts {
+  // Countable family members
+  daughters: number;
+  sons: number;
+  brothers: number;
+  sisters: number;
+  // Single family members (boolean)
+  wife: boolean;
+  husband: boolean;
+  mother: boolean;
+  father: boolean;
+  grandfather: boolean;
+  grandmother: boolean;
+  other: boolean;
+}
+
 export default function FirstStep({
   form,
   socialMediaUrls,
@@ -33,19 +49,25 @@ export default function FirstStep({
   handleSocialMediaFetch,
   addSocialMediaUrl,
   removeSocialMediaUrl,
+  portraitPhoto,
+  setPortraitPhoto,
 }: {
   form: UseFormReturn<Step1FormData>;
   socialMediaUrls: string[];
-  setAdditionalPhotos: (photos: File[]) => void;
-  setFamilyCounts: (counts: any) => void;
+  setAdditionalPhotos: (photos: File[] | ((prev: File[]) => File[])) => void;
+  setFamilyCounts: (
+    counts: FamilyCounts | ((prev: FamilyCounts) => FamilyCounts)
+  ) => void;
   removeAdditionalPhoto: (index: number) => void;
   socialMediaPreview: string | null;
-  familyCounts: any;
+  familyCounts: FamilyCounts;
   additionalPhotos: File[];
   updateSocialMediaUrl: (index: number, value: string) => void;
   handleSocialMediaFetch: (index: number) => void;
   addSocialMediaUrl: () => void;
   removeSocialMediaUrl: (index: number) => void;
+  portraitPhoto: File | null;
+  setPortraitPhoto: (photo: File | null) => void;
 }) {
   const { currentLanguage } = useLanguage();
 
@@ -123,25 +145,61 @@ export default function FirstStep({
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center space-x-2">
-                <Checkbox id="father" />
+                <Checkbox
+                  id="father"
+                  checked={familyCounts.father}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      father: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="father" className="text-sm">
                   {t("father")}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="mother" />
+                <Checkbox
+                  id="mother"
+                  checked={familyCounts.mother}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      mother: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="mother" className="text-sm">
                   {t("mother")}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="wife" />
+                <Checkbox
+                  id="wife"
+                  checked={familyCounts.wife}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      wife: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="wife" className="text-sm">
                   {t("wife")}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="husband" />
+                <Checkbox
+                  id="husband"
+                  checked={familyCounts.husband}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      husband: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="husband" className="text-sm">
                   {t("husband")}
                 </Label>
@@ -163,7 +221,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         daughters: Math.max(0, prev.daughters - 1),
                       }))
@@ -180,7 +238,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         daughters: prev.daughters + 1,
                       }))
@@ -205,7 +263,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         sons: Math.max(0, prev.sons - 1),
                       }))
@@ -222,7 +280,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         sons: prev.sons + 1,
                       }))
@@ -247,7 +305,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         brothers: Math.max(0, prev.brothers - 1),
                       }))
@@ -264,7 +322,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         brothers: prev.brothers + 1,
                       }))
@@ -289,7 +347,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         sisters: Math.max(0, prev.sisters - 1),
                       }))
@@ -306,7 +364,7 @@ export default function FirstStep({
                     size="sm"
                     className="h-6 w-6 p-0"
                     onClick={() =>
-                      setFamilyCounts((prev: any) => ({
+                      setFamilyCounts((prev: FamilyCounts) => ({
                         ...prev,
                         sisters: prev.sisters + 1,
                       }))
@@ -320,19 +378,46 @@ export default function FirstStep({
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center space-x-2">
-                <Checkbox id="grandfather" />
+                <Checkbox
+                  id="grandfather"
+                  checked={familyCounts.grandfather}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      grandfather: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="grandfather" className="text-sm">
                   {t("grandfather")}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="grandmother" />
+                <Checkbox
+                  id="grandmother"
+                  checked={familyCounts.grandmother}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      grandmother: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="grandmother" className="text-sm">
                   {t("grandmother")}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="other" />
+                <Checkbox
+                  id="other"
+                  checked={familyCounts.other}
+                  onCheckedChange={(checked) => {
+                    setFamilyCounts((prev: FamilyCounts) => ({
+                      ...prev,
+                      other: checked as boolean,
+                    }));
+                  }}
+                />
                 <Label htmlFor="other" className="text-sm">
                   {t("otherRelative")}
                 </Label>
@@ -348,8 +433,28 @@ export default function FirstStep({
             <p className="text-sm text-muted-foreground">
               {t("uploadDignified")}
             </p>
-            <Input type="file" accept="image/*" className="mt-2" />
+            <Input
+              type="file"
+              accept="image/*"
+              className="mt-2"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                setPortraitPhoto(file || null);
+              }}
+            />
           </div>
+          {portraitPhoto && (
+            <div className="mt-2 p-2 bg-muted rounded flex items-center justify-between">
+              <span className="text-sm">{portraitPhoto.name}</span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setPortraitPhoto(null)}
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            </div>
+          )}
         </div>
 
         <div>

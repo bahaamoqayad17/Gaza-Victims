@@ -48,15 +48,17 @@ export default function ThirdStep({
 }: {
   form: UseFormReturn<Step3FormData>;
   proofOfIdFiles: File[];
-  setProofOfIdFiles: (files: File[]) => void;
+  setProofOfIdFiles: (files: File[] | ((prev: File[]) => File[])) => void;
   removeProofOfIdFile: (index: number) => void;
   proofOfDeathFiles: File[];
-  setProofOfDeathFiles: (files: File[]) => void;
+  setProofOfDeathFiles: (files: File[] | ((prev: File[]) => File[])) => void;
   removeProofOfDeathFile: (index: number) => void;
   isGraphicContent: boolean;
   setIsGraphicContent: (value: boolean) => void;
   additionalEvidenceFiles: File[];
-  setAdditionalEvidenceFiles: (files: File[]) => void;
+  setAdditionalEvidenceFiles: (
+    files: File[] | ((prev: File[]) => File[])
+  ) => void;
   removeAdditionalEvidenceFile: (index: number) => void;
   isAdditionalEvidenceGraphic: boolean;
   setIsAdditionalEvidenceGraphic: (value: boolean) => void;
@@ -143,14 +145,13 @@ export default function ThirdStep({
             </p>
             <Input
               type="file"
-              multiple
               accept="image/*,video/*,.pdf,.doc,.docx"
               className="mt-2"
               onChange={(e) => {
-                const files = Array.from(e.target.files || []);
-                setProofOfIdFiles((prev: File[]) =>
-                  [...prev, ...files].slice(0, 20)
-                );
+                const file = e.target.files?.[0];
+                if (file) {
+                  setProofOfIdFiles([file]); // Only store one file
+                }
               }}
             />
           </div>
@@ -187,14 +188,13 @@ export default function ThirdStep({
             </p>
             <Input
               type="file"
-              multiple
-              accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+              accept="image/*,video/*,.pdf,.doc,.docx"
               className="mt-2"
               onChange={(e) => {
-                const files = Array.from(e.target.files || []);
-                setProofOfDeathFiles((prev: File[]) =>
-                  [...prev, ...files].slice(0, 20)
-                );
+                const file = e.target.files?.[0];
+                if (file) {
+                  setProofOfDeathFiles([file]); // Only store one file
+                }
               }}
             />
           </div>

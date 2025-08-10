@@ -37,6 +37,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
+import { AddModeratorDialog } from "@/components/AddModeratorDialog";
 
 // Mock data for moderators
 const moderators = [
@@ -275,10 +276,7 @@ const ModeratorsDashboard = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Moderator Management</CardTitle>
-                  <Button size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Moderator
-                  </Button>
+                  <AddModeratorDialog />
                 </div>
               </CardHeader>
               <CardContent>

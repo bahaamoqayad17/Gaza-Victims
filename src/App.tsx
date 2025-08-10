@@ -50,6 +50,21 @@ const App = () => (
               <Route path="/browse" element={<Browse />} />
               <Route path="/case-submitted" element={<CaseSubmitted />} />
               <Route path="/map" element={<Map />} />
+              <Route
+                path="/moderators"
+                element={
+                  <AuthGuard
+                    allowedRoles={[
+                      "admin",
+                      "moderator",
+                      "senior_moderator",
+                      "third_party",
+                    ]}
+                  >
+                    <ModeratorsDashboard />
+                  </AuthGuard>
+                }
+              />
               {/* <Route path="/case/:id" element={<CaseDetail />} />
               <Route path="/about" element={<About />} />
               <Route path="/legal" element={<Legal />} />

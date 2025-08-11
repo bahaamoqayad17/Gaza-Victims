@@ -74,7 +74,7 @@ const About = () => {
 
       await createContact(contactData).unwrap();
 
-      toast.success("Thank you for contacting us! We'll get back to you soon.");
+      toast.success(t("aboutPageContactSuccessToast"));
       setSubmitted(true);
       reset();
       setSelectedTypes([]);
@@ -88,7 +88,7 @@ const About = () => {
         typeof error.data === "object" &&
         "message" in error.data
           ? String(error.data.message)
-          : "Failed to send message. Please try again.";
+          : t("aboutPageContactErrorToast");
       toast.error(errorMessage);
     }
   };
@@ -102,13 +102,14 @@ const About = () => {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h1 className="text-2xl font-bold">Message Sent Successfully!</h1>
+            <h1 className="text-2xl font-bold">
+              {t("aboutPageContactSuccessTitle")}
+            </h1>
             <p className="text-muted-foreground">
-              Thank you for reaching out to us. We've received your message and
-              will get back to you as soon as possible.
+              {t("aboutPageContactSuccessMessage")}
             </p>
             <Button onClick={() => setSubmitted(false)}>
-              Send Another Message
+              {t("aboutPageContactSendAnother")}
             </Button>
           </div>
         </div>
@@ -133,17 +134,9 @@ const About = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-lg leading-relaxed">
-                We are dedicated to documenting and preserving the memory of
-                victims of violence, ensuring their stories are not forgotten
-                and contributing to justice and accountability efforts
-                worldwide.
+                {t("aboutPageMissionDescription1")}
               </p>
-              <p>
-                Every life has value, and every story deserves to be told.
-                Through careful documentation and verification, we create a
-                permanent record that honors the victims and supports legal and
-                humanitarian efforts.
-              </p>
+              <p>{t("aboutPageMissionDescription2")}</p>
             </CardContent>
           </Card>
 
@@ -153,14 +146,11 @@ const About = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Shield className="w-5 h-5 text-blue-500" />
-                  Truth & Verification
+                  {t("aboutPageTruthVerification")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">
-                  Every case undergoes rigorous verification processes to ensure
-                  accuracy and reliability for legal documentation.
-                </p>
+                <p className="text-sm">{t("aboutPageTruthDescription")}</p>
               </CardContent>
             </Card>
 
@@ -168,14 +158,11 @@ const About = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Users className="w-5 h-5 text-green-500" />
-                  Dignity & Respect
+                  {t("aboutPageDignityRespect")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">
-                  We treat every victim and their families with the utmost
-                  dignity, respecting their privacy and cultural sensitivities.
-                </p>
+                <p className="text-sm">{t("aboutPageDignityDescription")}</p>
               </CardContent>
             </Card>
 
@@ -183,14 +170,11 @@ const About = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Globe className="w-5 h-5 text-purple-500" />
-                  Global Access
+                  {t("aboutPageGlobalAccess")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">
-                  We provide multilingual access to ensure communities worldwide
-                  can document and access information in their native languages.
-                </p>
+                <p className="text-sm">{t("aboutPageGlobalDescription")}</p>
               </CardContent>
             </Card>
           </div>
@@ -198,26 +182,30 @@ const About = () => {
           {/* How We Work */}
           <Card>
             <CardHeader>
-              <CardTitle>How We Work</CardTitle>
+              <CardTitle>{t("aboutPageHowWeWork")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold mb-2">Documentation Process</h4>
+                  <h4 className="font-semibold mb-2">
+                    {t("aboutPageDocumentationProcess")}
+                  </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Secure submission system</li>
-                    <li>• Multi-source verification</li>
-                    <li>• Expert review and validation</li>
-                    <li>• Secure archival storage</li>
+                    <li>• {t("aboutPageSecureSubmission")}</li>
+                    <li>• {t("aboutPageMultiSourceVerification")}</li>
+                    <li>• {t("aboutPageExpertReview")}</li>
+                    <li>• {t("aboutPageSecureArchival")}</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Security Measures</h4>
+                  <h4 className="font-semibold mb-2">
+                    {t("aboutPageSecurityMeasures")}
+                  </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• End-to-end encryption</li>
-                    <li>• Anonymous submission options</li>
-                    <li>• Protected witness identities</li>
-                    <li>• GDPR compliance</li>
+                    <li>• {t("aboutPageEndToEndEncryption")}</li>
+                    <li>• {t("aboutPageAnonymousSubmission")}</li>
+                    <li>• {t("aboutPageProtectedWitness")}</li>
+                    <li>• {t("aboutPageGdprCompliance")}</li>
                   </ul>
                 </div>
               </div>
@@ -227,38 +215,37 @@ const About = () => {
           {/* How Can You Help */}
           <Card>
             <CardHeader>
-              <CardTitle>How Can You Help?</CardTitle>
+              <CardTitle>{t("aboutPageHowCanYouHelp")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p>
-                There are many ways to contribute to preserving memory and
-                seeking justice:
-              </p>
+              <p>{t("aboutPageManyWaysContribute")}</p>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Documentation</h4>
+                  <h4 className="font-semibold mb-2">
+                    {t("aboutPageDocumentation")}
+                  </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Submit verified documentation</li>
-                    <li>• Share witness testimonies</li>
-                    <li>• Provide additional evidence</li>
-                    <li>• Help with verification</li>
+                    <li>• {t("aboutPageSubmitVerified")}</li>
+                    <li>• {t("aboutPageShareWitness")}</li>
+                    <li>• {t("aboutPageProvideEvidence")}</li>
+                    <li>• {t("aboutPageHelpVerification")}</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Support</h4>
+                  <h4 className="font-semibold mb-2">
+                    {t("aboutPageSupport")}
+                  </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Technical expertise</li>
-                    <li>• Translation services</li>
-                    <li>• Legal assistance</li>
-                    <li>• Advocacy efforts</li>
+                    <li>• {t("aboutPageTechnicalExpertise")}</li>
+                    <li>• {t("aboutPageTranslationServices")}</li>
+                    <li>• {t("aboutPageLegalAssistance")}</li>
+                    <li>• {t("aboutPageAdvocacyEfforts")}</li>
                   </ul>
                 </div>
               </div>
               <div className="bg-muted/50 p-4 rounded-lg">
                 <p className="text-sm">
-                  <strong>Note:</strong> This platform is completely voluntary
-                  and non-profit. All contributions are made by volunteers
-                  dedicated to preserving memory and seeking accountability.
+                  <strong>Note:</strong> {t("aboutPageVoluntaryNote")}
                 </p>
               </div>
             </CardContent>
@@ -270,19 +257,17 @@ const About = () => {
               <CardTitle>Contact</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p>
-                If you need assistance, have questions about the documentation
-                process, or require support as a survivor or family member,
-                please reach out to us.
-              </p>
+              <p>{t("aboutPageContactDescription")}</p>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="name">Name *</Label>
+                    <Label htmlFor="name">
+                      {t("aboutPageContactNameLabel")}
+                    </Label>
                     <Input
                       id="name"
-                      placeholder="Your name"
+                      placeholder={t("aboutPageContactNamePlaceholder")}
                       {...register("name")}
                       className={errors.name ? "border-red-500" : ""}
                     />
@@ -293,11 +278,13 @@ const About = () => {
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="email">Email *</Label>
+                    <Label htmlFor="email">
+                      {t("aboutPageContactEmailLabel")}
+                    </Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Your email"
+                      placeholder={t("aboutPageContactEmailPlaceholder")}
                       {...register("email")}
                       className={errors.email ? "border-red-500" : ""}
                     />
@@ -310,10 +297,12 @@ const About = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="mobile_number">Contact Number *</Label>
+                  <Label htmlFor="mobile_number">
+                    {t("aboutPageContactPhoneLabel")}
+                  </Label>
                   <Input
                     id="mobile_number"
-                    placeholder="Your contact number"
+                    placeholder={t("aboutPageContactPhonePlaceholder")}
                     {...register("mobile_number")}
                     className={errors.mobile_number ? "border-red-500" : ""}
                   />
@@ -325,10 +314,12 @@ const About = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="message">Message *</Label>
+                  <Label htmlFor="message">
+                    {t("aboutPageContactMessageLabel")}
+                  </Label>
                   <Textarea
                     id="message"
-                    placeholder="Your message"
+                    placeholder={t("aboutPageContactMessagePlaceholder")}
                     rows={4}
                     {...register("message")}
                     className={errors.message ? "border-red-500" : ""}
@@ -342,7 +333,7 @@ const About = () => {
 
                 <div className="space-y-2">
                   <Label className="text-sm font-medium">
-                    Select all that apply:
+                    {t("aboutPageContactSelectApply")}
                   </Label>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
@@ -354,7 +345,7 @@ const About = () => {
                         }
                       />
                       <Label htmlFor="technical" className="text-sm">
-                        Report technical issue
+                        {t("aboutPageContactTechnicalIssue")}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -366,9 +357,9 @@ const About = () => {
                         }
                       />
                       <Label htmlFor="help" className="text-sm">
-                        We would like to help{" "}
+                        {t("aboutPageContactHelp")}{" "}
                         <span className="bg-green-100 text-green-800 px-1 rounded text-xs">
-                          Volunteer
+                          {t("aboutPageContactVolunteer")}
                         </span>
                       </Label>
                     </div>
@@ -381,7 +372,7 @@ const About = () => {
                         }
                       />
                       <Label htmlFor="legal" className="text-sm">
-                        Legal violation
+                        {t("aboutPageContactLegalViolation")}
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -393,7 +384,7 @@ const About = () => {
                         }
                       />
                       <Label htmlFor="other" className="text-sm">
-                        Other
+                        {t("aboutPageContactOther")}
                       </Label>
                     </div>
                   </div>
@@ -408,7 +399,7 @@ const About = () => {
                     }
                   />
                   <Label htmlFor="recaptcha" className="text-sm">
-                    I'm not a robot (reCAPTCHA) *
+                    {t("aboutPageContactRecaptcha")}
                   </Label>
                 </div>
                 {errors.recaptcha && (
@@ -421,10 +412,10 @@ const About = () => {
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Sending...
+                      {t("aboutPageContactSending")}
                     </>
                   ) : (
-                    "Submit"
+                    t("aboutPageContactSubmit")
                   )}
                 </Button>
               </form>

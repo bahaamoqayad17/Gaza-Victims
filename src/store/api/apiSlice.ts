@@ -159,7 +159,7 @@ export interface HomePageData {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:4000/api",
+  baseUrl: process.env.VITE_API_URL,
   prepareHeaders: (headers, { getState }) => {
     // Add auth token if available
     const state = getState() as RootState;

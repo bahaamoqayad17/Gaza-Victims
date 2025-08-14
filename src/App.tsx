@@ -51,8 +51,7 @@ const App = () => (
               <Route path="/case-submitted" element={<CaseSubmitted />} />
               <Route path="/map" element={<Map />} />
               <Route path="/about" element={<About />} />
-
-              {/* <Route path="/case/:id" element={<CaseDetail />} />
+              <Route path="/case/:id" element={<CaseDetail />} />
               <Route path="/legal" element={<Legal />} />
               <Route path="/download-archive" element={<DownloadArchive />} />
               <Route path="/report" element={<ReportCase />} />
@@ -66,21 +65,6 @@ const App = () => (
                   </AuthGuard>
                 }
               />
-              <Route
-                path="/moderators"
-                element={
-                  <AuthGuard
-                    allowedRoles={[
-                      "admin",
-                      "moderator",
-                      "senior_moderator",
-                      "third_party",
-                    ]}
-                  >
-                    <ModeratorsDashboard />
-                  </AuthGuard>
-                }
-              /> */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

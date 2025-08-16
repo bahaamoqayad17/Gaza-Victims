@@ -30,17 +30,23 @@ import {
   FileText,
   Settings,
   AlertTriangle,
+  Key,
+  RefreshCw,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAddModeratorMutation } from "@/store/api/apiSlice";
 
 interface AddModeratorDialogProps {
-  onAddModerator?: (moderator: any) => void;
+  onAddModerator?: (moderator: unknown) => void;
 }
 
 export function AddModeratorDialog({
   onAddModerator,
 }: AddModeratorDialogProps) {
   const [open, setOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -56,14 +62,7 @@ export function AddModeratorDialog({
     startDate: "",
     securityClearance: "",
     notes: "",
-    permissions: {
-      canReviewCases: false,
-      canVerifyDocuments: false,
-      canManageModerators: false,
-      canAccessAnalytics: false,
-      canExportData: false,
-      canManageSettings: false,
-    },
+    password: "",
     emergencyContact: {
       name: "",
       relationship: "",
@@ -73,21 +72,27 @@ export function AddModeratorDialog({
   });
 
   const { toast } = useToast();
+  const [addModerator, { isLoading }] = useAddModeratorMutation();
 
-  const handleInputChange = (field: string, value: any) => {
+  const generatePassword = () => {
+    const length = 12;
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    setFormData((prev) => ({ ...prev, password }));
+    toast({
+      title: "Password generated",
+      description: "A secure password has been generated automatically.",
+    });
+  };
+
+  const handleInputChange = (field: string, value: unknown) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }));
-  };
-
-  const handlePermissionChange = (permission: string, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      permissions: {
-        ...prev.permissions,
-        [permission]: checked,
-      },
     }));
   };
 
@@ -112,18 +117,19 @@ export function AddModeratorDialog({
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Basic validation
     if (
       !formData.firstName ||
       !formData.lastName ||
       !formData.email ||
-      !formData.role
+      !formData.role ||
+      !formData.password
     ) {
       toast({
         title: "Required fields missing",
         description:
-          "Please fill in all required fields (First Name, Last Name, Email, Role)",
+          "Please fill in all required fields (First Name, Last Name, Email, Role, Password)",
         variant: "destructive",
       });
       return;
@@ -140,60 +146,65 @@ export function AddModeratorDialog({
       return;
     }
 
-    const newModerator = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: `${formData.firstName} ${formData.lastName}`,
-      email: formData.email,
-      role: formData.role,
-      status: "pending",
-      casesReviewed: 0,
-      joinDate: formData.startDate || new Date().toISOString().split("T")[0],
-      lastActive: "Never",
-      ...formData,
-    };
+    // Password validation
+    if (formData.password.length < 8) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 8 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    onAddModerator?.(newModerator);
+    try {
+      const result = await addModerator(formData).unwrap();
 
-    toast({
-      title: "Moderator added successfully",
-      description: `${formData.firstName} ${
-        formData.lastName
-      } has been added as a ${formData.role.replace("_", " ")}`,
-    });
+      toast({
+        title: "Moderator added successfully",
+        description: `${formData.firstName} ${
+          formData.lastName
+        } has been added as a ${formData.role.replace("_", " ")}`,
+      });
 
-    // Reset form
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      secondaryEmail: "",
-      phone: "",
-      role: "",
-      organization: "",
-      department: "",
-      specializations: [],
-      languages: [],
-      timeZone: "",
-      startDate: "",
-      securityClearance: "",
-      notes: "",
-      permissions: {
-        canReviewCases: false,
-        canVerifyDocuments: false,
-        canManageModerators: false,
-        canAccessAnalytics: false,
-        canExportData: false,
-        canManageSettings: false,
-      },
-      emergencyContact: {
-        name: "",
-        relationship: "",
-        phone: "",
+      // Call the callback if provided
+      onAddModerator?.(result.data.user);
+
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
         email: "",
-      },
-    });
+        secondaryEmail: "",
+        phone: "",
+        role: "",
+        organization: "",
+        department: "",
+        specializations: [],
+        languages: [],
+        timeZone: "",
+        startDate: "",
+        securityClearance: "",
+        notes: "",
+        password: "",
+        emergencyContact: {
+          name: "",
+          relationship: "",
+          phone: "",
+          email: "",
+        },
+      });
 
-    setOpen(false);
+      setOpen(false);
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "An error occurred while adding the moderator";
+      toast({
+        title: "Failed to add moderator",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -308,6 +319,46 @@ export function AddModeratorDialog({
                   </Select>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password *</Label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={(e) =>
+                        handleInputChange("password", e.target.value)
+                      }
+                      placeholder="Enter password (min. 8 characters)"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={generatePassword}
+                    className="flex items-center gap-2"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Generate
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -336,8 +387,11 @@ export function AddModeratorDialog({
                         Senior Moderator
                       </SelectItem>
                       <SelectItem value="moderator">Moderator</SelectItem>
-                      <SelectItem value="third_party_verifier">
-                        Third Party Verifier
+                      <SelectItem value="third_party_moderator">
+                        Third Party Moderator
+                      </SelectItem>
+                      <SelectItem value="digital_forensics_moderator">
+                        Digital Forensics Moderator
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -431,86 +485,6 @@ export function AddModeratorDialog({
             </CardContent>
           </Card>
 
-          {/* Permissions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Settings className="w-4 h-4" />
-                Permissions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="canReviewCases"
-                    checked={formData.permissions.canReviewCases}
-                    onCheckedChange={(checked) =>
-                      handlePermissionChange("canReviewCases", !!checked)
-                    }
-                  />
-                  <Label htmlFor="canReviewCases">Can Review Cases</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="canVerifyDocuments"
-                    checked={formData.permissions.canVerifyDocuments}
-                    onCheckedChange={(checked) =>
-                      handlePermissionChange("canVerifyDocuments", !!checked)
-                    }
-                  />
-                  <Label htmlFor="canVerifyDocuments">
-                    Can Verify Documents
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="canManageModerators"
-                    checked={formData.permissions.canManageModerators}
-                    onCheckedChange={(checked) =>
-                      handlePermissionChange("canManageModerators", !!checked)
-                    }
-                  />
-                  <Label htmlFor="canManageModerators">
-                    Can Manage Moderators
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="canAccessAnalytics"
-                    checked={formData.permissions.canAccessAnalytics}
-                    onCheckedChange={(checked) =>
-                      handlePermissionChange("canAccessAnalytics", !!checked)
-                    }
-                  />
-                  <Label htmlFor="canAccessAnalytics">
-                    Can Access Analytics
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="canExportData"
-                    checked={formData.permissions.canExportData}
-                    onCheckedChange={(checked) =>
-                      handlePermissionChange("canExportData", !!checked)
-                    }
-                  />
-                  <Label htmlFor="canExportData">Can Export Data</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="canManageSettings"
-                    checked={formData.permissions.canManageSettings}
-                    onCheckedChange={(checked) =>
-                      handlePermissionChange("canManageSettings", !!checked)
-                    }
-                  />
-                  <Label htmlFor="canManageSettings">Can Manage Settings</Label>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Emergency Contact */}
           <Card>
             <CardHeader>
@@ -599,10 +573,16 @@ export function AddModeratorDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Add Moderator</Button>
+          <Button onClick={handleSubmit} disabled={isLoading}>
+            {isLoading ? "Adding..." : "Add Moderator"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

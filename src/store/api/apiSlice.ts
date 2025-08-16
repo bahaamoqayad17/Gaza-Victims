@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "../store";
 
 // Define API response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   status: "success" | "fail" | "error";
   message?: string;
   data?: T;
@@ -22,7 +22,43 @@ export interface User {
   name: string;
   email: string;
   role: string;
+  isActive: boolean;
+  casesReviewed: number;
+  secondaryEmail?: string;
+  mobile_number?: string;
+  timezone?: string;
+  organization_name?: string;
+  department?: string;
+  start_date?: string;
+  end_date?: string;
+  specializations?: string[];
+  languages?: string[];
+  security_clearance?: string;
+  notes?: string;
+  contact_name?: string;
+  contact_number?: string;
+  contact_email?: string;
+  contact_relationship?: string;
   passwordChangedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DashboardStats {
+  users: {
+    total: number;
+    active: number;
+    activeVerifiers: number;
+  };
+  cases: {
+    total: number;
+    pending: number;
+    underReview: number;
+    thirdPartyReview: number;
+    digitalForensicsReview: number;
+    verified: number;
+    verifiedToday: number;
+  };
 }
 
 export interface AuthResponse {
@@ -64,12 +100,20 @@ export interface Case {
   notes?: string;
   date?: string;
   status: string;
+  urgency: string;
   submittedBy: string;
   relationshipToVictim?: string;
   actionTaken?: string;
   isVerified: boolean;
   isThirdPartyVerified: boolean;
   isDigitalForensicsVerified: boolean;
+  userThirdPartyVerified?:
+    | string
+    | { _id: string; name: string; email: string };
+  userDigitalForensicsVerified?:
+    | string
+    | { _id: string; name: string; email: string };
+  userModeratorVerified?: string | { _id: string; name: string; email: string };
   consentAgreed: boolean;
   safetyAcknowledged: boolean;
   createdAt: string;
@@ -316,7 +360,7 @@ export const apiSlice = createApi({
     }),
 
     searchContacts: builder.query<
-      ApiResponse<{ contacts: any[] }>,
+      ApiResponse<{ contacts: unknown[] }>,
       {
         q?: string;
         type?: string;
@@ -352,6 +396,73 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+
+    addModerator: builder.mutation<
+      ApiResponse<{ user: User }>,
+      {
+        firstName: string;
+        lastName: string;
+        email: string;
+        secondaryEmail?: string;
+        phone?: string;
+        role: string;
+        organization?: string;
+        department?: string;
+        specializations?: string[];
+        languages?: string[];
+        timeZone?: string;
+        startDate?: string;
+        securityClearance?: string;
+        notes?: string;
+        emergencyContact?: {
+          name?: string;
+          relationship?: string;
+          phone?: string;
+          email?: string;
+        };
+        password: string;
+      }
+    >({
+      query: (moderatorData) => ({
+        url: "/users/add-moderator",
+        method: "POST",
+        body: moderatorData,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    // Case review endpoints (protected)
+    getPendingCases: builder.query<ApiResponse<{ cases: Case[] }>, void>({
+      query: () => "/cases/pending-cases",
+      providesTags: ["Case"],
+    }),
+
+    getCasesUnderReview: builder.query<ApiResponse<{ cases: Case[] }>, void>({
+      query: () => "/cases/cases-under-review",
+      providesTags: ["Case"],
+    }),
+
+    getCasesForThirdPartyReview: builder.query<
+      ApiResponse<{ cases: Case[] }>,
+      void
+    >({
+      query: () => "/cases/third-party-review",
+      providesTags: ["Case"],
+    }),
+
+    getCasesForDigitalForensicsReview: builder.query<
+      ApiResponse<{ cases: Case[] }>,
+      void
+    >({
+      query: () => "/cases/digital-forensics-review",
+      providesTags: ["Case"],
+    }),
+
+    // Dashboard stats endpoint
+    getDashboardStats: builder.query<ApiResponse<DashboardStats>, void>({
+      query: () => "/cases/dashboard-stats",
+      providesTags: ["Case", "User"],
+    }),
   }),
 });
 
@@ -377,4 +488,14 @@ export const {
   // User hooks
   useGetAllUsersQuery,
   useAddUserMutation,
+  useAddModeratorMutation,
+
+  // Case review hooks
+  useGetPendingCasesQuery,
+  useGetCasesUnderReviewQuery,
+  useGetCasesForThirdPartyReviewQuery,
+  useGetCasesForDigitalForensicsReviewQuery,
+
+  // Dashboard stats hook
+  useGetDashboardStatsQuery,
 } = apiSlice;

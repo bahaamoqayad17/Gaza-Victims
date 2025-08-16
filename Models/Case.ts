@@ -54,12 +54,6 @@ const Schema = new mongoose.Schema(
 
     date: Date,
 
-    status: {
-      type: String,
-      required: true,
-      default: "pending",
-    },
-
     submittedBy: {
       type: String,
       required: true,
@@ -68,10 +62,31 @@ const Schema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
     actionTaken: {
       type: String,
       default: "pending",
     },
+
+    status: {
+      type: String,
+      enum: [
+        "pending",
+        "under_review",
+        "third_party_review",
+        "digital_forensics_review",
+        "verified",
+      ],
+      default: "pending",
+    },
+
+    urgency: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "low",
+    },
+
+    // Verification Status
 
     isVerified: {
       type: Boolean,
@@ -95,6 +110,26 @@ const Schema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+
+    userThirdPartyVerified: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    userDigitalForensicsVerified: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    userModeratorVerified: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    verifiedDate: Date,
   },
   { timestamps: true }
 );

@@ -17,7 +17,7 @@ const Schema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "user",
+    default: "user", // user , admin, senior_moderator, moderator, digital_forensics_moderator, third_party_moderator
   },
   password: {
     type: String,
@@ -29,13 +29,41 @@ const Schema = new mongoose.Schema({
     type: String,
     required: [true, "Please confirm your password"],
     validate: {
-      // This only works on CREATE and SAVE!!!
       validator: function (el: any) {
         return el === (this as any).password;
       },
       message: "Passwords are not the same!",
     },
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  secondaryEmail: {
+    type: String,
+    default: null,
+  },
+  mobile_number: {
+    type: String,
+    default: null,
+  },
+  timezone: {
+    type: String,
+    default: "UTC",
+  },
+  organization_name: String,
+  department: String,
+  start_date: Date,
+  end_date: Date,
+  specializations: [String],
+  languages: [String],
+  security_clearance: String,
+
+  notes: String,
+  contact_name: String,
+  contact_number: String,
+  contact_email: String,
+  contact_relationship: String,
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,

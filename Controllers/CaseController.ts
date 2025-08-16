@@ -1,7 +1,81 @@
 import Case from "@/Models/Case";
+import User from "@/Models/User";
 import { processFilesForS3 } from "@/Utils/fileUpload";
 import ApiFeatures from "@/Utils/ApiFeatures";
 import { Request, Response } from "express";
+
+// Dashboard stats endpoint
+export const getDashboardStats = async (req: Request, res: Response) => {
+  try {
+    console.log("Fetching dashboard stats...");
+
+    // Get user counts
+    const totalUsers = await User.countDocuments();
+    const activeUsers = await User.countDocuments({ isActive: true });
+
+    // Get case counts
+    const totalCases = await Case.countDocuments();
+    const pendingCases = await Case.countDocuments({
+      status: "pending",
+      isVerified: false,
+    });
+    const casesUnderReview = await Case.countDocuments({
+      status: "under_review",
+      isVerified: false,
+    });
+    const thirdPartyReviewCases = await Case.countDocuments({
+      status: "third_party_review",
+      isThirdPartyVerified: false,
+    });
+    const digitalForensicsReviewCases = await Case.countDocuments({
+      status: "digital_forensics_review",
+      isDigitalForensicsVerified: false,
+    });
+    const verifiedCases = await Case.countDocuments({ isVerified: true });
+
+    // Get cases verified today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const casesVerifiedToday = await Case.countDocuments({
+      isVerified: true,
+      updatedAt: { $gte: today },
+    });
+
+    // Get active verifiers count
+    const activeVerifiers = await User.countDocuments({
+      role: { $in: ["third_party_moderator", "digital_forensics_moderator"] },
+      isActive: true,
+    });
+
+    const stats = {
+      users: {
+        total: totalUsers,
+        active: activeUsers,
+        activeVerifiers,
+      },
+      cases: {
+        total: totalCases,
+        pending: pendingCases,
+        underReview: casesUnderReview,
+        thirdPartyReview: thirdPartyReviewCases,
+        digitalForensicsReview: digitalForensicsReviewCases,
+        verified: verifiedCases,
+        verifiedToday: casesVerifiedToday,
+      },
+    };
+
+    res.status(200).json({
+      status: "success",
+      data: stats,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching dashboard stats",
+    });
+  }
+};
 
 // REST API Controllers
 export const getAllCasesController = async (req: Request, res: Response) => {
@@ -26,6 +100,104 @@ export const getAllCasesController = async (req: Request, res: Response) => {
     res.status(500).json({
       status: "error",
       message: "Something went wrong while fetching cases",
+    });
+  }
+};
+
+export const getCasesForThirdPartyReview = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const cases = await Case.find({
+      isThirdPartyVerified: false,
+      isVerified: true,
+      status: "third_party_review",
+    }).populate("userThirdPartyVerified", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cases,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching third party review cases:", error);
+    res.status(500).json({
+      status: "error",
+      message:
+        "Something went wrong while fetching cases for third party review",
+    });
+  }
+};
+
+export const getCasesUnderReview = async (req: Request, res: Response) => {
+  try {
+    const cases = await Case.find({
+      status: "under_review",
+      isVerified: false,
+    }).populate("userModeratorVerified", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cases,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching cases under review:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching cases under review",
+    });
+  }
+};
+
+export const getPendingCases = async (req: Request, res: Response) => {
+  try {
+    const cases = await Case.find({
+      isVerified: false,
+      status: "pending",
+    }).populate("userModeratorVerified", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cases,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching pending cases:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching pending cases",
+    });
+  }
+};
+
+export const getCasesForDigitalForensicsReview = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const cases = await Case.find({
+      isDigitalForensicsVerified: false,
+      isVerified: true,
+      status: "digital_forensics_review",
+    }).populate("userDigitalForensicsVerified", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cases,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching digital forensics review cases:", error);
+    res.status(500).json({
+      status: "error",
+      message:
+        "Something went wrong while fetching cases for digital forensics review",
     });
   }
 };
@@ -386,6 +558,53 @@ export const getHomePageController = async (req: Request, res: Response) => {
       status: "error",
       message: "Something went wrong while fetching homepage data",
       error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const assignCase = async (req: Request, res: Response) => {
+  try {
+    const case_ = await Case.findById(req.params.id);
+
+    const assignedTo = req.body.assignedTo;
+
+    const userAssigned = await User.findById(assignedTo);
+
+    if (!userAssigned) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No user found with that ID",
+      });
+    }
+
+    if (userAssigned?.role === "moderator") {
+      case_.status = "under_review";
+      case_.userModeratorVerified = userAssigned._id;
+    } else if (userAssigned?.role === "third_party_moderator") {
+      case_.status = "third_party_review";
+      case_.userThirdPartyVerified = userAssigned._id;
+    } else if (userAssigned?.role === "digital_forensics_moderator") {
+      case_.status = "digital_forensics_review";
+      case_.userDigitalForensicsVerified = userAssigned._id;
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid user role for assigning case",
+      });
+    }
+
+    await case_.save();
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        case: case_,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while assigning case",
     });
   }
 };

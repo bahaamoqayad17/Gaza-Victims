@@ -11,6 +11,8 @@ import {
   getCasesUnderReview,
   assignCase,
   getDashboardStats,
+  getVerifiedCases,
+  verifyCase,
 } from "@/Controllers/CaseController";
 import CatchAsync from "@/Utils/CatchAsync";
 import { validateCaseCreation } from "@/Utils/validationMiddleware";
@@ -79,6 +81,24 @@ router.post(
   protect,
   restrictTo("admin", "senior_moderator"),
   CatchAsync(assignCase)
+);
+
+router.get(
+  "/verified-cases",
+  protect,
+  restrictTo("admin", "senior_moderator"),
+  CatchAsync(getVerifiedCases)
+);
+
+router.patch(
+  "/verify/:id",
+  protect,
+  restrictTo(
+    "moderator",
+    "third_party_moderator",
+    "digital_forensics_moderator"
+  ),
+  CatchAsync(verifyCase)
 );
 
 router.get("/:id", CatchAsync(getCaseController));

@@ -60,6 +60,13 @@ export const protect = CatchAsync(
 // Authorization middleware
 export const restrictTo = (...roles: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (!req.user.isActive) {
+      return res.status(401).json({
+        status: "fail",
+        message: "You are not active! Please wait for activation.",
+      });
+    }
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         status: "fail",

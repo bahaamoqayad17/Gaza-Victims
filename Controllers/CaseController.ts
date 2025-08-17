@@ -581,9 +581,23 @@ export const assignCase = async (req: Request, res: Response) => {
       case_.status = "under_review";
       case_.userModeratorVerified = userAssigned._id;
     } else if (userAssigned?.role === "third_party_moderator") {
+      if (!case_.isVerified) {
+        return res.status(400).json({
+          status: "fail",
+          message: "Case is not verified",
+        });
+      }
+
       case_.status = "third_party_review";
       case_.userThirdPartyVerified = userAssigned._id;
     } else if (userAssigned?.role === "digital_forensics_moderator") {
+      if (!case_.isVerified) {
+        return res.status(400).json({
+          status: "fail",
+          message: "Case is not verified",
+        });
+      }
+
       case_.status = "digital_forensics_review";
       case_.userDigitalForensicsVerified = userAssigned._id;
     } else {
@@ -605,6 +619,78 @@ export const assignCase = async (req: Request, res: Response) => {
     res.status(500).json({
       status: "error",
       message: "Something went wrong while assigning case",
+    });
+  }
+};
+
+export const getVerifiedCases = async (req: Request, res: Response) => {
+  try {
+    const cases = await Case.find({
+      isVerified: true,
+      isThirdPartyVerified: true,
+      isDigitalForensicsVerified: true,
+      status: "verified",
+    })
+      .populate("userThirdPartyVerified", "name email")
+      .populate("userDigitalForensicsVerified", "name email")
+      .populate("userModeratorVerified", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cases,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching verified cases",
+    });
+  }
+};
+
+export const verifyCase = async (req: any, res: Response) => {
+  try {
+    const case_ = await Case.findById(req.params.id);
+
+    if (!case_) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No case found with that ID",
+      });
+    }
+
+    if (req.user.role === "moderator") {
+      case_.isVerified = true;
+      case_.status = "under_third_party_review";
+      case_.userModeratorVerified = req.user._id;
+    } else if (req.user.role === "third_party_moderator") {
+      case_.isThirdPartyVerified = true;
+      case_.status = "under_digital_forensics_review";
+      case_.userThirdPartyVerified = req.user._id;
+    } else if (req.user.role === "digital_forensics_moderator") {
+      case_.isDigitalForensicsVerified = true;
+      case_.status = "verified";
+      case_.userDigitalForensicsVerified = req.user._id;
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid user role for verifying case",
+      });
+    }
+
+    await case_.save();
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        case: case_,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while verifying case",
     });
   }
 };

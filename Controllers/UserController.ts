@@ -279,3 +279,117 @@ export const getAdminStats = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getUserRecords = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+    // return all the cases that the user has reviewed
+    const cases = await Case.find({
+      $or: [
+        { userModeratorVerified: user._id },
+        { userThirdPartyVerified: user._id },
+        { userDigitalForensicsVerified: user._id },
+      ],
+    })
+      .populate("userModeratorVerified", "name email")
+      .populate("userThirdPartyVerified", "name email")
+      .populate("userDigitalForensicsVerified", "name email");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        cases,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching user records",
+    });
+  }
+};
+
+export const deleteUserController = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while deleting user",
+    });
+  }
+};
+
+export const deactiveUserController = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { isActive: false },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while deactivating user",
+    });
+  }
+};
+
+export const activateUserController = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { isActive: true },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while activating user",
+    });
+  }
+};

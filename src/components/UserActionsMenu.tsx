@@ -20,6 +20,11 @@ import {
 import { Trash2, UserX, FileText, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { UserCasesModal } from "./UserCasesModal";
+import {
+  useDeleteUserMutation,
+  useDeactivateUserMutation,
+  useActivateUserMutation,
+} from "@/store/api/apiSlice";
 
 interface User {
   _id: string;
@@ -43,34 +48,58 @@ export function UserActionsMenu({ user, onUserUpdate }: UserActionsMenuProps) {
   const [showCasesModal, setShowCasesModal] = useState(false);
   const { toast } = useToast();
 
-  const handleDelete = () => {
-    // TODO: Implement actual delete API call
-    console.log(`Deleting user: ${user._id}`);
+  // API mutations
+  const [deleteUser] = useDeleteUserMutation();
+  const [deactivateUser] = useDeactivateUserMutation();
+  const [activateUser] = useActivateUserMutation();
 
-    toast({
-      title: "User deleted",
-      description: `${user.name} has been permanently deleted.`,
-      variant: "destructive",
-    });
+  const handleDelete = async () => {
+    try {
+      await deleteUser(user._id).unwrap();
 
-    onUserUpdate?.(user._id, "delete");
-    setShowDeleteDialog(false);
+      toast({
+        title: "User deleted",
+        description: `${user.name} has been permanently deleted.`,
+        variant: "destructive",
+      });
+
+      onUserUpdate?.(user._id, "delete");
+      setShowDeleteDialog(false);
+    } catch (error) {
+      toast({
+        title: "Delete failed",
+        description: "Failed to delete user. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDeactivate = () => {
-    // TODO: Implement actual deactivate/activate API call
+  const handleDeactivate = async () => {
     const action = user.isActive ? "deactivate" : "activate";
-    console.log(`${action} user: ${user._id}`);
 
-    toast({
-      title: user.isActive ? "User deactivated" : "User activated",
-      description: `${user.name} has been ${
-        user.isActive ? "deactivated" : "activated"
-      }.`,
-    });
+    try {
+      if (user.isActive) {
+        await deactivateUser(user._id).unwrap();
+      } else {
+        await activateUser(user._id).unwrap();
+      }
 
-    onUserUpdate?.(user._id, action);
-    setShowDeactivateDialog(false);
+      toast({
+        title: user.isActive ? "User deactivated" : "User activated",
+        description: `${user.name} has been ${
+          user.isActive ? "deactivated" : "activated"
+        }.`,
+      });
+
+      onUserUpdate?.(user._id, action);
+      setShowDeactivateDialog(false);
+    } catch (error) {
+      toast({
+        title: `${action.charAt(0).toUpperCase() + action.slice(1)} failed`,
+        description: `Failed to ${action} user. Please try again.`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleViewCases = () => {

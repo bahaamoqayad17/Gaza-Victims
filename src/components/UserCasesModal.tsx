@@ -17,17 +17,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Calendar, MapPin, AlertTriangle } from "lucide-react";
-
-interface UserCase {
-  id: string;
-  name: string;
-  location: string;
-  status: string;
-  priority: string;
-  assignedDate: string;
-  reviewedDate?: string;
-}
+import {
+  FileText,
+  Calendar,
+  MapPin,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
+import { useGetUserRecordsQuery } from "@/store/api/apiSlice";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface UserCasesModalProps {
   isOpen: boolean;
@@ -35,88 +33,6 @@ interface UserCasesModalProps {
   userName: string;
   userId: string;
 }
-
-// Mock data for user cases
-const generateMockCases = (
-  userId: string
-): { assigned: UserCase[]; reviewed: UserCase[] } => {
-  const mockAssignedCases: UserCase[] = [
-    {
-      id: "case-001",
-      name: "Gaza City Incident Report",
-      location: "Gaza City, Palestine",
-      status: "under_review",
-      priority: "high",
-      assignedDate: "2024-01-15",
-    },
-    {
-      id: "case-002",
-      name: "Rafah Border Documentation",
-      location: "Rafah, Palestine",
-      status: "pending",
-      priority: "medium",
-      assignedDate: "2024-01-14",
-    },
-    {
-      id: "case-003",
-      name: "Khan Younis Evidence Collection",
-      location: "Khan Younis, Palestine",
-      status: "third_party_review",
-      priority: "high",
-      assignedDate: "2024-01-13",
-    },
-  ];
-
-  const mockReviewedCases: UserCase[] = [
-    {
-      id: "case-101",
-      name: "Jabalia Camp Investigation",
-      location: "Jabalia, Palestine",
-      status: "verified",
-      priority: "high",
-      assignedDate: "2024-01-10",
-      reviewedDate: "2024-01-12",
-    },
-    {
-      id: "case-102",
-      name: "Deir al-Balah Witness Testimony",
-      location: "Deir al-Balah, Palestine",
-      status: "verified",
-      priority: "medium",
-      assignedDate: "2024-01-08",
-      reviewedDate: "2024-01-11",
-    },
-    {
-      id: "case-103",
-      name: "Beit Lahia Documentation",
-      location: "Beit Lahia, Palestine",
-      status: "rejected",
-      priority: "low",
-      assignedDate: "2024-01-05",
-      reviewedDate: "2024-01-09",
-    },
-    {
-      id: "case-104",
-      name: "Gaza Port Security Footage",
-      location: "Gaza Port, Palestine",
-      status: "verified",
-      priority: "medium",
-      assignedDate: "2024-01-03",
-      reviewedDate: "2024-01-07",
-    },
-    {
-      id: "case-105",
-      name: "Al-Shifa Hospital Records",
-      location: "Gaza City, Palestine",
-      status: "verified",
-      priority: "high",
-      assignedDate: "2024-01-01",
-      reviewedDate: "2024-01-06",
-    },
-  ];
-
-  return { assigned: mockAssignedCases, reviewed: mockReviewedCases };
-};
 
 export function UserCasesModal({
   isOpen,
@@ -126,7 +42,31 @@ export function UserCasesModal({
 }: UserCasesModalProps) {
   const [activeTab, setActiveTab] = useState("assigned");
 
-  const { assigned, reviewed } = generateMockCases(userId);
+  // Fetch user records from API
+  const {
+    data: userRecordsResponse,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetUserRecordsQuery(userId, {
+    skip: !isOpen, // Only fetch when modal is open
+  });
+
+  const cases = userRecordsResponse?.data?.cases || [];
+
+  // Separate cases into assigned (active) and reviewed (completed)
+  const assigned = cases.filter(
+    (case_) =>
+      case_.status === "pending" ||
+      case_.status === "under_review" ||
+      case_.status === "third_party_review" ||
+      case_.status === "digital_forensics_review"
+  );
+
+  const reviewed = cases.filter(
+    (case_) => case_.status === "verified" || case_.status === "rejected"
+  );
 
   const getPriorityBadgeVariant = (priority: string) => {
     switch (priority) {
@@ -165,6 +105,64 @@ export function UserCasesModal({
   const formatStatus = (status: string) => {
     return status.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              {userName}'s Cases
+            </DialogTitle>
+            <DialogDescription>
+              View all cases assigned to and reviewed by {userName}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="ml-2">Loading user cases...</span>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              {userName}'s Cases
+            </DialogTitle>
+            <DialogDescription>
+              View all cases assigned to and reviewed by {userName}
+            </DialogDescription>
+          </DialogHeader>
+          <Alert variant="destructive">
+            <AlertDescription>
+              Failed to load user cases.{" "}
+              {error && "data" in error
+                ? (error.data as { message?: string })?.message
+                : "Please try again."}
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2"
+                onClick={() => refetch()}
+              >
+                Retry
+              </Button>
+            </AlertDescription>
+          </Alert>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -215,19 +213,21 @@ export function UserCasesModal({
                     </TableRow>
                   ) : (
                     assigned.map((case_) => (
-                      <TableRow key={case_.id}>
+                      <TableRow key={case_._id}>
                         <TableCell>
                           <div>
                             <div className="font-medium">{case_.name}</div>
                             <div className="text-sm text-muted-foreground">
-                              ID: {case_.id}
+                              ID: {case_._id.toString().slice(-6)}
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <MapPin className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-sm">{case_.location}</span>
+                            <span className="text-sm">
+                              {case_.locationName || "N/A"}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -237,15 +237,17 @@ export function UserCasesModal({
                         </TableCell>
                         <TableCell>
                           <Badge
-                            variant={getPriorityBadgeVariant(case_.priority)}
+                            variant={getPriorityBadgeVariant(
+                              case_.urgency || "low"
+                            )}
                           >
-                            {case_.priority}
+                            {case_.urgency || "low"}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <Calendar className="w-3 h-3" />
-                            {formatDate(case_.assignedDate)}
+                            {formatDate(case_.createdAt)}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -281,19 +283,21 @@ export function UserCasesModal({
                     </TableRow>
                   ) : (
                     reviewed.map((case_) => (
-                      <TableRow key={case_.id}>
+                      <TableRow key={case_._id}>
                         <TableCell>
                           <div>
                             <div className="font-medium">{case_.name}</div>
                             <div className="text-sm text-muted-foreground">
-                              ID: {case_.id}
+                              ID: {case_._id.toString().slice(-6)}
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <MapPin className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-sm">{case_.location}</span>
+                            <span className="text-sm">
+                              {case_.locationName || "N/A"}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -303,22 +307,24 @@ export function UserCasesModal({
                         </TableCell>
                         <TableCell>
                           <Badge
-                            variant={getPriorityBadgeVariant(case_.priority)}
+                            variant={getPriorityBadgeVariant(
+                              case_.urgency || "low"
+                            )}
                           >
-                            {case_.priority}
+                            {case_.urgency || "low"}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <Calendar className="w-3 h-3" />
-                            {formatDate(case_.assignedDate)}
+                            {formatDate(case_.createdAt)}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <Calendar className="w-3 h-3" />
-                            {case_.reviewedDate
-                              ? formatDate(case_.reviewedDate)
+                            {case_.updatedAt
+                              ? formatDate(case_.updatedAt)
                               : "N/A"}
                           </div>
                         </TableCell>

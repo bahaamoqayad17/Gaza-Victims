@@ -10,37 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Loader2 } from "lucide-react";
-import {
-  useGetPendingCasesQuery,
-  useAssignCaseMutation,
-} from "@/store/api/apiSlice";
+import { Loader2 } from "lucide-react";
+import { useGetVerifiedCasesQuery } from "@/store/api/apiSlice";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useToast } from "@/hooks/use-toast";
-import { AssignCaseModal } from "@/components/AssignCaseModal";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
 
-export const PendingCasesTab = () => {
-  const [assignModalOpen, setAssignModalOpen] = useState(false);
-  const [selectedCase, setSelectedCase] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-
-  // Get current user role
-  const currentUser = useSelector((state: RootState) => state.auth.user);
-  const canAssignCases =
-    currentUser?.role === "admin" || currentUser?.role === "senior_moderator";
-
-  // Fetch pending cases from API
+export const VerifiedCasesTab = () => {
+  // Fetch verified cases from API
   const {
     data: casesResponse,
     isLoading,
     isError,
     error,
     refetch,
-  } = useGetPendingCasesQuery();
+  } = useGetVerifiedCasesQuery();
 
   const getPriorityBadgeVariant = (priority: string) => {
     switch (priority) {
@@ -63,45 +45,17 @@ export const PendingCasesTab = () => {
 
   const cases = casesResponse?.data?.cases || [];
 
-  const handleAssignClick = (caseId: string, caseName: string) => {
-    setSelectedCase({ id: caseId, name: caseName });
-    setAssignModalOpen(true);
-  };
-
-  const [assignCase] = useAssignCaseMutation();
-  const { toast } = useToast();
-
-  const handleAssignCase = async (caseId: string, userId: string) => {
-    try {
-      await assignCase({ caseId, assignedTo: userId }).unwrap();
-
-      toast({
-        title: "Case assigned successfully",
-        description: "The case has been assigned to the selected moderator.",
-      });
-
-      setAssignModalOpen(false);
-      setSelectedCase(null);
-    } catch (error) {
-      toast({
-        title: "Assignment failed",
-        description: "Failed to assign the case. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   // Loading state
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Pending Case Reviews</CardTitle>
+          <CardTitle>Verified Cases</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin" />
-            <span className="ml-2">Loading pending cases...</span>
+            <span className="ml-2">Loading verified cases...</span>
           </div>
         </CardContent>
       </Card>
@@ -113,12 +67,12 @@ export const PendingCasesTab = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Pending Case Reviews</CardTitle>
+          <CardTitle>Verified Cases</CardTitle>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
             <AlertDescription>
-              Failed to load pending cases.{" "}
+              Failed to load verified cases.{" "}
               {error && "data" in error
                 ? (error.data as { message?: string })?.message
                 : "Please try again."}
@@ -141,7 +95,7 @@ export const PendingCasesTab = () => {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Pending Case Reviews</CardTitle>
+          <CardTitle>Verified Cases</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -152,18 +106,19 @@ export const PendingCasesTab = () => {
                 <TableHead>Status</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Submitted</TableHead>
-                <TableHead>Reviewer</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>Moderator</TableHead>
+                <TableHead>Third Party</TableHead>
+                <TableHead>Digital Forensics</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {cases.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="text-center py-8 text-muted-foreground"
                   >
-                    No pending cases found.
+                    No verified cases found.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -179,7 +134,7 @@ export const PendingCasesTab = () => {
                     </TableCell>
                     <TableCell>{case_.locationName || "N/A"}</TableCell>
                     <TableCell>
-                      <Badge variant="secondary">
+                      <Badge variant="default">
                         {case_.status.replace("_", " ")}
                       </Badge>
                     </TableCell>
@@ -200,27 +155,27 @@ export const PendingCasesTab = () => {
                         ? typeof case_.userModeratorVerified === "object"
                           ? (case_.userModeratorVerified as { name: string })
                               ?.name
-                          : "Assigned"
-                        : "Unassigned"}
+                          : "Verified"
+                        : "N/A"}
                     </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          Review
-                        </Button>
-                        {canAssignCases && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleAssignClick(case_._id, case_.name)
-                            }
-                          >
-                            Assign
-                          </Button>
-                        )}
-                      </div>
+                    <TableCell className="text-sm">
+                      {case_.userThirdPartyVerified
+                        ? typeof case_.userThirdPartyVerified === "object"
+                          ? (case_.userThirdPartyVerified as { name: string })
+                              ?.name
+                          : "Verified"
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {case_.userDigitalForensicsVerified
+                        ? typeof case_.userDigitalForensicsVerified === "object"
+                          ? (
+                              case_.userDigitalForensicsVerified as {
+                                name: string;
+                              }
+                            )?.name
+                          : "Verified"
+                        : "N/A"}
                     </TableCell>
                   </TableRow>
                 ))
@@ -229,21 +184,6 @@ export const PendingCasesTab = () => {
           </Table>
         </CardContent>
       </Card>
-
-      {/* Assignment Modal */}
-      {selectedCase && (
-        <AssignCaseModal
-          isOpen={assignModalOpen}
-          onClose={() => {
-            setAssignModalOpen(false);
-            setSelectedCase(null);
-          }}
-          caseId={selectedCase.id}
-          caseName={selectedCase.name}
-          allowedRoles={["moderator"]}
-          onAssign={handleAssignCase}
-        />
-      )}
     </>
   );
 };

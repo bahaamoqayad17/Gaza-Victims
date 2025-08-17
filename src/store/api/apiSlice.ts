@@ -431,6 +431,104 @@ export const apiSlice = createApi({
       invalidatesTags: ["User"],
     }),
 
+    // User management endpoints
+    deleteUser: builder.mutation<ApiResponse<{ user: User }>, string>({
+      query: (userId) => ({
+        url: `/users/${userId}`,
+        method: "DELETE",
+      }),
+      async onQueryStarted(userId, { dispatch, queryFulfilled }) {
+        // Optimistic update - remove user from list
+        const patchResult = dispatch(
+          apiSlice.util.updateQueryData("getAllUsers", undefined, (draft) => {
+            if (draft.data?.users) {
+              draft.data.users = draft.data.users.filter(
+                (user) => user._id !== userId
+              );
+            }
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert optimistic update on error
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: ["User"],
+    }),
+
+    deactivateUser: builder.mutation<ApiResponse<{ user: User }>, string>({
+      query: (userId) => ({
+        url: `/users/deactivate/${userId}`,
+        method: "PATCH",
+      }),
+      async onQueryStarted(userId, { dispatch, queryFulfilled }) {
+        // Optimistic update - set user as inactive
+        const patchResult = dispatch(
+          apiSlice.util.updateQueryData("getAllUsers", undefined, (draft) => {
+            const userIndex = draft.data?.users?.findIndex(
+              (user) => user._id === userId
+            );
+            if (
+              userIndex !== undefined &&
+              userIndex >= 0 &&
+              draft.data?.users
+            ) {
+              draft.data.users[userIndex].isActive = false;
+            }
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert optimistic update on error
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: ["User"],
+    }),
+
+    activateUser: builder.mutation<ApiResponse<{ user: User }>, string>({
+      query: (userId) => ({
+        url: `/users/activate/${userId}`,
+        method: "PATCH",
+      }),
+      async onQueryStarted(userId, { dispatch, queryFulfilled }) {
+        // Optimistic update - set user as active
+        const patchResult = dispatch(
+          apiSlice.util.updateQueryData("getAllUsers", undefined, (draft) => {
+            const userIndex = draft.data?.users?.findIndex(
+              (user) => user._id === userId
+            );
+            if (
+              userIndex !== undefined &&
+              userIndex >= 0 &&
+              draft.data?.users
+            ) {
+              draft.data.users[userIndex].isActive = true;
+            }
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert optimistic update on error
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: ["User"],
+    }),
+
+    // Get user records endpoint
+    getUserRecords: builder.query<ApiResponse<{ cases: Case[] }>, string>({
+      query: (userId) => `/users/user-records/${userId}`,
+      providesTags: (result, error, userId) => [{ type: "Case", id: userId }],
+    }),
+
     // Case review endpoints (protected)
     getPendingCases: builder.query<ApiResponse<{ cases: Case[] }>, void>({
       query: () => "/cases/pending-cases",
@@ -458,10 +556,300 @@ export const apiSlice = createApi({
       providesTags: ["Case"],
     }),
 
+    getVerifiedCases: builder.query<ApiResponse<{ cases: Case[] }>, void>({
+      query: () => "/cases/verified-cases",
+      providesTags: ["Case"],
+    }),
+
     // Dashboard stats endpoint
     getDashboardStats: builder.query<ApiResponse<DashboardStats>, void>({
       query: () => "/cases/dashboard-stats",
       providesTags: ["Case", "User"],
+    }),
+
+    // Case assignment endpoint
+    assignCase: builder.mutation<
+      ApiResponse<{ case: Case }>,
+      { caseId: string; assignedTo: string }
+    >({
+      query: ({ caseId, assignedTo }) => ({
+        url: `/cases/assign-case/${caseId}`,
+        method: "POST",
+        body: { assignedTo },
+      }),
+      async onQueryStarted(
+        { caseId, assignedTo },
+        { dispatch, queryFulfilled, getState }
+      ) {
+        // Get user info for optimistic update
+        const state = getState() as RootState;
+        const usersResult = apiSlice.endpoints.getAllUsers.select()(state);
+        const assignedUser = usersResult.data?.data?.users?.find(
+          (user) => user._id === assignedTo
+        );
+
+        // Optimistic updates for all case lists
+        const patchResults: { undo: () => void }[] = [];
+
+        // Update pending cases
+        const pendingPatch = dispatch(
+          apiSlice.util.updateQueryData(
+            "getPendingCases",
+            undefined,
+            (draft) => {
+              const caseIndex = draft.data?.cases?.findIndex(
+                (c) => c._id === caseId
+              );
+              if (
+                caseIndex !== undefined &&
+                caseIndex >= 0 &&
+                draft.data?.cases
+              ) {
+                const case_ = draft.data.cases[caseIndex];
+                if (assignedUser?.role === "moderator") {
+                  case_.status = "under_review";
+                  case_.userModeratorVerified = assignedUser;
+                } else if (assignedUser?.role === "third_party_moderator") {
+                  case_.status = "third_party_review";
+                  case_.userThirdPartyVerified = assignedUser;
+                } else if (
+                  assignedUser?.role === "digital_forensics_moderator"
+                ) {
+                  case_.status = "digital_forensics_review";
+                  case_.userDigitalForensicsVerified = assignedUser;
+                }
+              }
+            }
+          )
+        );
+        patchResults.push(pendingPatch);
+
+        // Update cases under review
+        const underReviewPatch = dispatch(
+          apiSlice.util.updateQueryData(
+            "getCasesUnderReview",
+            undefined,
+            (draft) => {
+              const caseIndex = draft.data?.cases?.findIndex(
+                (c) => c._id === caseId
+              );
+              if (
+                caseIndex !== undefined &&
+                caseIndex >= 0 &&
+                draft.data?.cases
+              ) {
+                const case_ = draft.data.cases[caseIndex];
+                if (assignedUser?.role === "moderator") {
+                  case_.userModeratorVerified = assignedUser;
+                }
+              }
+            }
+          )
+        );
+        patchResults.push(underReviewPatch);
+
+        // Update third party review cases
+        const thirdPartyPatch = dispatch(
+          apiSlice.util.updateQueryData(
+            "getCasesForThirdPartyReview",
+            undefined,
+            (draft) => {
+              const caseIndex = draft.data?.cases?.findIndex(
+                (c) => c._id === caseId
+              );
+              if (
+                caseIndex !== undefined &&
+                caseIndex >= 0 &&
+                draft.data?.cases
+              ) {
+                const case_ = draft.data.cases[caseIndex];
+                if (assignedUser?.role === "third_party_moderator") {
+                  case_.userThirdPartyVerified = assignedUser;
+                }
+              }
+            }
+          )
+        );
+        patchResults.push(thirdPartyPatch);
+
+        // Update digital forensics review cases
+        const digitalForensicsPatch = dispatch(
+          apiSlice.util.updateQueryData(
+            "getCasesForDigitalForensicsReview",
+            undefined,
+            (draft) => {
+              const caseIndex = draft.data?.cases?.findIndex(
+                (c) => c._id === caseId
+              );
+              if (
+                caseIndex !== undefined &&
+                caseIndex >= 0 &&
+                draft.data?.cases
+              ) {
+                const case_ = draft.data.cases[caseIndex];
+                if (assignedUser?.role === "digital_forensics_moderator") {
+                  case_.userDigitalForensicsVerified = assignedUser;
+                }
+              }
+            }
+          )
+        );
+        patchResults.push(digitalForensicsPatch);
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert optimistic updates on error
+          patchResults.forEach((patch) => patch.undo());
+        }
+      },
+      invalidatesTags: ["Case"],
+    }),
+
+    // Case verification endpoint
+    verifyCase: builder.mutation<ApiResponse<{ case: Case }>, string>({
+      query: (caseId) => ({
+        url: `/cases/verify/${caseId}`,
+        method: "PATCH",
+      }),
+      async onQueryStarted(caseId, { dispatch, queryFulfilled, getState }) {
+        // Get current user info for optimistic update
+        const state = getState() as RootState;
+        const currentUser = state.auth.user;
+
+        // Optimistic updates for all case lists
+        const patchResults: { undo: () => void }[] = [];
+
+        if (currentUser?.role === "moderator") {
+          // Update cases under review - remove from list as it moves to third party review
+          const underReviewPatch = dispatch(
+            apiSlice.util.updateQueryData(
+              "getCasesUnderReview",
+              undefined,
+              (draft) => {
+                if (draft.data?.cases) {
+                  draft.data.cases = draft.data.cases.filter(
+                    (c) => c._id !== caseId
+                  );
+                }
+              }
+            )
+          );
+          patchResults.push(underReviewPatch);
+
+          // Update third party review cases - add to list
+          const thirdPartyPatch = dispatch(
+            apiSlice.util.updateQueryData(
+              "getCasesForThirdPartyReview",
+              undefined,
+              (draft) => {
+                const caseIndex = draft.data?.cases?.findIndex(
+                  (c) => c._id === caseId
+                );
+                if (
+                  caseIndex !== undefined &&
+                  caseIndex >= 0 &&
+                  draft.data?.cases
+                ) {
+                  const case_ = draft.data.cases[caseIndex];
+                  case_.isVerified = true;
+                  case_.status = "under_third_party_review";
+                  case_.userModeratorVerified = currentUser;
+                }
+              }
+            )
+          );
+          patchResults.push(thirdPartyPatch);
+        } else if (currentUser?.role === "third_party_moderator") {
+          // Update third party review cases - remove from list
+          const thirdPartyPatch = dispatch(
+            apiSlice.util.updateQueryData(
+              "getCasesForThirdPartyReview",
+              undefined,
+              (draft) => {
+                if (draft.data?.cases) {
+                  draft.data.cases = draft.data.cases.filter(
+                    (c) => c._id !== caseId
+                  );
+                }
+              }
+            )
+          );
+          patchResults.push(thirdPartyPatch);
+
+          // Update digital forensics review cases - add to list
+          const digitalForensicsPatch = dispatch(
+            apiSlice.util.updateQueryData(
+              "getCasesForDigitalForensicsReview",
+              undefined,
+              (draft) => {
+                const caseIndex = draft.data?.cases?.findIndex(
+                  (c) => c._id === caseId
+                );
+                if (
+                  caseIndex !== undefined &&
+                  caseIndex >= 0 &&
+                  draft.data?.cases
+                ) {
+                  const case_ = draft.data.cases[caseIndex];
+                  case_.isThirdPartyVerified = true;
+                  case_.status = "under_digital_forensics_review";
+                  case_.userThirdPartyVerified = currentUser;
+                }
+              }
+            )
+          );
+          patchResults.push(digitalForensicsPatch);
+        } else if (currentUser?.role === "digital_forensics_moderator") {
+          // Update digital forensics review cases - remove from list
+          const digitalForensicsPatch = dispatch(
+            apiSlice.util.updateQueryData(
+              "getCasesForDigitalForensicsReview",
+              undefined,
+              (draft) => {
+                if (draft.data?.cases) {
+                  draft.data.cases = draft.data.cases.filter(
+                    (c) => c._id !== caseId
+                  );
+                }
+              }
+            )
+          );
+          patchResults.push(digitalForensicsPatch);
+
+          // Update verified cases - add to list
+          const verifiedPatch = dispatch(
+            apiSlice.util.updateQueryData(
+              "getVerifiedCases",
+              undefined,
+              (draft) => {
+                const caseIndex = draft.data?.cases?.findIndex(
+                  (c) => c._id === caseId
+                );
+                if (
+                  caseIndex !== undefined &&
+                  caseIndex >= 0 &&
+                  draft.data?.cases
+                ) {
+                  const case_ = draft.data.cases[caseIndex];
+                  case_.isDigitalForensicsVerified = true;
+                  case_.status = "verified";
+                  case_.userDigitalForensicsVerified = currentUser;
+                }
+              }
+            )
+          );
+          patchResults.push(verifiedPatch);
+        }
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Revert optimistic updates on error
+          patchResults.forEach((patch) => patch.undo());
+        }
+      },
+      invalidatesTags: ["Case"],
     }),
   }),
 });
@@ -490,12 +878,25 @@ export const {
   useAddUserMutation,
   useAddModeratorMutation,
 
+  // User management hooks
+  useDeleteUserMutation,
+  useDeactivateUserMutation,
+  useActivateUserMutation,
+  useGetUserRecordsQuery,
+
   // Case review hooks
   useGetPendingCasesQuery,
   useGetCasesUnderReviewQuery,
   useGetCasesForThirdPartyReviewQuery,
   useGetCasesForDigitalForensicsReviewQuery,
+  useGetVerifiedCasesQuery,
 
   // Dashboard stats hook
   useGetDashboardStatsQuery,
+
+  // Case assignment hook
+  useAssignCaseMutation,
+
+  // Case verification hook
+  useVerifyCaseMutation,
 } = apiSlice;

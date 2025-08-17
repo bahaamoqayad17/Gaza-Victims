@@ -62,33 +62,14 @@ export const ModeratorsTab = () => {
     return isActive ? "default" : "secondary";
   };
 
-  // Helper function to format date
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString();
-  };
-
-  // Helper function to get last active (mock for now since not in backend)
-  const getLastActive = () => {
-    const activities = [
-      "2 hours ago",
-      "1 day ago",
-      "3 hours ago",
-      "1 week ago",
-    ];
-    return activities[Math.floor(Math.random() * activities.length)];
-  };
-
   const users = usersResponse?.data?.users || [];
 
   const handleUserUpdate = (
     userId: string,
     action: "delete" | "deactivate" | "activate"
   ) => {
-    // TODO: Implement actual API calls for user actions
-    console.log(`User ${userId} action: ${action}`);
-    // For now, just refetch the data to update the UI
-    refetch();
+    // No need to refetch - optimistic updates handle UI changes
+    console.log(`User ${userId} action: ${action} completed`);
   };
 
   const filteredModerators = users.filter((user) => {

@@ -12,6 +12,7 @@ import {
   ThirdPartyReviewCasesTab,
   DigitalForensicsReviewCasesTab,
   CasesUnderReviewTab,
+  VerifiedCasesTab,
 } from "@/components/TabsMods";
 import { useGetDashboardStatsQuery } from "@/store/api/apiSlice";
 
@@ -26,7 +27,7 @@ const ModeratorsDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* <Header /> */}
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
@@ -119,6 +120,7 @@ const ModeratorsDashboard = () => {
             <TabsTrigger value="digital-forensics-review-cases">
               Digital Forensics Review Cases
             </TabsTrigger>
+            <TabsTrigger value="verified-cases">Verified Cases</TabsTrigger>
             <TabsTrigger value="verification-settings">
               Verification Settings
             </TabsTrigger>
@@ -147,13 +149,17 @@ const ModeratorsDashboard = () => {
             <DigitalForensicsReviewCasesTab />
           </TabsContent>
 
+          <TabsContent value="verified-cases" className="space-y-6">
+            <VerifiedCasesTab />
+          </TabsContent>
+
           <TabsContent value="verification-settings" className="space-y-6">
             <VerificationSettingsTab />
           </TabsContent>
         </Tabs>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

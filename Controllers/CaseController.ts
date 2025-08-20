@@ -204,7 +204,7 @@ export const getCasesForDigitalForensicsReview = async (
 
 export const getCaseController = async (req: Request, res: Response) => {
   try {
-    const case_ = await Case.findById(req.params.id);
+    const case_ = await Case.findOne({ generated_id: req.params.id });
 
     if (!case_) {
       return res.status(404).json({
@@ -232,16 +232,11 @@ export const createCaseController = async (
   res: Response
 ) => {
   try {
-    console.log("Request body:", req.body);
-    console.log("Form data:", req.formData?.files.additionalPhotos);
-
     // Generate temporary ID for file organization
     const tempId = new Date().getTime().toString();
 
     // Extract files from the parsed form data
     const files = req.formData?.files || {};
-
-    console.log("Extracted files:", Object.keys(files));
 
     // Process and upload files to S3 if any
     let uploadedFiles = {};
@@ -281,18 +276,75 @@ export const getCasesLocationsController = async (
   res: Response
 ) => {
   try {
-    const locations = await Case.find().select("location");
+    // Get comprehensive map data (similar to homepage but with all locations)
+    const mapLocations = await Case.aggregate([
+      {
+        $match: {
+          "location.lat": { $exists: true, $ne: "" },
+          "location.lng": { $exists: true, $ne: "" },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            lat: "$location.lat",
+            lng: "$location.lng",
+            locationName: "$locationName",
+          },
+          count: { $sum: 1 },
+          cases: {
+            $push: {
+              _id: "$_id",
+              name: "$name",
+              date: "$date",
+              age: "$age",
+              gender: "$gender",
+              status: "$status",
+              isVerified: "$isVerified",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          lat: "$_id.lat",
+          lng: "$_id.lng",
+          locationName: "$_id.locationName",
+          caseCount: "$count",
+          recentCases: { $slice: ["$cases", 10] }, // Show up to 10 cases per location
+        },
+      },
+      {
+        $sort: { caseCount: -1 }, // Sort by case count descending
+      },
+    ]);
+
+    // Get total statistics
+    const totalLocations = await Case.distinct("locationName", {
+      locationName: { $exists: true, $ne: "" },
+    }).then((locations) => locations.length);
+
+    const totalCasesWithLocation = await Case.countDocuments({
+      "location.lat": { $exists: true, $ne: "" },
+      "location.lng": { $exists: true, $ne: "" },
+    });
 
     res.status(200).json({
       status: "success",
       data: {
-        locations,
+        locations: mapLocations,
+        totalLocations,
+        totalCasesWithLocation,
+        lastUpdated: new Date().toISOString(),
       },
     });
   } catch (error) {
+    console.error("Error fetching case locations:", error);
     res.status(500).json({
       status: "error",
       message: "Something went wrong while fetching locations",
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };
@@ -305,8 +357,8 @@ export const getHomePageController = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     // 1. Get recent cases with pagination
-    const recentCases = await Case.find()
-      .sort({ createdAt: -1 })
+    const recentCases = await Case.find({ isVerified: true })
+      .sort({ date: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .select("-__v");
@@ -316,14 +368,36 @@ export const getHomePageController = async (req: Request, res: Response) => {
     // 2. Get timeline navigation data (years and months with case counts)
     const timelineData = await Case.aggregate([
       {
+        $match: {
+          date: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $addFields: {
+          dateAsDate: {
+            $cond: {
+              if: { $type: "$date" },
+              then: {
+                $cond: {
+                  if: { $eq: [{ $type: "$date" }, "string"] },
+                  then: { $dateFromString: { dateString: "$date" } },
+                  else: "$date",
+                },
+              },
+              else: new Date(),
+            },
+          },
+        },
+      },
+      {
         $group: {
           _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
+            year: { $year: "$dateAsDate" },
+            month: { $month: "$dateAsDate" },
           },
           count: { $sum: 1 },
           monthName: {
-            $first: { $dateToString: { format: "%b", date: "$createdAt" } },
+            $first: { $dateToString: { format: "%b", date: "$dateAsDate" } },
           },
         },
       },
@@ -405,7 +479,23 @@ export const getHomePageController = async (req: Request, res: Response) => {
       casesByMonth: await Case.aggregate([
         {
           $match: {
-            createdAt: {
+            date: { $exists: true, $ne: null },
+          },
+        },
+        {
+          $addFields: {
+            dateAsDate: {
+              $cond: {
+                if: { $eq: [{ $type: "$date" }, "string"] },
+                then: { $dateFromString: { dateString: "$date" } },
+                else: "$date",
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            dateAsDate: {
               $gte: new Date(new Date().getFullYear(), 0, 1),
               $lt: new Date(new Date().getFullYear() + 1, 0, 1),
             },
@@ -413,10 +503,10 @@ export const getHomePageController = async (req: Request, res: Response) => {
         },
         {
           $group: {
-            _id: { $month: "$createdAt" },
+            _id: { $month: "$dateAsDate" },
             count: { $sum: 1 },
             monthName: {
-              $first: { $dateToString: { format: "%b", date: "$createdAt" } },
+              $first: { $dateToString: { format: "%b", date: "$dateAsDate" } },
             },
           },
         },
@@ -494,13 +584,60 @@ export const getHomePageController = async (req: Request, res: Response) => {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const recentActivity = {
-      newCasesLast30Days: await Case.countDocuments({
-        createdAt: { $gte: thirtyDaysAgo },
-      }),
-      verifiedLast30Days: await Case.countDocuments({
-        createdAt: { $gte: thirtyDaysAgo },
-        isVerified: true,
-      }),
+      newCasesLast30Days: await Case.aggregate([
+        {
+          $match: {
+            date: { $exists: true, $ne: null },
+          },
+        },
+        {
+          $addFields: {
+            dateAsDate: {
+              $cond: {
+                if: { $eq: [{ $type: "$date" }, "string"] },
+                then: { $dateFromString: { dateString: "$date" } },
+                else: "$date",
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            dateAsDate: { $gte: thirtyDaysAgo },
+          },
+        },
+        {
+          $count: "count",
+        },
+      ]).then((result) => result[0]?.count || 0),
+
+      verifiedLast30Days: await Case.aggregate([
+        {
+          $match: {
+            date: { $exists: true, $ne: null },
+            isVerified: true,
+          },
+        },
+        {
+          $addFields: {
+            dateAsDate: {
+              $cond: {
+                if: { $eq: [{ $type: "$date" }, "string"] },
+                then: { $dateFromString: { dateString: "$date" } },
+                else: "$date",
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            dateAsDate: { $gte: thirtyDaysAgo },
+          },
+        },
+        {
+          $count: "count",
+        },
+      ]).then((result) => result[0]?.count || 0),
     };
 
     res.status(200).json({

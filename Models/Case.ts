@@ -3,6 +3,15 @@ import { InferSchemaType } from "mongoose";
 
 const Schema = new mongoose.Schema(
   {
+    generated_id: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => {
+        return `CASE-${Math.floor(10000000 + Math.random() * 90000000)}`;
+      },
+    },
+
     name: {
       type: String,
       required: true,
@@ -82,7 +91,7 @@ const Schema = new mongoose.Schema(
 
     urgency: {
       type: String,
-      enum: ["low", "medium", "high"],
+      enum: ["low", "medium", "high", "urgent"],
       default: "low",
     },
 
@@ -134,8 +143,11 @@ const Schema = new mongoose.Schema(
   { timestamps: true }
 );
 
+Schema.index({ generated_id: 1 }, { unique: true });
+
 export type CaseType = Omit<InferSchemaType<typeof Schema>, ""> & {
   _id: mongoose.Types.ObjectId | string;
+  generated_id: string;
 };
 
 const Case = mongoose.models.Case || mongoose.model<CaseType>("Case", Schema);

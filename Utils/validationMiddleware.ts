@@ -233,3 +233,20 @@ export const validateContactCreation = (
 
   next();
 };
+
+export const validateReportCreation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, email, message, report_type, urgency } = req.body;
+
+  if (!name || !email || !message || !report_type || !urgency) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Please provide name, email, message, report_type, and urgency",
+    });
+  }
+
+  next();
+};

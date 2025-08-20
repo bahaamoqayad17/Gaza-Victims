@@ -1,5 +1,9 @@
 [
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439011"
+        },
+        "generated_id": "CASE-12345001",
         "name": "Sarah M.",
         "age": 8,
         "gender": "Female",
@@ -37,7 +41,8 @@
         ],
         "notes": "",
         "date": "2025-07-20T00:00:00.000Z",
-        "status": "documented",
+        "status": "verified",
+        "urgency": "high",
         "submittedBy": "anonymous",
         "relationshipToVictim": "family member",
         "actionTaken": "pending",
@@ -45,9 +50,17 @@
         "isThirdPartyVerified": false,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": "2025-07-20T12:00:00.000Z"
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439012"
+        },
+        "generated_id": "CASE-12345002",
         "name": "Ahmed K.",
         "age": 34,
         "gender": "Male",
@@ -85,6 +98,7 @@
         "notes": "",
         "date": "2025-07-19T00:00:00.000Z",
         "status": "verified",
+        "urgency": "high",
         "submittedBy": "anonymous",
         "relationshipToVictim": "witness",
         "actionTaken": "pending",
@@ -92,9 +106,17 @@
         "isThirdPartyVerified": true,
         "isDigitalForensicsVerified": true,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": "2025-07-19T12:00:00.000Z"
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439013"
+        },
+        "generated_id": "CASE-12345003",
         "name": "Maria L.",
         "age": 42,
         "gender": "Female",
@@ -131,7 +153,8 @@
         ],
         "notes": "",
         "date": "2025-07-18T00:00:00.000Z",
-        "status": "investigating",
+        "status": "under_review",
+        "urgency": "medium",
         "submittedBy": "anonymous",
         "relationshipToVictim": "colleague",
         "actionTaken": "pending",
@@ -139,9 +162,17 @@
         "isThirdPartyVerified": false,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": null
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439014"
+        },
+        "generated_id": "CASE-12345004",
         "name": "Chen W.",
         "age": 25,
         "gender": "Male",
@@ -178,7 +209,8 @@
         ],
         "notes": "",
         "date": "2025-07-17T00:00:00.000Z",
-        "status": "documented",
+        "status": "verified",
+        "urgency": "high",
         "submittedBy": "anonymous",
         "relationshipToVictim": "friend",
         "actionTaken": "pending",
@@ -186,9 +218,17 @@
         "isThirdPartyVerified": false,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": "2025-07-17T12:00:00.000Z"
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439015"
+        },
+        "generated_id": "CASE-12345005",
         "name": "Elena R.",
         "age": 31,
         "gender": "Female",
@@ -229,13 +269,22 @@
         "submittedBy": "anonymous",
         "relationshipToVictim": "colleague",
         "actionTaken": "investigating",
+        "urgency": "high",
         "isVerified": true,
         "isThirdPartyVerified": true,
         "isDigitalForensicsVerified": true,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": "2025-07-16T12:00:00.000Z"
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439016"
+        },
+        "generated_id": "CASE-12345006",
         "name": "David L.",
         "age": 45,
         "gender": "Male",
@@ -272,7 +321,8 @@
         ],
         "notes": "",
         "date": "2025-07-15T00:00:00.000Z",
-        "status": "documented",
+        "status": "third_party_review",
+        "urgency": "high",
         "submittedBy": "anonymous",
         "relationshipToVictim": "neighbor",
         "actionTaken": "pending",
@@ -280,9 +330,17 @@
         "isThirdPartyVerified": false,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": null
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439017"
+        },
+        "generated_id": "CASE-12345007",
         "name": "Fatima A.",
         "age": 19,
         "gender": "Female",
@@ -319,7 +377,8 @@
         ],
         "notes": "",
         "date": "2025-07-14T00:00:00.000Z",
-        "status": "investigating",
+        "status": "digital_forensics_review",
+        "urgency": "high",
         "submittedBy": "anonymous",
         "relationshipToVictim": "family member",
         "actionTaken": "pending",
@@ -327,9 +386,17 @@
         "isThirdPartyVerified": false,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": null
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439018"
+        },
+        "generated_id": "CASE-12345008",
         "name": "Michael T.",
         "age": 38,
         "gender": "Male",
@@ -367,6 +434,7 @@
         "notes": "",
         "date": "2025-07-13T00:00:00.000Z",
         "status": "verified",
+        "urgency": "medium",
         "submittedBy": "anonymous",
         "relationshipToVictim": "colleague",
         "actionTaken": "pending",
@@ -374,9 +442,17 @@
         "isThirdPartyVerified": true,
         "isDigitalForensicsVerified": true,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": "2025-07-13T12:00:00.000Z"
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439019"
+        },
+        "generated_id": "CASE-12345009",
         "name": "Amira H.",
         "age": 26,
         "gender": "Female",
@@ -413,7 +489,8 @@
         ],
         "notes": "",
         "date": "2025-07-12T00:00:00.000Z",
-        "status": "documented",
+        "status": "under_review",
+        "urgency": "high",
         "submittedBy": "anonymous",
         "relationshipToVictim": "family member",
         "actionTaken": "investigating",
@@ -421,9 +498,17 @@
         "isThirdPartyVerified": false,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": null
     },
     {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439020"
+        },
+        "generated_id": "CASE-12345010",
         "name": "Carlos M.",
         "age": 52,
         "gender": "Male",
@@ -461,6 +546,7 @@
         "notes": "",
         "date": "2025-07-11T00:00:00.000Z",
         "status": "verified",
+        "urgency": "medium",
         "submittedBy": "anonymous",
         "relationshipToVictim": "community member",
         "actionTaken": "pending",
@@ -468,6 +554,10 @@
         "isThirdPartyVerified": true,
         "isDigitalForensicsVerified": false,
         "consentAgreed": true,
-        "safetyAcknowledged": true
+        "safetyAcknowledged": true,
+        "userThirdPartyVerified": null,
+        "userDigitalForensicsVerified": null,
+        "userModeratorVerified": null,
+        "verifiedDate": "2025-07-11T12:00:00.000Z"
     }
 ]

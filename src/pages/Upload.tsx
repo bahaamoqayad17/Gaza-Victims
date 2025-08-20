@@ -307,9 +307,9 @@ const Upload = () => {
       // Submit using Redux RTK Query
       const result = await createCase(formData).unwrap();
 
-      if (result?.data?.case?._id) {
+      if (result?.data?.case?.generated_id) {
         // Generate case number from the returned ID
-        const caseNumber = result.data.case._id;
+        const caseNumber = result.data.case.generated_id;
 
         const description = t("caseNumberGenerated") + ": " + caseNumber;
 

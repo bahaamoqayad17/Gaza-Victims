@@ -1,13 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Menu, LogIn, LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
 import { useEffect } from "react";
-import { useIsAuthenticated } from "@/components/AuthGuard";
-import { useAppDispatch } from "@/store/hooks";
-import { logout } from "@/store/slices/authSlice";
-import { toast } from "sonner";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -18,12 +14,6 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
   const location = useLocation();
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
-  const isAuthenticated = useIsAuthenticated();
-  const dispatch = useAppDispatch();
-  const handleLogout = () => {
-    dispatch(logout());
-    toast.success("Logged out successfully");
-  };
 
   // Set RTL for Arabic and Farsi
   useEffect(() => {
@@ -98,15 +88,6 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   )}
                 </h1>
               </Link>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/auth">
-                  <LogIn className="h-4 w-4 mr-1" />
-                  {t("login")}
-                </Link>
-              </Button>
-              <LanguageSelector />
             </div>
           </div>
           {/* Mobile navigation - second line */}
@@ -224,23 +205,6 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
             >
               {t("about")}
             </Link>
-            {isAuthenticated ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleLogout()}
-              >
-                <LogOut className="h-4 w-4 mr-1" />
-                {t("logout")}
-              </Button>
-            ) : (
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/auth">
-                  <LogIn className="h-4 w-4 mr-1" />
-                  {t("login")}
-                </Link>
-              </Button>
-            )}
             <LanguageSelector />
           </nav>
         </div>

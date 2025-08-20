@@ -20,6 +20,9 @@ import { UseFormReturn } from "react-hook-form";
 import { Step2FormData } from "@/lib/validationSchemas";
 import { useLanguage } from "../LanguageSelector";
 import { useTranslation } from "@/lib/translations";
+import { InteractiveMap } from "../InteractiveMap";
+import { useState } from "react";
+import { MapPin } from "lucide-react";
 
 export default function SecondStep({
   form,
@@ -48,6 +51,10 @@ export default function SecondStep({
 }) {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   return (
     <Form {...form}>
       <form className="space-y-4">
@@ -67,7 +74,7 @@ export default function SecondStep({
           />
           <FormField
             control={form.control}
-            name="location"
+            name="locationName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("location")}</FormLabel>
@@ -79,6 +86,65 @@ export default function SecondStep({
             )}
           />
         </div>
+
+        <InteractiveMap
+          onLocationSelect={(location) => {
+            form.setValue("location", {
+              lat: location.lat.toString(),
+              lng: location.lng.toString(),
+            });
+            setSelectedCoordinates(location);
+            // Also update the locationName field with coordinates if no text location is provided
+            if (!form.getValues("locationName")) {
+              form.setValue(
+                "locationName",
+                `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`
+              );
+            }
+          }}
+          enableSelection={true}
+        />
+
+        {/* Display selected coordinates */}
+        {selectedCoordinates && (
+          <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-2 text-sm text-green-800">
+              <MapPin className="w-4 h-4" />
+              <span className="font-medium">Location Selected:</span>
+              <span>
+                {selectedCoordinates.lat.toFixed(6)},{" "}
+                {selectedCoordinates.lng.toFixed(6)}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Hidden fields for location object */}
+        <FormField
+          control={form.control}
+          name="location.lat"
+          render={({ field }) => (
+            <FormItem className="hidden">
+              <FormControl>
+                <Input type="hidden" {...field} value={field.value || ""} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="location.lng"
+          render={({ field }) => (
+            <FormItem className="hidden">
+              <FormControl>
+                <Input type="hidden" {...field} value={field.value || ""} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

@@ -19,6 +19,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Step1FormData } from "@/lib/validationSchemas";
 import { useTranslation } from "@/lib/translations";
 import { useLanguage } from "../LanguageSelector";
+import { InteractiveMap } from "../InteractiveMap";
 
 interface FamilyCounts {
   // Countable family members

@@ -21,7 +21,11 @@ export const step1Schema = z.object({
 // Step 2: Incident Details
 export const step2Schema = z.object({
   date: z.string().min(1, "dateRequired"),
-  location: z.string().min(1, "locationRequired"),
+  location: z.object({
+    lat: z.string().min(1, "latitudeRequired"),
+    lng: z.string().min(1, "longitudeRequired"),
+  }),
+  locationName: z.string().optional(),
   cause: z.string().min(1, "causeRequired"),
   otherCauseDetails: z.string().optional(),
   circumstances: z.string().min(1, "circumstancesRequired"),
@@ -73,7 +77,11 @@ export const uploadFormSchema = z.object({
 
   // Step 2
   date: z.string().min(1, "dateRequired"),
-  location: z.string().min(1, "locationRequired"),
+  location: z.object({
+    lat: z.string().min(1, "latitudeRequired"),
+    lng: z.string().min(1, "longitudeRequired"),
+  }),
+  locationName: z.string().optional(),
   cause: z.string().min(1, "causeRequired"),
   otherCauseDetails: z.string().optional(),
   circumstances: z.string().min(1, "circumstancesRequired"),
@@ -102,7 +110,7 @@ export const uploadFormSchema = z.object({
 export const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
   email: z.string().email("Please provide a valid email address"),
-  mobile_number: z.string().min(10, "Please provide a valid mobile number"),
+  mobile_number: z.string().min(7, "Please provide a valid mobile number"),
   message: z.string().min(10, "Message must be at least 10 characters long"),
   type: z.string().optional(),
   recaptcha: z
@@ -134,6 +142,62 @@ export type Step3FormData = z.infer<typeof step3Schema>;
 export type Step4FormData = z.infer<typeof step4Schema>;
 export type Step5FormData = z.infer<typeof step5Schema>;
 export type UploadFormData = z.infer<typeof uploadFormSchema>;
+// Report case validation schema
+export const reportCaseSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters long"),
+  email: z.string().email("Please provide a valid email address"),
+  contact: z.string().optional(),
+  message: z.string().min(10, "Message must be at least 10 characters long"),
+  reportType: z
+    .array(z.string())
+    .min(1, "Please select at least one report type"),
+  caseId: z.string().optional(),
+  urgency: z.string().min(1, "Please select urgency level"),
+  captchaValue: z.string().min(1, "Please complete the reCAPTCHA verification"),
+});
+
+// Report additional information validation schema
+export const reportAdditionalSchema = z
+  .object({
+    caseId: z.string().optional(),
+    name: z.string().optional(),
+    email: z
+      .string()
+      .email("Please provide a valid email address")
+      .optional()
+      .or(z.literal("")),
+    contact: z.string().optional(),
+    relationship: z
+      .string()
+      .min(1, "Please select your relationship to the victim"),
+    additionalInfo: z
+      .string()
+      .min(10, "Additional information must be at least 10 characters long"),
+    evidenceDescription: z.string().optional(),
+    urgency: z.string().min(1, "Please select urgency level"),
+    newEvidence: z.boolean(),
+    witnessTes: z.boolean(),
+    correction: z.boolean(),
+    consentAgreed: z
+      .boolean()
+      .refine((val) => val === true, "You must agree to the consent terms"),
+    safetyAcknowledged: z
+      .boolean()
+      .refine(
+        (val) => val === true,
+        "You must acknowledge the safety disclaimer"
+      ),
+    captchaValue: z
+      .string()
+      .min(1, "Please complete the reCAPTCHA verification"),
+  })
+  .refine((data) => data.newEvidence || data.witnessTes || data.correction, {
+    message: "Please select at least one type of information you're providing",
+    path: ["newEvidence"],
+  });
+
 export type ContactFormData = z.infer<typeof contactSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type ReportCaseFormData = z.infer<typeof reportCaseSchema>;
+export type ReportAdditionalFormData = z.infer<typeof reportAdditionalSchema>;

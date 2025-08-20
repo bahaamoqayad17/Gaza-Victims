@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,75 +38,118 @@ import { useTranslation } from "@/lib/translations";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import ReCAPTCHA from "react-google-recaptcha";
+import {
+  reportCaseSchema,
+  type ReportCaseFormData,
+} from "@/lib/validationSchemas";
+import { useToast } from "@/hooks/use-toast";
+import { useCreateReportMutation } from "@/store/api/apiSlice";
 
 const ReportCase = () => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
+  const { toast } = useToast();
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    contact: "",
-    message: "",
-    reportType: [] as string[],
-    caseId: "",
-    urgency: "medium",
-    familyComposition: {
-      father: false,
-      mother: false,
-      grandfather: false,
-      grandmother: false,
-      wife: false,
-      brothers: 0,
-      sisters: 0,
-      son: 0,
-      daughter: 0,
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createReport] = useCreateReportMutation();
+
+  // React Hook Form setup
+  const form = useForm<ReportCaseFormData>({
+    resolver: zodResolver(reportCaseSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      contact: "",
+      message: "",
+      reportType: [],
+      caseId: "",
+      urgency: "medium",
+      captchaValue: "",
     },
+    mode: "onChange",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Report submitted:", formData);
-    // Handle form submission
-  };
+  const handleSubmit = async (data: ReportCaseFormData) => {
+    if (!captchaValue) {
+      toast({
+        title: "Verification Required",
+        description: "Please complete the reCAPTCHA verification",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const handleReportTypeChange = (type: string, checked: boolean) => {
-    if (checked) {
-      setFormData((prev) => ({
-        ...prev,
-        reportType: [...prev.reportType, type],
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        reportType: prev.reportType.filter((t) => t !== type),
-      }));
+    setIsSubmitting(true);
+    try {
+      // Prepare data for API call
+      const reportData = {
+        name: data.name,
+        email: data.email,
+        contact_info: data.contact || undefined,
+        message: data.message,
+        caseId: data.caseId || undefined,
+        relation_to_victim: undefined,
+        report_type: data.reportType,
+        urgency: data.urgency,
+        type: data.reportType, // Backend expects both report_type and type
+        captchaValue: captchaValue,
+      };
+
+      await createReport(reportData).unwrap();
+
+      toast({
+        title: "Report Submitted",
+        description:
+          "Your report has been submitted successfully. We will review it and get back to you.",
+      });
+
+      // Reset form after successful submission
+      form.reset();
+      setCaptchaValue(null);
+    } catch (error: unknown) {
+      console.error("Error submitting report:", error);
+
+      // Handle specific error messages from backend
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "There was an error submitting your report. Please try again.";
+
+      toast({
+        title: "Submission Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleFamilyTagChange = (tag: string, checked: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      familyComposition: {
-        ...prev.familyComposition,
-        [tag]: checked,
-      },
-    }));
+  const handleReportTypeChange = (
+    typeId: string,
+    label: string,
+    checked: boolean
+  ) => {
+    const currentTypes = form.getValues("reportType");
+    if (checked) {
+      form.setValue("reportType", [...currentTypes, label]);
+    } else {
+      form.setValue(
+        "reportType",
+        currentTypes.filter((t) => t !== label)
+      );
+    }
+    // Trigger validation
+    form.trigger("reportType");
   };
 
-  const handleFamilyCountChange = (type: string, increment: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      familyComposition: {
-        ...prev.familyComposition,
-        [type]: Math.max(
-          0,
-          (prev.familyComposition[
-            type as keyof typeof prev.familyComposition
-          ] as number) + (increment ? 1 : -1)
-        ),
-      },
-    }));
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value);
+    if (value) {
+      form.setValue("captchaValue", value);
+      form.trigger("captchaValue");
+    } else {
+      form.setValue("captchaValue", "");
+    }
   };
 
   return (
@@ -117,278 +170,243 @@ const ReportCase = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Contact Information */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">{t("contactInformation")}</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">{t("name")}</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            name: e.target.value,
-                          }))
-                        }
-                        placeholder="Your name"
-                        required
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                  className="space-y-6"
+                >
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-medium">{t("contactInformation")}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("name")}</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                placeholder="your.email@example.com"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                          }))
-                        }
-                        placeholder="your.email@example.com"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="contact">
-                      Additional Contact (Optional)
-                    </Label>
-                    <Input
-                      id="contact"
-                      value={formData.contact}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          contact: e.target.value,
-                        }))
-                      }
-                      placeholder="Phone number or alternative contact method"
+                    <FormField
+                      control={form.control}
+                      name="contact"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Additional Contact (Optional)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Phone number or alternative contact method"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
                   </div>
-                </div>
 
-                <Separator />
+                  <Separator />
 
-                {/* Report Type */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">Report Type</h4>
-                  <div className="space-y-3">
-                    {[
-                      { id: "technical", label: "Report technical issue" },
-                      { id: "help", label: "We would like to help" },
-                      { id: "violation", label: "Legal violation" },
-                      { id: "other", label: "Other" },
-                    ].map((type) => (
-                      <div
-                        key={type.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={type.id}
-                          checked={formData.reportType.includes(type.id)}
-                          onCheckedChange={(checked) =>
-                            handleReportTypeChange(type.id, checked as boolean)
-                          }
-                        />
-                        <Label htmlFor={type.id}>{type.label}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  {/* Report Type */}
+                  <FormField
+                    control={form.control}
+                    name="reportType"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base font-medium">
+                            Report Type
+                          </FormLabel>
+                        </div>
+                        <div className="space-y-3">
+                          {[
+                            {
+                              id: "technical",
+                              label: "Report technical issue",
+                            },
+                            { id: "help", label: "We would like to help" },
+                            { id: "violation", label: "Legal violation" },
+                            { id: "other", label: "Other" },
+                          ].map((type) => (
+                            <FormField
+                              key={type.id}
+                              control={form.control}
+                              name="reportType"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={type.id}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(
+                                          type.label
+                                        )}
+                                        onCheckedChange={(checked) => {
+                                          handleReportTypeChange(
+                                            type.id,
+                                            type.label,
+                                            checked as boolean
+                                          );
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {type.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <Separator />
+                  <Separator />
 
-                {/* Case Information */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">Case Information (Optional)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="case-id">Case ID</Label>
-                      <Input
-                        id="case-id"
-                        value={formData.caseId}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            caseId: e.target.value,
-                          }))
-                        }
-                        placeholder="If reporting about a specific case"
+                  {/* Case Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Case Information (Optional)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="caseId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Case ID</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="If reporting about a specific case"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="urgency"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Urgency Level</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select urgency level" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="low">Low</SelectItem>
+                                <SelectItem value="medium">Medium</SelectItem>
+                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="urgent">Urgent</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="urgency">Urgency Level</Label>
-                      <Select
-                        value={formData.urgency}
-                        onValueChange={(value) =>
-                          setFormData((prev) => ({ ...prev, urgency: value }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
                   </div>
-                </div>
 
-                <Separator />
+                  <Separator />
 
-                {/* Family Composition */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">Family Composition (Optional)</h4>
-                  <div className="space-y-3">
-                    <p className="text-sm text-muted-foreground">
-                      Select family members who are still alive:
-                    </p>
-
-                    {/* Checkbox tags for individual family members */}
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        "father",
-                        "mother",
-                        "grandfather",
-                        "grandmother",
-                        "wife",
-                      ].map((member) => (
-                        <div
-                          key={member}
-                          className="flex items-center space-x-2"
-                        >
-                          <Checkbox
-                            id={member}
-                            checked={
-                              formData.familyComposition[
-                                member as keyof typeof formData.familyComposition
-                              ] as boolean
-                            }
-                            onCheckedChange={(checked) =>
-                              handleFamilyTagChange(member, checked as boolean)
-                            }
+                  {/* Message */}
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Please provide detailed information about your report..."
+                            rows={6}
+                            {...field}
                           />
-                          <Label
-                            htmlFor={member}
-                            className="text-sm capitalize"
-                          >
-                            {member}
-                          </Label>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Security Notice */}
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <Shield className="w-4 h-4 text-blue-600 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-medium mb-1">Security & Privacy</p>
+                        <p className="text-muted-foreground">
+                          Your report will be handled confidentially. We use
+                          encryption to protect sensitive information and will
+                          only share details with authorized personnel as
+                          necessary for investigation.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* reCAPTCHA */}
+                  <FormField
+                    control={form.control}
+                    name="captchaValue"
+                    render={() => (
+                      <FormItem>
+                        <div className="flex justify-center">
+                          <ReCAPTCHA
+                            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                            onChange={handleCaptchaChange}
+                            onExpired={() => handleCaptchaChange(null)}
+                          />
                         </div>
-                      ))}
-                    </div>
-
-                    {/* Counter for multiple family members */}
-                    <div className="grid grid-cols-2 gap-4">
-                      {["brothers", "sisters", "son", "daughter"].map(
-                        (member) => (
-                          <div key={member} className="space-y-2">
-                            <Label className="text-sm capitalize">
-                              {member}
-                            </Label>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-8 p-0"
-                                onClick={() =>
-                                  handleFamilyCountChange(member, false)
-                                }
-                                disabled={
-                                  formData.familyComposition[
-                                    member as keyof typeof formData.familyComposition
-                                  ] === 0
-                                }
-                              >
-                                <Minus className="h-3 w-3" />
-                              </Button>
-                              <span className="w-8 text-center text-sm">
-                                {
-                                  formData.familyComposition[
-                                    member as keyof typeof formData.familyComposition
-                                  ]
-                                }
-                              </span>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="h-8 w-8 p-0"
-                                onClick={() =>
-                                  handleFamilyCountChange(member, true)
-                                }
-                              >
-                                <Plus className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Message */}
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        message: e.target.value,
-                      }))
-                    }
-                    placeholder="Please provide detailed information about your report..."
-                    rows={6}
-                    required
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                {/* Security Notice */}
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <Shield className="w-4 h-4 text-blue-600 mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-medium mb-1">Security & Privacy</p>
-                      <p className="text-muted-foreground">
-                        Your report will be handled confidentially. We use
-                        encryption to protect sensitive information and will
-                        only share details with authorized personnel as
-                        necessary for investigation.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* reCAPTCHA placeholder */}
-                <div className="flex justify-center">
-                  <ReCAPTCHA
-                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                    onChange={(value) => setCaptchaValue(value)}
-                    onExpired={() => setCaptchaValue(null)}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button type="submit" className="w-full" size="lg">
-                  <Send className="w-4 h-4 mr-2" />
-                  Submit Report
-                </Button>
-              </form>
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    size="lg"
+                    disabled={isSubmitting}
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    {isSubmitting ? "Submitting..." : "Submit Report"}
+                  </Button>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </div>

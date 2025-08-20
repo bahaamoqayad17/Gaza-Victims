@@ -1,17 +1,11 @@
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { Shield } from "lucide-react";
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
-import { useIsAuthenticated, useHasRole } from "@/components/AuthGuard";
 
 export const Footer = () => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
-
-  const isAuthenticated = useIsAuthenticated();
-  const isAdminOrModerator = useHasRole(["admin", "moderator"]);
 
   return (
     <footer className="border-t bg-muted/20 mt-auto">
@@ -71,23 +65,6 @@ export const Footer = () => {
             <p className="text-xs">{t("voluntaryNonProfit")}</p>
           </div>
         </div>
-
-        {/* MVP Moderator Access Button */}
-        {!isAuthenticated && !isAdminOrModerator && (
-          <div className="fixed bottom-4 right-4">
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="bg-background/90 backdrop-blur-sm"
-            >
-              <Link to="/moderators">
-                <Shield className="w-4 h-4 mr-2" />
-                For MVP: Moderators Dashboard
-              </Link>
-            </Button>
-          </div>
-        )}
       </div>
     </footer>
   );

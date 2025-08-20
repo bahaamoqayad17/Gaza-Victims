@@ -8,7 +8,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/components/LanguageSelector";
 import { store } from "@/store/store";
 import { loadUserFromStorage } from "@/store/slices/authSlice";
-import { AuthGuard } from "@/components/AuthGuard";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Browse from "./pages/Browse";
@@ -22,8 +21,6 @@ import ReportCase from "./pages/ReportCase";
 import ReportAdditional from "./pages/ReportAdditional";
 import ReviewCase from "./pages/ReviewCase";
 import CaseSubmitted from "./pages/CaseSubmitted";
-import Auth from "./pages/Auth";
-import ModeratorsDashboard from "./pages/ModeratorsDashboard";
 
 const queryClient = new QueryClient();
 
@@ -57,14 +54,6 @@ const App = () => (
               <Route path="/report" element={<ReportCase />} />
               <Route path="/report-additional" element={<ReportAdditional />} />
               <Route path="/review-case" element={<ReviewCase />} />
-              <Route
-                path="/auth"
-                element={
-                  <AuthGuard requireAuth={false} redirectAuthenticatedTo="/">
-                    <Auth />
-                  </AuthGuard>
-                }
-              />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

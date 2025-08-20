@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "../store";
 
 // Define API response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   status: "success" | "fail" | "error";
   message?: string;
   data?: T;
@@ -104,6 +104,33 @@ export interface CaseInput {
   safetyAcknowledged: boolean;
 }
 
+export interface Report {
+  _id: string;
+  name: string;
+  email: string;
+  contact_info?: string;
+  message: string;
+  case?: string;
+  relation_to_victim?: string;
+  report_type: string[];
+  urgency: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReportInput {
+  name: string;
+  email: string;
+  contact_info?: string;
+  message: string;
+  caseId?: string;
+  relation_to_victim?: string;
+  report_type: string[];
+  urgency: string;
+  type: string[];
+  captchaValue: string;
+}
+
 export interface HomePageData {
   recentCases: Case[];
   pagination: {
@@ -176,7 +203,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["Case", "User", "Auth", "Contact"],
+  tagTypes: ["Case", "User", "Auth", "Contact", "Report"],
   endpoints: (builder) => ({
     // Auth endpoints
     register: builder.mutation<
@@ -275,7 +302,26 @@ export const apiSlice = createApi({
     }),
 
     getCasesLocations: builder.query<
-      ApiResponse<{ locations: Array<{ lat: string; lng: string }> }>,
+      ApiResponse<{
+        locations: Array<{
+          lat: string;
+          lng: string;
+          locationName?: string;
+          caseCount: number;
+          recentCases: Array<{
+            _id: string;
+            name: string;
+            date?: string;
+            age: number;
+            gender: string;
+            status: string;
+            isVerified: boolean;
+          }>;
+        }>;
+        totalLocations: number;
+        totalCasesWithLocation: number;
+        lastUpdated: string;
+      }>,
       void
     >({
       query: () => "/cases/locations",
@@ -316,7 +362,7 @@ export const apiSlice = createApi({
     }),
 
     searchContacts: builder.query<
-      ApiResponse<{ contacts: any[] }>,
+      ApiResponse<{ contacts: unknown[] }>,
       {
         q?: string;
         type?: string;
@@ -352,6 +398,41 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+
+    // Report endpoints
+    createReport: builder.mutation<
+      ApiResponse<{ report: Report }>,
+      ReportInput
+    >({
+      query: (reportData) => {
+        const body: Record<string, unknown> = {
+          name: reportData.name,
+          email: reportData.email,
+          message: reportData.message,
+          report_type: reportData.report_type,
+          urgency: reportData.urgency,
+          type: reportData.type,
+        };
+
+        // Only include optional fields if they have values
+        if (reportData.contact_info) {
+          body.contact_info = reportData.contact_info;
+        }
+        if (reportData.caseId) {
+          body.caseId = reportData.caseId;
+        }
+        if (reportData.relation_to_victim) {
+          body.relation_to_victim = reportData.relation_to_victim;
+        }
+
+        return {
+          url: "/reports",
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: ["Report"],
+    }),
   }),
 });
 
@@ -377,4 +458,7 @@ export const {
   // User hooks
   useGetAllUsersQuery,
   useAddUserMutation,
+
+  // Report hooks
+  useCreateReportMutation,
 } = apiSlice;

@@ -21,8 +21,10 @@ import { useToast } from "@/hooks/use-toast";
 import { AssignCaseModal } from "@/components/AssignCaseModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
 
 export const ThirdPartyReviewCasesTab = () => {
+  const router = useNavigate();
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [selectedCase, setSelectedCase] = useState<{
     id: string;
@@ -172,6 +174,7 @@ export const ThirdPartyReviewCasesTab = () => {
                 <TableHead>Status</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Submitted</TableHead>
+                <TableHead>Verified</TableHead>
                 <TableHead>Reviewer</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -215,6 +218,9 @@ export const ThirdPartyReviewCasesTab = () => {
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(case_.createdAt)}
                     </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {case_.isThirdPartyVerified ? "Yes" : "No"}
+                    </TableCell>
                     <TableCell className="text-sm">
                       {case_.userThirdPartyVerified
                         ? typeof case_.userThirdPartyVerified === "object"
@@ -225,7 +231,11 @@ export const ThirdPartyReviewCasesTab = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/case/${case_._id}`)}
+                        >
                           <CheckCircle className="w-4 h-4 mr-1" />
                           Review
                         </Button>

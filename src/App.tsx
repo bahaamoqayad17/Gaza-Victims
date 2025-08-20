@@ -12,6 +12,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ModeratorsDashboard from "./pages/ModeratorsDashboard";
+import CaseDetail from "./pages/CaseDetail";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,22 @@ const App = () => (
                 element={
                   <AuthGuard requireAuth={false} redirectAuthenticatedTo="/">
                     <Auth />
+                  </AuthGuard>
+                }
+              />
+
+              <Route
+                path="/case/:id"
+                element={
+                  <AuthGuard
+                    allowedRoles={[
+                      "admin",
+                      "moderator",
+                      "senior_moderator",
+                      "third_party",
+                    ]}
+                  >
+                    <CaseDetail />
                   </AuthGuard>
                 }
               />

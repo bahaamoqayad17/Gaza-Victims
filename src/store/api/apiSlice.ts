@@ -69,6 +69,32 @@ export interface AuthResponse {
   };
 }
 
+export interface Report {
+  _id: string;
+  name: string;
+  email: string;
+  contact_info?: string;
+  message: string;
+  case?: string | Case;
+  relation_to_victim?: string;
+  report_type: string[];
+  urgency: string;
+  type?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Contact {
+  _id: string;
+  name: string;
+  email: string;
+  mobile_number: string;
+  message: string;
+  type?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Case {
   _id: string;
   name: string;
@@ -220,7 +246,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["Case", "User", "Auth", "Contact"],
+  tagTypes: ["Case", "User", "Auth", "Contact", "Report"],
   endpoints: (builder) => ({
     // Auth endpoints
     register: builder.mutation<
@@ -851,6 +877,18 @@ export const apiSlice = createApi({
       },
       invalidatesTags: ["Case"],
     }),
+
+    // Reports endpoints
+    getReports: builder.query<ApiResponse<{ reports: Report[] }>, void>({
+      query: () => "/reports",
+      providesTags: ["Report"],
+    }),
+
+    // Contacts endpoints
+    getContacts: builder.query<ApiResponse<{ contacts: Contact[] }>, void>({
+      query: () => "/contacts",
+      providesTags: ["Contact"],
+    }),
   }),
 });
 
@@ -899,4 +937,10 @@ export const {
 
   // Case verification hook
   useVerifyCaseMutation,
+
+  // Reports hooks
+  useGetReportsQuery,
+
+  // Contacts hooks
+  useGetContactsQuery,
 } = apiSlice;

@@ -21,8 +21,10 @@ import { useToast } from "@/hooks/use-toast";
 import { AssignCaseModal } from "@/components/AssignCaseModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
 
 export const CasesUnderReviewTab = () => {
+  const router = useNavigate();
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [selectedCase, setSelectedCase] = useState<{
     id: string;
@@ -78,17 +80,12 @@ export const CasesUnderReviewTab = () => {
     try {
       await assignCase({ caseId, assignedTo: userId }).unwrap();
 
-      toast({
-        title: "Case assigned successfully",
-        description: "The case has been assigned to the selected moderator.",
-      });
-
       setAssignModalOpen(false);
       setSelectedCase(null);
     } catch (error) {
       toast({
         title: "Assignment failed",
-        description: "Failed to assign the case. Please try again.",
+        description: error.data.message,
         variant: "destructive",
       });
     }
@@ -172,6 +169,7 @@ export const CasesUnderReviewTab = () => {
                 <TableHead>Status</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Submitted</TableHead>
+                <TableHead>Verified</TableHead>
                 <TableHead>Reviewer</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -215,6 +213,9 @@ export const CasesUnderReviewTab = () => {
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(case_.createdAt)}
                     </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {case_.isVerified ? "Yes" : "No"}
+                    </TableCell>
                     <TableCell className="text-sm">
                       {case_.userModeratorVerified
                         ? typeof case_.userModeratorVerified === "object"
@@ -225,7 +226,11 @@ export const CasesUnderReviewTab = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/case/${case_._id}`)}
+                        >
                           <CheckCircle className="w-4 h-4 mr-1" />
                           Review
                         </Button>

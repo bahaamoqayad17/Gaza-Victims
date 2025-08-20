@@ -13,17 +13,42 @@ import {
   DigitalForensicsReviewCasesTab,
   CasesUnderReviewTab,
   VerifiedCasesTab,
+  ReportsTab,
+  ContactsTab,
 } from "@/components/TabsMods";
 import { useGetDashboardStatsQuery } from "@/store/api/apiSlice";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 const ModeratorsDashboard = () => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
 
+  // Get current user from auth state
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const userRole = currentUser?.role;
+
   // Fetch dashboard stats
   const { data: statsResponse, isLoading: statsLoading } =
     useGetDashboardStatsQuery();
   const stats = statsResponse?.data;
+
+  // Define role-based tab visibility
+  const canViewAdminTabs =
+    userRole === "admin" || userRole === "senior_moderator";
+  const canViewModeratorTabs = userRole === "moderator";
+  const canViewThirdPartyTabs = userRole === "third_party_moderator";
+  const canViewDigitalForensicsTabs =
+    userRole === "digital_forensics_moderator";
+
+  // Determine default tab based on role
+  const getDefaultTab = () => {
+    if (canViewAdminTabs) return "moderators";
+    if (canViewModeratorTabs) return "cases-under-review";
+    if (canViewThirdPartyTabs) return "third-party-review-cases";
+    if (canViewDigitalForensicsTabs) return "digital-forensics-review-cases";
+    return "pending-cases"; // fallback
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,55 +132,98 @@ const ModeratorsDashboard = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue="moderators" className="space-y-6">
+        <Tabs defaultValue={getDefaultTab()} className="space-y-6">
           <TabsList>
-            <TabsTrigger value="moderators">{t("moderators")}</TabsTrigger>
-            <TabsTrigger value="pending-cases">{t("pendingCases")}</TabsTrigger>
-            <TabsTrigger value="cases-under-review">
-              Cases Under Review
-            </TabsTrigger>
-            <TabsTrigger value="third-party-review-cases">
-              Third Party Review Cases
-            </TabsTrigger>
-            <TabsTrigger value="digital-forensics-review-cases">
-              Digital Forensics Review Cases
-            </TabsTrigger>
-            <TabsTrigger value="verified-cases">Verified Cases</TabsTrigger>
-            <TabsTrigger value="verification-settings">
-              Verification Settings
-            </TabsTrigger>
+            {/* Admin and Senior Moderator only tabs */}
+            {canViewAdminTabs && (
+              <>
+                <TabsTrigger value="moderators">{t("moderators")}</TabsTrigger>
+                <TabsTrigger value="pending-cases">
+                  {t("pendingCases")}
+                </TabsTrigger>
+                <TabsTrigger value="verified-cases">Verified Cases</TabsTrigger>
+                <TabsTrigger value="verification-settings">
+                  Verification Settings
+                </TabsTrigger>
+                <TabsTrigger value="reports">Reports</TabsTrigger>
+                <TabsTrigger value="contacts">Contacts</TabsTrigger>
+              </>
+            )}
+
+            {/* Moderator specific tab */}
+            {(canViewModeratorTabs || canViewAdminTabs) && (
+              <TabsTrigger value="cases-under-review">
+                Cases Under Review
+              </TabsTrigger>
+            )}
+
+            {/* Third Party Moderator specific tab */}
+            {(canViewThirdPartyTabs || canViewAdminTabs) && (
+              <TabsTrigger value="third-party-review-cases">
+                Third Party Review Cases
+              </TabsTrigger>
+            )}
+
+            {/* Digital Forensics Moderator specific tab */}
+            {(canViewDigitalForensicsTabs || canViewAdminTabs) && (
+              <TabsTrigger value="digital-forensics-review-cases">
+                Digital Forensics Review Cases
+              </TabsTrigger>
+            )}
           </TabsList>
 
-          <TabsContent value="moderators" className="space-y-6">
-            <ModeratorsTab />
-          </TabsContent>
+          {/* Admin and Senior Moderator only content */}
+          {canViewAdminTabs && (
+            <>
+              <TabsContent value="moderators" className="space-y-6">
+                <ModeratorsTab />
+              </TabsContent>
 
-          <TabsContent value="pending-cases" className="space-y-6">
-            <PendingCasesTab />
-          </TabsContent>
+              <TabsContent value="pending-cases" className="space-y-6">
+                <PendingCasesTab />
+              </TabsContent>
 
-          <TabsContent value="cases-under-review" className="space-y-6">
-            <CasesUnderReviewTab />
-          </TabsContent>
+              <TabsContent value="verified-cases" className="space-y-6">
+                <VerifiedCasesTab />
+              </TabsContent>
 
-          <TabsContent value="third-party-review-cases" className="space-y-6">
-            <ThirdPartyReviewCasesTab />
-          </TabsContent>
+              <TabsContent value="verification-settings" className="space-y-6">
+                <VerificationSettingsTab />
+              </TabsContent>
 
-          <TabsContent
-            value="digital-forensics-review-cases"
-            className="space-y-6"
-          >
-            <DigitalForensicsReviewCasesTab />
-          </TabsContent>
+              <TabsContent value="reports" className="space-y-6">
+                <ReportsTab />
+              </TabsContent>
 
-          <TabsContent value="verified-cases" className="space-y-6">
-            <VerifiedCasesTab />
-          </TabsContent>
+              <TabsContent value="contacts" className="space-y-6">
+                <ContactsTab />
+              </TabsContent>
+            </>
+          )}
 
-          <TabsContent value="verification-settings" className="space-y-6">
-            <VerificationSettingsTab />
-          </TabsContent>
+          {/* Moderator specific content */}
+          {(canViewModeratorTabs || canViewAdminTabs) && (
+            <TabsContent value="cases-under-review" className="space-y-6">
+              <CasesUnderReviewTab />
+            </TabsContent>
+          )}
+
+          {/* Third Party Moderator specific content */}
+          {(canViewThirdPartyTabs || canViewAdminTabs) && (
+            <TabsContent value="third-party-review-cases" className="space-y-6">
+              <ThirdPartyReviewCasesTab />
+            </TabsContent>
+          )}
+
+          {/* Digital Forensics Moderator specific content */}
+          {(canViewDigitalForensicsTabs || canViewAdminTabs) && (
+            <TabsContent
+              value="digital-forensics-review-cases"
+              className="space-y-6"
+            >
+              <DigitalForensicsReviewCasesTab />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
 

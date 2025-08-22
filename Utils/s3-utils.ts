@@ -211,6 +211,55 @@ export async function getSignedUrlForFile(
   }
 }
 
+/**
+ * Download a file from S3 as a Buffer
+ */
+export async function downloadFileFromS3(key: string): Promise<Buffer> {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: key,
+  });
+
+  try {
+    const response = await s3Client.send(command);
+
+    if (!response.Body) {
+      throw new Error("No file content received from S3");
+    }
+
+    // Convert the stream to buffer
+    const chunks: Uint8Array[] = [];
+    const stream = response.Body as any;
+
+    return new Promise((resolve, reject) => {
+      stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
+      stream.on("error", reject);
+      stream.on("end", () => resolve(Buffer.concat(chunks)));
+    });
+  } catch (error) {
+    console.error("Error downloading file from S3:", error);
+    throw new Error(
+      `Failed to download file from S3: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+}
+
+/**
+ * Extract S3 key from URL
+ */
+export function extractS3KeyFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    // Remove leading slash from pathname
+    return urlObj.pathname.substring(1);
+  } catch (error) {
+    console.error("Error extracting S3 key from URL:", error);
+    throw new Error("Invalid S3 URL format");
+  }
+}
+
 export function getFilenameFromUrl(url: string): string {
   try {
     // Extract filename from URL path

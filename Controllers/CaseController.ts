@@ -831,3 +831,245 @@ export const verifyCase = async (req: any, res: Response) => {
     });
   }
 };
+
+export const downloadCase = async (req: Request, res: Response) => {
+  try {
+    const { generated_id } = req.body;
+
+    if (!generated_id) {
+      return res.status(400).json({
+        status: "fail",
+        message: "generated_id is required",
+      });
+    }
+
+    // Find the case by generated_id
+    const caseData = await Case.findOne({ generated_id });
+    if (!caseData) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Case not found",
+      });
+    }
+
+    const archiver = require("archiver");
+    const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+    const fs = require("fs");
+    const path = require("path");
+    const os = require("os");
+    const {
+      downloadFileFromS3,
+      extractS3KeyFromUrl,
+      getFilenameFromUrl,
+    } = require("../Utils/s3-utils");
+
+    // Create temporary directory for files
+    const tempDir = path.join(
+      os.tmpdir(),
+      `case-${generated_id}-${Date.now()}`
+    );
+    fs.mkdirSync(tempDir, { recursive: true });
+
+    try {
+      // 1. Create CSV file with case data
+      const csvPath = path.join(
+        tempDir,
+        `case-${caseData.name.replace(/[^a-zA-Z0-9]/g, "_")}-data.csv`
+      );
+
+      const csvWriter = createCsvWriter({
+        path: csvPath,
+        header: [
+          { id: "id", title: "Case ID" },
+          { id: "name", title: "Name" },
+          { id: "age", title: "Age" },
+          { id: "gender", title: "Gender" },
+          { id: "occupation", title: "Occupation" },
+          { id: "story", title: "Story" },
+          { id: "leftBehind", title: "Left Behind" },
+          { id: "locationName", title: "Location Name" },
+          { id: "locationLat", title: "Location Latitude" },
+          { id: "locationLng", title: "Location Longitude" },
+          { id: "date", title: "Date" },
+          { id: "status", title: "Status" },
+          { id: "isVerified", title: "Is Verified" },
+          { id: "createdAt", title: "Created At" },
+          { id: "updatedAt", title: "Updated At" },
+          { id: "socialMediaLinks", title: "Social Media Links" },
+          { id: "portraitPhoto", title: "Portrait Photo URL" },
+          { id: "additionalAttachments", title: "Additional Attachments URLs" },
+        ],
+      });
+
+      // Prepare CSV data
+      const csvData = [
+        {
+          id: caseData.generated_id,
+          name: caseData.name || "",
+          age: caseData.age || "",
+          gender: caseData.gender || "",
+          occupation: caseData.occupation || "",
+          story: caseData.story || "",
+          leftBehind: Array.isArray(caseData.leftBehind)
+            ? caseData.leftBehind.join("; ")
+            : "",
+          locationName: caseData.locationName || "",
+          locationLat: caseData.location?.lat || "",
+          locationLng: caseData.location?.lng || "",
+          date: caseData.date || "",
+          status: caseData.status || "",
+          isVerified: caseData.isVerified || false,
+          createdAt: caseData.createdAt || "",
+          updatedAt: caseData.updatedAt || "",
+          socialMediaLinks: Array.isArray(caseData.socialMediaLinks)
+            ? caseData.socialMediaLinks.join("; ")
+            : "",
+          portraitPhoto: caseData.portraitPhoto || "",
+          additionalAttachments: Array.isArray(caseData.additionalAttachments)
+            ? caseData.additionalAttachments.join("; ")
+            : "",
+        },
+      ];
+
+      await csvWriter.writeRecords(csvData);
+
+      // 2. Download files from S3
+      const filesToDownload: string[] = [];
+
+      // Add portrait photo if exists
+      if (caseData.portraitPhoto) {
+        filesToDownload.push(caseData.portraitPhoto);
+      }
+
+      // Add additional attachments if exist
+      if (
+        caseData.additionalAttachments &&
+        Array.isArray(caseData.additionalAttachments)
+      ) {
+        filesToDownload.push(...caseData.additionalAttachments);
+      }
+
+      // Download files from S3 and save to temp directory
+      const downloadPromises = filesToDownload.map(async (fileUrl, index) => {
+        try {
+          const s3Key = extractS3KeyFromUrl(fileUrl);
+          const fileName = getFilenameFromUrl(fileUrl);
+          const fileBuffer = await downloadFileFromS3(s3Key);
+
+          // Create unique filename to avoid conflicts
+          const fileExtension = path.extname(fileName);
+          const baseName = path.basename(fileName, fileExtension);
+          const uniqueFileName = `${index + 1}-${baseName}${fileExtension}`;
+          const filePath = path.join(tempDir, uniqueFileName);
+
+          fs.writeFileSync(filePath, fileBuffer);
+          return { success: true, fileName: uniqueFileName };
+        } catch (error) {
+          console.error(`Error downloading file ${fileUrl}:`, error);
+          return {
+            success: false,
+            fileName: fileUrl,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
+        }
+      });
+
+      const downloadResults = await Promise.all(downloadPromises);
+
+      // Log download results
+      const successfulDownloads = downloadResults.filter((r) => r.success);
+      const failedDownloads = downloadResults.filter((r) => !r.success);
+
+      console.log(
+        `Successfully downloaded ${successfulDownloads.length} files`
+      );
+      if (failedDownloads.length > 0) {
+        console.log(
+          `Failed to download ${failedDownloads.length} files:`,
+          failedDownloads
+        );
+      }
+
+      // 3. Create ZIP archive
+      const archive = archiver("zip", {
+        zlib: { level: 9 }, // Maximum compression
+      });
+
+      // Set response headers
+      const zipFileName = `case-${caseData.name.replace(
+        /[^a-zA-Z0-9]/g,
+        "_"
+      )}-${Date.now()}.zip`;
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${zipFileName}"`
+      );
+
+      // Pipe archive to response
+      archive.pipe(res);
+
+      // Add CSV file to archive
+      archive.file(csvPath, { name: path.basename(csvPath) });
+
+      // Add downloaded files to archive
+      const tempFiles = fs.readdirSync(tempDir);
+      tempFiles.forEach((fileName: string) => {
+        if (fileName.endsWith(".csv")) return; // Skip CSV as it's already added
+        const filePath = path.join(tempDir, fileName);
+        if (fs.statSync(filePath).isFile()) {
+          archive.file(filePath, { name: fileName });
+        }
+      });
+
+      // Create a summary file with download results
+      if (failedDownloads.length > 0) {
+        const summaryPath = path.join(tempDir, "download-summary.txt");
+        const summaryContent = [
+          `Case Download Summary for: ${caseData.name}`,
+          `Generated on: ${new Date().toISOString()}`,
+          ``,
+          `Successfully downloaded files: ${successfulDownloads.length}`,
+          `Failed downloads: ${failedDownloads.length}`,
+          ``,
+          ...(failedDownloads.length > 0
+            ? [
+                "Failed files:",
+                ...failedDownloads.map((f) => `- ${f.fileName}: ${f.error}`),
+              ]
+            : []),
+        ].join("\n");
+
+        fs.writeFileSync(summaryPath, summaryContent);
+        archive.file(summaryPath, { name: "download-summary.txt" });
+      }
+
+      // Finalize archive
+      await archive.finalize();
+
+      // Clean up temp directory after a delay
+      setTimeout(() => {
+        try {
+          fs.rmSync(tempDir, { recursive: true, force: true });
+        } catch (error) {
+          console.error("Error cleaning up temp directory:", error);
+        }
+      }, 5000); // 5 seconds delay to ensure download completes
+    } catch (error) {
+      // Clean up temp directory on error
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch (cleanupError) {
+        console.error("Error cleaning up temp directory:", cleanupError);
+      }
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error in downloadCase:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to generate case download",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};

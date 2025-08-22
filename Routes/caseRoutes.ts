@@ -13,6 +13,7 @@ import {
   getDashboardStats,
   getVerifiedCases,
   verifyCase,
+  downloadCase,
 } from "@/Controllers/CaseController";
 import CatchAsync from "@/Utils/CatchAsync";
 import { validateCaseCreation } from "@/Utils/validationMiddleware";
@@ -100,6 +101,9 @@ router.patch(
   ),
   CatchAsync(verifyCase)
 );
+
+// Download case route - accessible to authenticated users
+router.post("/download", CatchAsync(downloadCase));
 
 router.get("/:id", CatchAsync(getCaseController));
 

@@ -2,13 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, MapPin, Shield, AlertTriangle, Loader2 } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Shield,
+  AlertTriangle,
+  Loader2,
+  Download,
+} from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { useGetCaseByIdQuery } from "@/store/api/apiSlice";
+import {
+  useGetCaseByIdQuery,
+  useDownloadCaseMutation,
+} from "@/store/api/apiSlice";
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
+import { toast } from "@/hooks/use-toast";
 
 const CaseDetail = () => {
   const { id } = useParams();
@@ -21,6 +32,49 @@ const CaseDetail = () => {
     isError,
     error,
   } = useGetCaseByIdQuery(id || "");
+
+  const [downloadCase, { isLoading: isDownloading }] =
+    useDownloadCaseMutation();
+
+  const handleDownload = async () => {
+    console.log({ caseData });
+    if (!caseData?.generated_id) return;
+
+    try {
+      const blob = await downloadCase({
+        generated_id: caseData.generated_id,
+      }).unwrap();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Generate filename
+      const caseName = caseData?.name?.replace(/[^a-zA-Z0-9]/g, "_") || "case";
+      link.download = `case-${caseName}-${Date.now()}.zip`;
+
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Download Started",
+        description: "Your case file download has started.",
+      });
+    } catch (error) {
+      console.error("Download error:", error);
+      toast({
+        title: "Download Error",
+        description: "Failed to download case file. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -541,8 +595,24 @@ const CaseDetail = () => {
                     {t("reportAdditionalInformation")}
                   </Link>
                 </Button>
-                <Button variant="outline" size="sm" className="w-full text-xs">
-                  {t("downloadCaseFile")}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs"
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      {"Downloading..."}
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-3 w-3 mr-1" />
+                      {t("downloadCaseFile")}
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>

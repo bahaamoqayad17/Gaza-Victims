@@ -45,6 +45,7 @@ import { useGetAllCasesQuery } from "@/store/api/apiSlice";
 // Helper function to transform backend case data to VictimCard format
 const transformCaseToVictim = (caseData: {
   _id: string;
+  generated_id: string;
   name: string;
   age: number;
   gender: string;
@@ -67,6 +68,7 @@ const transformCaseToVictim = (caseData: {
   additionalAttachments?: string[];
 }) => ({
   id: caseData._id,
+  generated_id: caseData.generated_id,
   name: caseData.name,
   age: caseData.age,
   gender: caseData.gender,

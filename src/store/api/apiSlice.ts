@@ -292,6 +292,17 @@ export const apiSlice = createApi({
       providesTags: (result, error, id) => [{ type: "Case", id }],
     }),
 
+    downloadCase: builder.mutation<Blob, { generated_id: string }>({
+      query: (data) => ({
+        url: `/cases/download`,
+        method: "POST",
+        body: data,
+        responseHandler: async (response) => {
+          return response.blob();
+        },
+      }),
+    }),
+
     createCase: builder.mutation<ApiResponse<{ case: Case }>, FormData>({
       query: (formData) => ({
         url: "/cases",
@@ -447,6 +458,7 @@ export const {
   // Case hooks
   useGetAllCasesQuery,
   useGetCaseByIdQuery,
+  useDownloadCaseMutation,
   useCreateCaseMutation,
   useGetCasesLocationsQuery,
   useGetHomePageDataQuery,

@@ -37,7 +37,6 @@ const CaseDetail = () => {
     useDownloadCaseMutation();
 
   const handleDownload = async () => {
-    console.log({ caseData });
     if (!caseData?.generated_id) return;
 
     try {

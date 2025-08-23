@@ -97,7 +97,7 @@ export const InteractiveMap = ({
       recentCases: v.recentCases,
     }));
 
-    locationsToShow.forEach((location, index) => {
+    locationsToShow?.forEach((location, index) => {
       new mapboxgl.Marker()
         .setLngLat([Number(location.lng), Number(location.lat)])
         .addTo(map.current!);

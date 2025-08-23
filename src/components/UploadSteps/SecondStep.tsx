@@ -88,17 +88,20 @@ export default function SecondStep({
         </div>
 
         <InteractiveMap
-          onLocationSelect={(location) => {
-            form.setValue("location", {
-              lat: location.lat.toString(),
-              lng: location.lng.toString(),
+          onLocationSelect={(loc) => {
+            form.setValue("location.lat", loc.lat.toString(), {
+              shouldValidate: true,
             });
-            setSelectedCoordinates(location);
-            // Also update the locationName field with coordinates if no text location is provided
+            form.setValue("location.lng", loc.lng.toString(), {
+              shouldValidate: true,
+            });
+
+            setSelectedCoordinates(loc);
+
             if (!form.getValues("locationName")) {
               form.setValue(
                 "locationName",
-                `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`
+                `${loc.lat.toFixed(6)}, ${loc.lng.toFixed(6)}`
               );
             }
           }}

@@ -118,6 +118,12 @@ const Upload = () => {
 
   const step2Form = useForm<Step2FormData>({
     resolver: zodResolver(step2Schema),
+    defaultValues: {
+      location: {
+        lat: "",
+        lng: "",
+      },
+    },
     mode: "onChange",
   });
 

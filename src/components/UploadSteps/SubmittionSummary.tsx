@@ -23,13 +23,16 @@ export default function SubmittionSummary({
   formData: {
     name: string;
     age: string;
+    gender: string;
     occupation: string;
     background: string;
     date: string;
-    location: string;
+    location: { lat: string; lng: string };
+    locationName: string;
     circumstances: string;
     witnesses: string;
     source: string;
+    relationshipToVictim: string;
     notes: string;
     consentAgreed: boolean;
     safetyAcknowledged: boolean;
@@ -38,13 +41,16 @@ export default function SubmittionSummary({
     React.SetStateAction<{
       name: string;
       age: string;
+      gender: string;
       occupation: string;
       background: string;
       date: string;
-      location: string;
+      location: { lat: string; lng: string };
+      locationName: string;
       circumstances: string;
       witnesses: string;
       source: string;
+      relationshipToVictim: string;
       notes: string;
       consentAgreed: boolean;
       safetyAcknowledged: boolean;

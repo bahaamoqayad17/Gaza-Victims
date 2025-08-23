@@ -52,7 +52,8 @@ const Upload = () => {
     occupation: "",
     background: "",
     date: "",
-    location: "",
+    location: { lat: "", lng: "" },
+    locationName: "",
     circumstances: "",
     witnesses: "",
     source: "",
@@ -113,22 +114,46 @@ const Upload = () => {
   // React Hook Form setup for each step
   const step1Form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
+    defaultValues: {
+      name: "",
+      age: "",
+      gender: "",
+      occupation: "",
+      background: "",
+    },
     mode: "onChange",
   });
 
   const step2Form = useForm<Step2FormData>({
     resolver: zodResolver(step2Schema),
     defaultValues: {
+      date: "",
       location: {
         lat: "",
         lng: "",
       },
+      locationName: "",
+      cause: "",
+      otherCauseDetails: "",
+      circumstances: "",
+      perpetrator: "",
+      otherPerpetratorDetails: "",
+      perpetratorEvidence: "",
+      witnesses: "",
     },
     mode: "onChange",
   });
 
   const step3Form = useForm<Step3FormData>({
     resolver: zodResolver(step3Schema),
+    defaultValues: {
+      isGraphicContent: false,
+      isAdditionalEvidenceGraphic: false,
+      source: "",
+      relationshipToVictim: "",
+      newsLinks: [],
+      notes: "",
+    },
     mode: "onChange",
   });
 
@@ -139,6 +164,11 @@ const Upload = () => {
 
   const step5Form = useForm<Step5FormData>({
     resolver: zodResolver(step5Schema),
+    defaultValues: {
+      consentAgreed: false,
+      safetyAcknowledged: false,
+      captchaValue: "",
+    },
     mode: "onChange",
   });
 
@@ -155,7 +185,11 @@ const Upload = () => {
       occupation: step1Data.occupation || "",
       background: step1Data.background || "",
       date: step2Data.date || "",
-      location: step2Data.location || "",
+      location: step2Data.location ? { 
+        lat: step2Data.location.lat || "", 
+        lng: step2Data.location.lng || "" 
+      } : { lat: "", lng: "" },
+      locationName: step2Data.locationName || "",
       circumstances: step2Data.circumstances || "",
       witnesses: step2Data.witnesses || "",
       source: step3Data.source || "",
@@ -229,7 +263,8 @@ const Upload = () => {
       story: step1Data.background || "",
       leftBehind,
       socialMediaLinks,
-      locationName: step2Data.location,
+      locationName: step2Data.locationName,
+      location: step2Data.location,
       causeOfDeath,
       circumstances: step2Data.circumstances,
       perpetrator: perpetratorInfo,

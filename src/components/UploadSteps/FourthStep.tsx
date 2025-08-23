@@ -161,7 +161,10 @@ export default function FourthStep({
           </p>
           <p>
             <span className="font-medium">{t("location")}:</span>{" "}
-            {(formData.location as string) || t("notProvided")}
+            {formData.locationName || 
+              (formData.location?.lat && formData.location?.lng 
+                ? `${formData.location.lat}, ${formData.location.lng}` 
+                : t("notProvided"))}
           </p>
           <p>
             <span className="font-medium">{t("causeOfDeath")}:</span>{" "}

@@ -35,6 +35,7 @@ export interface AuthResponse {
 
 export interface Case {
   _id: string;
+  generated_id: string;
   name: string;
   age: number;
   gender: string;

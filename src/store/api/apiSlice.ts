@@ -293,6 +293,29 @@ export const apiSlice = createApi({
       providesTags: (result, error, id) => [{ type: "Case", id }],
     }),
 
+    getCaseByGeneratedId: builder.query<ApiResponse<{ case: Case }>, string>({
+      query: (generated_id) => `/cases/generated/${generated_id}`,
+      providesTags: (result, error, generated_id) => [
+        { type: "Case", id: generated_id },
+      ],
+    }),
+
+    getCaseStatus: builder.mutation<
+      ApiResponse<{
+        isVerified: boolean;
+        isThirdPartyVerified: boolean;
+        isDigitalForensicsVerified: boolean;
+        status: string;
+      }>,
+      { generated_id: string }
+    >({
+      query: (data) => ({
+        url: "/cases/status",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     downloadCase: builder.mutation<Blob, { generated_id: string }>({
       query: (data) => ({
         url: `/cases/download`,
@@ -459,6 +482,8 @@ export const {
   // Case hooks
   useGetAllCasesQuery,
   useGetCaseByIdQuery,
+  useGetCaseByGeneratedIdQuery,
+  useGetCaseStatusMutation,
   useDownloadCaseMutation,
   useCreateCaseMutation,
   useGetCasesLocationsQuery,

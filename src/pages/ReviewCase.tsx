@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,14 +20,30 @@ import {
   ChevronDown,
   Upload,
   X,
+  Loader2,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { toast } from "sonner";
+import {
+  useGetCaseByGeneratedIdQuery,
+  useGetCaseStatusMutation,
+  Case,
+} from "@/store/api/apiSlice";
+import { MobileTooltip } from "@/components/MobileTooltip";
+import { useTranslation } from "@/lib/translations";
 
 const ReviewCase = () => {
+  const { t } = useTranslation();
   const [caseNumber, setCaseNumber] = useState("");
   const [caseFound, setCaseFound] = useState(false);
+  const [currentCase, setCurrentCase] = useState<Case | null>(null);
+  const [caseStatus, setCaseStatus] = useState<{
+    isVerified: boolean;
+    isThirdPartyVerified: boolean;
+    isDigitalForensicsVerified: boolean;
+    status: string;
+  } | null>(null);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [deletionReason, setDeletionReason] = useState("");
   const [contactEmail, setContactEmail] = useState("");
@@ -41,56 +57,58 @@ const ReviewCase = () => {
     string | null
   >(null);
 
-  // Mock case data - in real app would fetch from backend
-  const mockCase = {
-    id: "CASE-2025-001234",
-    name: "John Doe",
-    age: 35,
-    gender: "Male",
-    occupation: "Teacher",
-    location: "Gaza City, Palestine",
-    date: "2024-01-15",
-    cause: "Bombing",
-    otherCauseDetails: "",
-    perpetrator: "Military Forces",
-    perpetratorEvidence:
-      "Witnessed military vehicles in the area during the attack",
-    circumstances:
-      "Was at home with family when bombing occurred. The house was directly hit.",
-    witnesses: "Neighbors saw the attack and can provide testimony.",
-    submittedBy: "Family Member",
-    status: "Under Review",
-    background:
-      "John was a dedicated teacher who loved his students and community. He had been teaching for over 10 years.",
-    familyRelationships: {
-      wife: true,
-      daughters: 2,
-      sons: 1,
-      mother: true,
-      father: false,
-    },
-    portraitPhoto: "/api/placeholder/300/400",
-    additionalPhotos: ["/api/placeholder/200/200", "/api/placeholder/200/200"],
-    socialMediaUrls: [
-      "https://facebook.com/johndoe",
-      "https://instagram.com/johndoe",
-    ],
-    proofOfIdFiles: ["ID_Document.pdf", "Passport.jpg"],
-    proofOfDeathFiles: ["Death_Certificate.pdf", "Medical_Report.pdf"],
-    additionalEvidenceFiles: ["Witness_Statement.pdf", "News_Article.jpg"],
-    newsLinks: ["https://news.example.com/bombing-incident"],
-    source: "Direct family member",
-    additionalNotes:
-      "Family is seeking justice and proper documentation of this tragedy.",
-  };
+  // API hooks
+  const {
+    data: caseData,
+    isLoading: isCaseLoading,
+    error: caseError,
+  } = useGetCaseByGeneratedIdQuery(caseNumber, {
+    skip: !caseFound || !caseNumber.trim(),
+  });
 
-  const handleSearchCase = () => {
-    if (caseNumber.trim()) {
-      // Mock case lookup - in real app would query backend
-      setCaseFound(true);
-      toast.success("Case found successfully");
-    } else {
+  const [getCaseStatus, { isLoading: isStatusLoading }] =
+    useGetCaseStatusMutation();
+
+  // Handle case data loading
+  useEffect(() => {
+    if (caseData?.status === "success" && caseData.data?.case) {
+      setCurrentCase(caseData.data.case);
+    } else if (caseError) {
+      setCaseFound(false);
+      setCurrentCase(null);
+      setCaseStatus(null);
+      toast.error("Case not found");
+    }
+  }, [caseData, caseError]);
+
+  const handleSearchCase = async () => {
+    if (!caseNumber.trim()) {
       toast.error("Please enter a valid case number");
+      return;
+    }
+
+    try {
+      // First, try to find the case
+      setCaseFound(true); // This will trigger the query
+
+      // Wait for the case data to load
+      // The useGetCaseByGeneratedIdQuery will handle the actual API call
+
+      // Also get the case status
+      const statusResult = await getCaseStatus({
+        generated_id: caseNumber.trim(),
+      });
+
+      if (statusResult.data?.status === "success") {
+        setCaseStatus(statusResult.data.data!);
+        toast.success("Case found successfully");
+      }
+    } catch (error) {
+      console.error("Error searching for case:", error);
+      setCaseFound(false);
+      setCurrentCase(null);
+      setCaseStatus(null);
+      toast.error("Case not found or an error occurred");
     }
   };
 
@@ -145,37 +163,77 @@ const ReviewCase = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {!caseFound ? (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="caseNumber">Case Number</Label>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Enter your case number to access and review your
-                      submission
-                    </p>
-                    <div className="flex gap-2">
-                      <Input
-                        id="caseNumber"
-                        placeholder="CASE-2025-XXXXXX"
-                        value={caseNumber}
-                        onChange={(e) => setCaseNumber(e.target.value)}
-                      />
-                      <Button onClick={handleSearchCase}>
-                        <Search className="h-4 w-4 mr-2" />
-                        Search
-                      </Button>
-                    </div>
-                  </div>
+              {isCaseLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <span className="ml-2">Loading case data...</span>
                 </div>
               ) : (
                 <div className="space-y-6">
                   {/* Basic Victim Information */}
-                  <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">
+                      Case Status Information
+                    </h3>
+                  </div>
+
+                  <div className="flex flex-wrap gap-x-1 gap-y-2 mb-2 text-xs">
+                    <MobileTooltip content={t("documentedDescription")}>
+                      <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">
+                        {t("documented")}
+                      </span>
+                    </MobileTooltip>
+                    {caseStatus?.isVerified ? (
+                      <MobileTooltip content={t("verifiedDescription")}>
+                        <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">
+                          {t("verified")}
+                        </span>
+                      </MobileTooltip>
+                    ) : (
+                      <MobileTooltip content={t("notVerifiedDescription")}>
+                        <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">
+                          {t("notVerified")}
+                        </span>
+                      </MobileTooltip>
+                    )}
+                    {caseStatus?.isThirdPartyVerified ? (
+                      <MobileTooltip content={t("thirdPartyDescription")}>
+                        <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">
+                          {t("thirdPartyVerified")}
+                        </span>
+                      </MobileTooltip>
+                    ) : (
+                      <MobileTooltip content={t("notThirdPartyDescription")}>
+                        <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">
+                          {t("notThirdPartyVerified")}
+                        </span>
+                      </MobileTooltip>
+                    )}
+                    {caseStatus?.isDigitalForensicsVerified ? (
+                      <MobileTooltip content={t("digitalForensicsDescription")}>
+                        <span className="bg-cyan-100 text-cyan-800 px-2 py-0.5 border border-cyan-300">
+                          {t("digitalForensicsVerified")}
+                        </span>
+                      </MobileTooltip>
+                    ) : (
+                      <MobileTooltip
+                        content={t("notDigitalForensicsDescription")}
+                      >
+                        <span className="bg-cyan-100 text-cyan-800 px-2 py-0.5 border border-cyan-300">
+                          {t("notDigitalForensicsVerified")}
+                        </span>
+                      </MobileTooltip>
+                    )}
+                  </div>
+
+                  {/* <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold">
                         Victim Information
                       </h3>
-                      <Badge variant="outline">{mockCase.status}</Badge>
+                      <Badge variant="outline">
+                        {caseStatus?.status || currentCase?.status || "Unknown"}
+                      </Badge>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -183,7 +241,9 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Case Number</Label>
-                            <p className="text-sm">{mockCase.id}</p>
+                            <p className="text-sm">
+                              {currentCase?.generated_id}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -202,7 +262,7 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Name</Label>
-                            <p className="text-sm">{mockCase.name}</p>
+                            <p className="text-sm">{currentCase?.name}</p>
                           </div>
                           <Button
                             variant="ghost"
@@ -221,7 +281,7 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Age</Label>
-                            <p className="text-sm">{mockCase.age}</p>
+                            <p className="text-sm">{currentCase?.age}</p>
                           </div>
                           <Button
                             variant="ghost"
@@ -240,7 +300,7 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Gender</Label>
-                            <p className="text-sm">{mockCase.gender}</p>
+                            <p className="text-sm">{currentCase?.gender}</p>
                           </div>
                           <Button
                             variant="ghost"
@@ -259,7 +319,9 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Occupation</Label>
-                            <p className="text-sm">{mockCase.occupation}</p>
+                            <p className="text-sm">
+                              {currentCase?.occupation || "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -283,25 +345,15 @@ const ReviewCase = () => {
                               Family Relationships
                             </Label>
                             <div className="text-sm space-y-1">
-                              {mockCase.familyRelationships.wife && (
-                                <p>• Wife</p>
-                              )}
-                              {mockCase.familyRelationships.daughters > 0 && (
-                                <p>
-                                  • {mockCase.familyRelationships.daughters}{" "}
-                                  Daughter(s)
-                                </p>
-                              )}
-                              {mockCase.familyRelationships.sons > 0 && (
-                                <p>
-                                  • {mockCase.familyRelationships.sons} Son(s)
-                                </p>
-                              )}
-                              {mockCase.familyRelationships.mother && (
-                                <p>• Mother</p>
-                              )}
-                              {mockCase.familyRelationships.father && (
-                                <p>• Father</p>
+                              {currentCase?.leftBehind &&
+                              currentCase.leftBehind.length > 0 ? (
+                                currentCase.leftBehind.map(
+                                  (relation, index) => (
+                                    <p key={index}>• {relation}</p>
+                                  )
+                                )
+                              ) : (
+                                <p>Not provided</p>
                               )}
                             </div>
                           </div>
@@ -322,7 +374,9 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Background</Label>
-                            <p className="text-sm">{mockCase.background}</p>
+                            <p className="text-sm">
+                              {currentCase?.story || "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -339,10 +393,10 @@ const ReviewCase = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Photos and Media */}
-                  <div className="border-t pt-6">
+                  {/* <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Photos and Media
                     </h3>
@@ -352,11 +406,19 @@ const ReviewCase = () => {
                         <div>
                           <Label className="font-medium">Portrait Photo</Label>
                           <div className="mt-2">
-                            <img
-                              src={mockCase.portraitPhoto}
-                              alt="Portrait"
-                              className="w-32 h-40 object-cover rounded border"
-                            />
+                            {currentCase?.portraitPhoto ? (
+                              <img
+                                src={currentCase.portraitPhoto}
+                                alt="Portrait"
+                                className="w-32 h-40 object-cover rounded border"
+                              />
+                            ) : (
+                              <div className="w-32 h-40 bg-gray-200 rounded border flex items-center justify-center">
+                                <span className="text-sm text-gray-500">
+                                  No photo
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -379,14 +441,23 @@ const ReviewCase = () => {
                             Additional Photos
                           </Label>
                           <div className="flex gap-2 mt-2">
-                            {mockCase.additionalPhotos.map((photo, index) => (
-                              <img
-                                key={index}
-                                src={photo}
-                                alt={`Additional ${index + 1}`}
-                                className="w-20 h-20 object-cover rounded border"
-                              />
-                            ))}
+                            {currentCase?.additionalAttachments &&
+                            currentCase.additionalAttachments.length > 0 ? (
+                              currentCase.additionalAttachments.map(
+                                (attachment, index) => (
+                                  <img
+                                    key={index}
+                                    src={attachment}
+                                    alt={`Additional ${index + 1}`}
+                                    className="w-20 h-20 object-cover rounded border"
+                                  />
+                                )
+                              )
+                            ) : (
+                              <p className="text-sm text-gray-500">
+                                No additional photos
+                              </p>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -409,9 +480,24 @@ const ReviewCase = () => {
                             Social Media URLs
                           </Label>
                           <div className="text-sm space-y-1">
-                            {mockCase.socialMediaUrls.map((url, index) => (
-                              <p key={index}>• {url}</p>
-                            ))}
+                            {currentCase?.socialMediaLinks &&
+                            currentCase.socialMediaLinks.length > 0 ? (
+                              currentCase.socialMediaLinks.map((url, index) => (
+                                <p key={index}>
+                                  •{" "}
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline"
+                                  >
+                                    {url}
+                                  </a>
+                                </p>
+                              ))
+                            ) : (
+                              <p>Not provided</p>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -428,10 +514,10 @@ const ReviewCase = () => {
                         </Button>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Incident Details */}
-                  <div className="border-t pt-6">
+                  {/* <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Incident Details
                     </h3>
@@ -443,7 +529,9 @@ const ReviewCase = () => {
                             <Label className="font-medium">
                               Date of Incident
                             </Label>
-                            <p className="text-sm">{mockCase.date}</p>
+                            <p className="text-sm">
+                              {currentCase?.date || "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -462,7 +550,12 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Location</Label>
-                            <p className="text-sm">{mockCase.location}</p>
+                            <p className="text-sm">
+                              {currentCase?.locationName ||
+                                (currentCase?.location
+                                  ? `${currentCase.location.lat}, ${currentCase.location.lng}`
+                                  : "Not provided")}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -483,7 +576,9 @@ const ReviewCase = () => {
                             <Label className="font-medium">
                               Cause of Death
                             </Label>
-                            <p className="text-sm">{mockCase.cause}</p>
+                            <p className="text-sm">
+                              {currentCase?.causeOfDeath || "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -502,7 +597,9 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Perpetrator</Label>
-                            <p className="text-sm">{mockCase.perpetrator}</p>
+                            <p className="text-sm">
+                              {currentCase?.perpetrator || "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -526,7 +623,8 @@ const ReviewCase = () => {
                               Perpetrator Evidence
                             </Label>
                             <p className="text-sm">
-                              {mockCase.perpetratorEvidence}
+                              {currentCase?.evidenceDescription ||
+                                "Not provided"}
                             </p>
                           </div>
                           <Button
@@ -548,7 +646,9 @@ const ReviewCase = () => {
                         <div className="flex items-center justify-between">
                           <div>
                             <Label className="font-medium">Circumstances</Label>
-                            <p className="text-sm">{mockCase.circumstances}</p>
+                            <p className="text-sm">
+                              {currentCase?.circumstances || "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -569,7 +669,10 @@ const ReviewCase = () => {
                             <Label className="font-medium">
                               Witness Information
                             </Label>
-                            <p className="text-sm">{mockCase.witnesses}</p>
+                            <p className="text-sm">
+                              {currentCase?.witness_information ||
+                                "Not provided"}
+                            </p>
                           </div>
                           <Button
                             variant="ghost"
@@ -586,10 +689,10 @@ const ReviewCase = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Documentation and Evidence */}
-                  <div className="border-t pt-6">
+                  {/* <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Documentation and Evidence
                     </h3>
@@ -601,9 +704,14 @@ const ReviewCase = () => {
                             Proof of ID Files
                           </Label>
                           <div className="text-sm space-y-1">
-                            {mockCase.proofOfIdFiles.map((file, index) => (
-                              <p key={index}>• {file}</p>
-                            ))}
+                            {currentCase?.proofOfIdFiles &&
+                            currentCase.proofOfIdFiles.length > 0 ? (
+                              currentCase.proofOfIdFiles.map((file, index) => (
+                                <p key={index}>• {file}</p>
+                              ))
+                            ) : (
+                              <p>Not provided</p>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -626,9 +734,14 @@ const ReviewCase = () => {
                             Proof of Death Files
                           </Label>
                           <div className="text-sm space-y-1">
-                            {mockCase.proofOfDeathFiles.map((file, index) => (
-                              <p key={index}>• {file}</p>
-                            ))}
+                            {currentCase?.proofOfDeathFiles &&
+                            currentCase.proofOfDeathFiles.length > 0 ? (
+                              currentCase.proofOfDeathFiles.map(
+                                (file, index) => <p key={index}>• {file}</p>
+                              )
+                            ) : (
+                              <p>Not provided</p>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -651,10 +764,13 @@ const ReviewCase = () => {
                             Additional Evidence Files
                           </Label>
                           <div className="text-sm space-y-1">
-                            {mockCase.additionalEvidenceFiles.map(
-                              (file, index) => (
-                                <p key={index}>• {file}</p>
+                            {currentCase?.additionalEvidenceFiles &&
+                            currentCase.additionalEvidenceFiles.length > 0 ? (
+                              currentCase.additionalEvidenceFiles.map(
+                                (file, index) => <p key={index}>• {file}</p>
                               )
+                            ) : (
+                              <p>Not provided</p>
                             )}
                           </div>
                         </div>
@@ -678,19 +794,24 @@ const ReviewCase = () => {
                             News Article Links
                           </Label>
                           <div className="text-sm space-y-1">
-                            {mockCase.newsLinks.map((link, index) => (
-                              <p key={index}>
-                                •{" "}
-                                <a
-                                  href={link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 hover:underline"
-                                >
-                                  {link}
-                                </a>
-                              </p>
-                            ))}
+                            {currentCase?.newsLinks &&
+                            currentCase.newsLinks.length > 0 ? (
+                              currentCase.newsLinks.map((link, index) => (
+                                <p key={index}>
+                                  •{" "}
+                                  <a
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline"
+                                  >
+                                    {link}
+                                  </a>
+                                </p>
+                              ))
+                            ) : (
+                              <p>Not provided</p>
+                            )}
                           </div>
                         </div>
                         <Button
@@ -712,7 +833,9 @@ const ReviewCase = () => {
                           <Label className="font-medium">
                             Source of Information
                           </Label>
-                          <p className="text-sm">{mockCase.source}</p>
+                          <p className="text-sm">
+                            {currentCase?.sourceOfInformation || "Not provided"}
+                          </p>
                         </div>
                         <Button
                           variant="ghost"
@@ -733,7 +856,9 @@ const ReviewCase = () => {
                           <Label className="font-medium">
                             Additional Notes
                           </Label>
-                          <p className="text-sm">{mockCase.additionalNotes}</p>
+                          <p className="text-sm">
+                            {currentCase?.notes || "Not provided"}
+                          </p>
                         </div>
                         <Button
                           variant="ghost"
@@ -749,7 +874,7 @@ const ReviewCase = () => {
                         </Button>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {flaggedErrors.length > 0 && (
                     <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
@@ -762,7 +887,7 @@ const ReviewCase = () => {
                   )}
 
                   {/* Add Additional Information */}
-                  <div className="border-t pt-6">
+                  {/* <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Add Additional Information
                     </h3>
@@ -785,7 +910,6 @@ const ReviewCase = () => {
                         />
                       </div>
 
-                      {/* File Upload for Additional Info */}
                       <div>
                         <Label>Upload Supporting Files</Label>
                         <p className="text-sm text-muted-foreground mb-2">
@@ -845,7 +969,6 @@ const ReviewCase = () => {
                       </div>
                     </div>
 
-                    {/* Consent and Safety Checkboxes */}
                     <div className="space-y-4 mb-6">
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -891,7 +1014,6 @@ const ReviewCase = () => {
                       </div>
                     </div>
 
-                    {/* Warning Notices */}
                     <div className="space-y-3 mb-6">
                       <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
                         <p className="text-sm text-amber-800 dark:text-amber-200">
@@ -917,7 +1039,6 @@ const ReviewCase = () => {
                       </div>
                     </div>
 
-                    {/* reCAPTCHA */}
                     <div className="flex justify-center mb-6">
                       <ReCAPTCHA
                         sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
@@ -937,10 +1058,10 @@ const ReviewCase = () => {
                     >
                       Submit Additional Information
                     </Button>
-                  </div>
+                  </div> */}
 
                   {/* Request Case Deletion */}
-                  <div className="border-t pt-6">
+                  {/* <div className="border-t pt-6">
                     <Collapsible
                       open={isDeletionOpen}
                       onOpenChange={setIsDeletionOpen}
@@ -1007,8 +1128,6 @@ const ReviewCase = () => {
                               </p>
                             </div>
 
-                            {/* reCAPTCHA for deletion */}
-
                             <div className="flex justify-center">
                               <ReCAPTCHA
                                 sitekey={
@@ -1034,7 +1153,7 @@ const ReviewCase = () => {
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
-                  </div>
+                  </div> */}
                 </div>
               )}
             </CardContent>

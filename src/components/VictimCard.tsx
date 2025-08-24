@@ -26,6 +26,7 @@ import {
   Download,
   Instagram,
   MessageCircle,
+  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "./LanguageSelector";
@@ -33,6 +34,7 @@ import { useTranslation } from "@/lib/translations";
 import { formatDate, calculateDaysSince } from "@/lib/dateUtils";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useDownloadCaseMutation } from "@/store/api/apiSlice";
 
 interface VictimCardProps {
   victim: {
@@ -71,7 +73,7 @@ export const VictimCard = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  const caseUrl = `${window.location.origin}/case/${victim.id}`;
+  const caseUrl = `${window.location.origin}/case/${victim.generated_id}`;
 
   const handleCopyUrl = async () => {
     try {
@@ -81,6 +83,48 @@ export const VictimCard = ({
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       toast.error("Failed to copy URL");
+    }
+  };
+
+  const [downloadCase, { isLoading: isDownloading }] =
+    useDownloadCaseMutation();
+
+  const handleDownload = async () => {
+    if (!victim?.generated_id) return;
+
+    try {
+      const blob = await downloadCase({
+        generated_id: victim.generated_id,
+      }).unwrap();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Generate filename
+      const caseName = victim?.name?.replace(/[^a-zA-Z0-9]/g, "_") || "case";
+      link.download = `case-${caseName}-${Date.now()}.zip`;
+
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Download Started",
+        description: "Your case file download has started.",
+      });
+    } catch (error) {
+      console.error("Download error:", error);
+      toast({
+        title: "Download Error",
+        description: "Failed to download case file. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -331,7 +375,6 @@ export const VictimCard = ({
         </CardContent>
       </Card>
 
-      {console.log({ victim })}
       {/* Action buttons */}
       <div className="flex gap-2 mt-2 mx-auto">
         <Button variant="outline" size="sm" asChild>
@@ -341,33 +384,14 @@ export const VictimCard = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            // Generate a downloadable file with case information
-            const caseData = {
-              name: victim.name,
-              age: victim.age,
-              location: victim.location,
-              date: victim.date,
-              causeOfDeath: victim.causeOfDeath,
-              perpetrator: victim.perpetrator,
-              newsLink: victim.newsLink,
-            };
-            const dataStr =
-              "data:text/json;charset=utf-8," +
-              encodeURIComponent(JSON.stringify(caseData, null, 2));
-            const downloadAnchorNode = document.createElement("a");
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute(
-              "download",
-              `case-${victim.id}.json`
-            );
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-            toast.success("Case data downloaded");
-          }}
+          onClick={handleDownload}
+          disabled={isDownloading}
         >
-          <Download className="h-4 w-4" />
+          {isDownloading ? (
+            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+          ) : (
+            <Download className="h-3 w-3 mr-1" />
+          )}
         </Button>
 
         <Dialog>

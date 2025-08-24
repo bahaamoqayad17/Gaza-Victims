@@ -185,10 +185,12 @@ const Upload = () => {
       occupation: step1Data.occupation || "",
       background: step1Data.background || "",
       date: step2Data.date || "",
-      location: step2Data.location ? { 
-        lat: step2Data.location.lat || "", 
-        lng: step2Data.location.lng || "" 
-      } : { lat: "", lng: "" },
+      location: step2Data.location
+        ? {
+            lat: step2Data.location.lat || "",
+            lng: step2Data.location.lng || "",
+          }
+        : { lat: "", lng: "" },
       locationName: step2Data.locationName || "",
       circumstances: step2Data.circumstances || "",
       witnesses: step2Data.witnesses || "",

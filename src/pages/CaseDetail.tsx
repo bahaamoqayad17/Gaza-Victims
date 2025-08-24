@@ -24,7 +24,6 @@ import { toast } from "@/hooks/use-toast";
 const CaseDetail = () => {
   const { id } = useParams();
   const { currentLanguage } = useLanguage();
-  console.log({ id });
   const { t } = useTranslation(currentLanguage);
   const {
     data: caseResponse,
@@ -348,7 +347,8 @@ const CaseDetail = () => {
                 <CardContent>
                   <div className="relative">
                     <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
-                      <div className="text-center filter blur-sm">
+                      {/* <div className="text-center filter blur-sm"> */}
+                      <div className="text-center">
                         <img
                           src={caseData.proofOfId}
                           alt="Identity Document"
@@ -356,11 +356,11 @@ const CaseDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    {/* <div className="absolute inset-0 flex items-center justify-center">
                       <Button variant="outline" size="sm">
                         {t("loginToView")}
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -375,7 +375,8 @@ const CaseDetail = () => {
                 <CardContent>
                   <div className="relative">
                     <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
-                      <div className="text-center filter blur-sm">
+                      {/* <div className="text-center filter blur-sm"> */}
+                      <div className="text-center">
                         <img
                           src={caseData.proofOfDeath}
                           alt="Death Certificate"
@@ -383,7 +384,7 @@ const CaseDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    {/* <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <Button variant="outline" size="sm" className="mb-2">
                         {t("loginToView")}
                       </Button>
@@ -392,7 +393,7 @@ const CaseDetail = () => {
                           {t("graphicContentWarning")}
                         </p>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -543,7 +544,7 @@ const CaseDetail = () => {
               <CardContent className="text-xs space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t("caseId")}:</span>
-                  <span className="font-mono">{caseData._id}</span>
+                  <span className="font-mono">{caseData.generated_id}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">

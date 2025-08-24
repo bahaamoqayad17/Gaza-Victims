@@ -14,6 +14,7 @@ import {
   getVerifiedCases,
   verifyCase,
   downloadCase,
+  getCaseStatus,
 } from "@/Controllers/CaseController";
 import CatchAsync from "@/Utils/CatchAsync";
 import { validateCaseCreation } from "@/Utils/validationMiddleware";
@@ -66,7 +67,7 @@ router.get(
 router.get(
   "/cases-under-review",
   protect,
-  restrictTo("admin", "senior_moderator"),
+  restrictTo("admin", "senior_moderator", "moderator"),
   CatchAsync(getCasesUnderReview)
 );
 
@@ -102,8 +103,13 @@ router.patch(
   CatchAsync(verifyCase)
 );
 
+router.post("/status", CatchAsync(getCaseStatus));
+
 // Download case route - accessible to authenticated users
 router.post("/download", CatchAsync(downloadCase));
+
+// Get case by generated_id (public route for case review)
+router.get("/generated/:generated_id", CatchAsync(getCaseController));
 
 router.get("/:id", CatchAsync(getCaseController));
 

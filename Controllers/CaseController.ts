@@ -81,7 +81,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
 export const getAllCasesController = async (req: Request, res: Response) => {
   try {
     // Use ApiFeatures for filtering, sorting, pagination
-    const features = new ApiFeatures(Case.find(), req.query)
+    const features = new ApiFeatures(Case.find({ isVerified: true }), req.query)
       .filter()
       .sort()
       .limitFields()
@@ -952,8 +952,14 @@ export const downloadCase = async (req: Request, res: Response) => {
       // Download files from S3 and save to temp directory
       const downloadPromises = filesToDownload.map(async (fileUrl, index) => {
         try {
+          console.log(
+            `Processing file ${index + 1}/${filesToDownload.length}: ${fileUrl}`
+          );
           const s3Key = extractS3KeyFromUrl(fileUrl);
+          console.log(`Extracted S3 key: ${s3Key}`);
           const fileName = getFilenameFromUrl(fileUrl);
+          console.log(`Extracted filename: ${fileName}`);
+
           const fileBuffer = await downloadFileFromS3(s3Key);
 
           // Create unique filename to avoid conflicts
@@ -963,6 +969,7 @@ export const downloadCase = async (req: Request, res: Response) => {
           const filePath = path.join(tempDir, uniqueFileName);
 
           fs.writeFileSync(filePath, fileBuffer);
+          console.log(`Successfully downloaded and saved: ${uniqueFileName}`);
           return { success: true, fileName: uniqueFileName };
         } catch (error) {
           console.error(`Error downloading file ${fileUrl}:`, error);
@@ -1070,6 +1077,35 @@ export const downloadCase = async (req: Request, res: Response) => {
       status: "error",
       message: "Failed to generate case download",
       error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const getCaseStatus = async (req: Request, res: Response) => {
+  try {
+    const { generated_id } = req.body;
+    const case_ = await Case.findOne({ generated_id });
+    if (!case_) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Case not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        isVerified: case_.isVerified,
+        isThirdPartyVerified: case_.isThirdPartyVerified,
+        isDigitalForensicsVerified: case_.isDigitalForensicsVerified,
+        status: case_.status,
+      },
+    });
+  } catch (error) {
+    console.error("Error in caseStatus:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching case status",
     });
   }
 };

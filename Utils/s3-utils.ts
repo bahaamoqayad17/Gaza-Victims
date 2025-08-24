@@ -212,38 +212,99 @@ export async function getSignedUrlForFile(
 }
 
 /**
- * Download a file from S3 as a Buffer
+ * Download a file from S3 as a Buffer with fallback key attempts
  */
 export async function downloadFileFromS3(key: string): Promise<Buffer> {
-  const command = new GetObjectCommand({
-    Bucket: BUCKET_NAME,
-    Key: key,
-  });
+  // Try multiple key variations to handle encoding issues
+  const keyVariations = [
+    key, // Original key
+    encodeURIComponent(key), // URL encoded
+    key.replace(/ /g, "_"), // Spaces replaced with underscores (our sanitization)
+    key.replace(/ /g, "%20"), // Spaces replaced with URL encoding
+  ];
 
-  try {
-    const response = await s3Client.send(command);
+  let lastError: Error | null = null;
 
-    if (!response.Body) {
-      throw new Error("No file content received from S3");
+  for (const keyVariation of keyVariations) {
+    try {
+      console.log(
+        `Attempting to download from S3: Bucket=${BUCKET_NAME}, Key=${keyVariation}`
+      );
+
+      const command = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: keyVariation,
+      });
+
+      const response = await s3Client.send(command);
+
+      if (!response.Body) {
+        throw new Error("No file content received from S3");
+      }
+
+      // Convert the stream to buffer
+      const chunks: Uint8Array[] = [];
+      const stream = response.Body as any;
+
+      return new Promise((resolve, reject) => {
+        stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
+        stream.on("error", (err: any) => {
+          console.error(`Stream error for key ${keyVariation}:`, err);
+          reject(err);
+        });
+        stream.on("end", () => {
+          console.log(
+            `Successfully downloaded ${chunks.length} chunks for key: ${keyVariation}`
+          );
+          resolve(Buffer.concat(chunks));
+        });
+      });
+    } catch (error) {
+      console.log(
+        `Failed to download with key variation "${keyVariation}":`,
+        error instanceof Error ? error.message : error
+      );
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      // If it's not a "key not found" error, don't try other variations
+      if (
+        error instanceof Error &&
+        !error.message.includes("NoSuchKey") &&
+        !error.message.includes("does not exist")
+      ) {
+        break;
+      }
+
+      // Continue to next variation
+      continue;
     }
-
-    // Convert the stream to buffer
-    const chunks: Uint8Array[] = [];
-    const stream = response.Body as any;
-
-    return new Promise((resolve, reject) => {
-      stream.on("data", (chunk: Uint8Array) => chunks.push(chunk));
-      stream.on("error", reject);
-      stream.on("end", () => resolve(Buffer.concat(chunks)));
-    });
-  } catch (error) {
-    console.error("Error downloading file from S3:", error);
-    throw new Error(
-      `Failed to download file from S3: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
   }
+
+  // If we get here, all variations failed
+  console.error(`All key variations failed for: ${key}`);
+  console.error(`Tried variations:`, keyVariations);
+
+  if (lastError) {
+    if (
+      lastError.message.includes("NoSuchKey") ||
+      lastError.message.includes("does not exist")
+    ) {
+      throw new Error(
+        `File not found in S3 with any key variation. Original key: ${key}. The file may have been deleted or the key is incorrect.`
+      );
+    }
+    if (lastError.message.includes("AccessDenied")) {
+      throw new Error(
+        `Access denied to S3 file: ${key}. Check S3 permissions.`
+      );
+    }
+  }
+
+  throw new Error(
+    `Failed to download file from S3 with any key variation. Original key: ${key}. Last error: ${
+      lastError ? lastError.message : "Unknown error"
+    }`
+  );
 }
 
 /**
@@ -252,8 +313,10 @@ export async function downloadFileFromS3(key: string): Promise<Buffer> {
 export function extractS3KeyFromUrl(url: string): string {
   try {
     const urlObj = new URL(url);
-    // Remove leading slash from pathname
-    return urlObj.pathname.substring(1);
+    // Remove leading slash from pathname and decode URL-encoded characters
+    const key = decodeURIComponent(urlObj.pathname.substring(1));
+    console.log(`Extracting S3 key from URL: ${url} -> ${key}`);
+    return key;
   } catch (error) {
     console.error("Error extracting S3 key from URL:", error);
     throw new Error("Invalid S3 URL format");

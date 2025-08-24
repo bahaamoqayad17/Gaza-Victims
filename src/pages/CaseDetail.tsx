@@ -24,7 +24,6 @@ import { toast } from "@/hooks/use-toast";
 const CaseDetail = () => {
   const { id } = useParams();
   const { currentLanguage } = useLanguage();
-  console.log({ id });
   const { t } = useTranslation(currentLanguage);
   const {
     data: caseResponse,
@@ -115,8 +114,6 @@ const CaseDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -125,7 +122,7 @@ const CaseDetail = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  {t("victimProfile")}
+                  Victim Profile
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -139,9 +136,7 @@ const CaseDetail = () => {
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-400 text-xs">
-                          {t("noPhoto")}
-                        </span>
+                        <span className="text-gray-400 text-xs">No Photo</span>
                       </div>
                     )}
                   </div>
@@ -155,7 +150,7 @@ const CaseDetail = () => {
                       {caseData.leftBehind &&
                         caseData.leftBehind.length > 0 && (
                           <p className="text-muted-foreground italic text-sm mt-1">
-                            {t("leftBehind")}: {caseData.leftBehind.join(", ")}
+                            Left Behind: {caseData.leftBehind.join(", ")}
                           </p>
                         )}
                     </div>
@@ -166,27 +161,27 @@ const CaseDetail = () => {
                       </span>
                       {caseData.isVerified && (
                         <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">
-                          {t("verified")}
+                          Verified
                         </span>
                       )}
                       {caseData.isThirdPartyVerified && (
                         <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">
-                          {t("thirdPartyVerified")}
+                          Third Party Verified
                         </span>
                       )}
                       {caseData.isDigitalForensicsVerified && (
                         <span className="bg-purple-100 text-purple-800 px-2 py-0.5 border border-purple-300">
-                          {t("digitalForensicsVerified")}
+                          Digital Forensics Verified
                         </span>
                       )}
                       {caseData.proofOfId && (
                         <span className="bg-blue-100 text-blue-800 px-2 py-0.5 border border-blue-300">
-                          {t("proofOfId")}
+                          Proof Of Id
                         </span>
                       )}
                       {caseData.proofOfDeath && (
                         <span className="bg-amber-100 text-amber-800 px-2 py-0.5 border border-amber-300">
-                          {t("proofOfDeath")}
+                          Proof Of Death
                         </span>
                       )}
                     </div>
@@ -207,29 +202,27 @@ const CaseDetail = () => {
                       </div>
                       {caseData.perpetrator && (
                         <div className="text-sm">
-                          <span>
-                            {t("perpetrator")}: {caseData.perpetrator}
-                          </span>
+                          <span>Perpetrator: {caseData.perpetrator}</span>
                         </div>
                       )}
                       <div className="text-sm">
                         <span>
-                          {t("enforcedLegalResponse")}:
+                          Enforced Legal Response :
                           <span className="text-red-600">
                             {" "}
-                            {t("none")}, {t("since")}{" "}
+                            None , Since{" "}
                             {Math.floor(
                               (new Date().getTime() -
                                 new Date(caseData.createdAt).getTime()) /
                                 (1000 * 60 * 60 * 24)
                             )}{" "}
-                            {t("days")}
+                            Days
                           </span>
                         </span>
                       </div>
                       {caseData.newsLinks && caseData.newsLinks.length > 0 && (
                         <div className="text-sm">
-                          <span>{t("incidentNewsStoryLabel")}: </span>
+                          <span>Incident News Story Label : </span>
                           <a
                             href={caseData.newsLinks[0]}
                             target="_blank"
@@ -241,9 +234,7 @@ const CaseDetail = () => {
                         </div>
                       )}
                     </div>
-                    <p className="text-sm">
-                      {caseData.story || t("noBackgroundInformation")}
-                    </p>
+                    <p className="text-sm">{caseData.story || "None"}</p>
                   </div>
                 </div>
               </CardContent>
@@ -254,7 +245,7 @@ const CaseDetail = () => {
               caseData.additionalAttachments.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t("theirLifeInFewImages")}</CardTitle>
+                    <CardTitle>Their Life In Few Images</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -276,7 +267,7 @@ const CaseDetail = () => {
                       {caseData.additionalAttachments.length < 6 && (
                         <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
                           <span className="text-gray-400 text-xs">
-                            {t("noAdditionalImages")}
+                            No Images
                           </span>
                         </div>
                       )}
@@ -288,12 +279,12 @@ const CaseDetail = () => {
             {/* Incident Details */}
             <Card>
               <CardHeader>
-                <CardTitle>{t("incidentDetails")}</CardTitle>
+                <CardTitle>Incident Details</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {caseData.causeOfDeath && (
                   <div>
-                    <h4 className="font-semibold mb-2">{t("causeOfDeath")}</h4>
+                    <h4 className="font-semibold mb-2">Cause Of Death</h4>
                     <Badge variant="outline">{caseData.causeOfDeath}</Badge>
                   </div>
                 )}
@@ -302,7 +293,7 @@ const CaseDetail = () => {
 
                 {caseData.circumstances && (
                   <div>
-                    <h4 className="font-semibold mb-2">{t("circumstances")}</h4>
+                    <h4 className="font-semibold mb-2">Circumstances</h4>
                     <p className="text-sm leading-relaxed">
                       {caseData.circumstances}
                     </p>
@@ -314,7 +305,7 @@ const CaseDetail = () => {
                     <Separator />
                     <div>
                       <h4 className="font-semibold mb-2">
-                        {t("witnessInformation")}
+                        Witness Information
                       </h4>
                       <p className="text-sm leading-relaxed">
                         {caseData.witness_information}
@@ -328,7 +319,7 @@ const CaseDetail = () => {
                     <Separator />
                     <div>
                       <h4 className="font-semibold mb-2">
-                        {t("evidenceDescription")}
+                        Evidence Description
                       </h4>
                       <p className="text-sm leading-relaxed">
                         {caseData.evidenceDescription}
@@ -343,12 +334,13 @@ const CaseDetail = () => {
             {caseData.proofOfId && (
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("proofOfIdentity")}</CardTitle>
+                  <CardTitle>Proof Of Identity</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
                     <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
-                      <div className="text-center filter blur-sm">
+                      {/* <div className="text-center filter blur-sm"> */}
+                      <div className="text-center">
                         <img
                           src={caseData.proofOfId}
                           alt="Identity Document"
@@ -356,11 +348,11 @@ const CaseDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    {/* <div className="absolute inset-0 flex items-center justify-center">
                       <Button variant="outline" size="sm">
-                        {t("loginToView")}
+                        Login To View
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -370,12 +362,13 @@ const CaseDetail = () => {
             {caseData.proofOfDeath && (
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("proofOfDeath")}</CardTitle>
+                  <CardTitle>Proof Of Death</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
                     <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
-                      <div className="text-center filter blur-sm">
+                      {/* <div className="text-center filter blur-sm"> */}
+                      <div className="text-center">
                         <img
                           src={caseData.proofOfDeath}
                           alt="Death Certificate"
@@ -383,16 +376,16 @@ const CaseDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    {/* <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <Button variant="outline" size="sm" className="mb-2">
-                        {t("loginToView")}
+                        Login To View
                       </Button>
                       {caseData.proofOfDeathGraphic && (
                         <p className="text-xs text-center text-amber-600 px-4">
-                          {t("graphicContentWarning")}
+                          Graphic Content Warning
                         </p>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -402,17 +395,17 @@ const CaseDetail = () => {
             {caseData.newsLinks && caseData.newsLinks.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("incidentNewsStory")}</CardTitle>
+                  <CardTitle>Incident News Story</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <p className="text-sm text-muted-foreground">
-                      {t("newsArticleScreenshot")}
+                      News Article Screenshot
                     </p>
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm">
-                      {t("relatedNewsCoverage")}:
+                      Related News Coverage:
                     </h4>
                     <div className="space-y-1 text-sm">
                       {caseData.newsLinks.map((link, index) => (
@@ -439,27 +432,25 @@ const CaseDetail = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
-                    {t("locationDetails")}
+                    Location Details
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h4 className="font-semibold mb-2">
-                      {t("incidentLocation")}
-                    </h4>
+                    <h4 className="font-semibold mb-2">Incident Location</h4>
                     <p className="text-muted-foreground">
-                      {caseData.locationName || t("locationProvided")}
+                      {caseData.locationName || "Location Provided"}
                     </p>
                     {caseData.location && (
                       <p className="text-sm text-muted-foreground mt-1">
-                        {t("coordinates")}: {caseData.location.lat}° N,{" "}
+                        Coordinates: {caseData.location.lat}° N,{" "}
                         {caseData.location.lng}° E
                       </p>
                     )}
                   </div>
                   <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <p className="text-sm text-muted-foreground">
-                      {t("interactiveMapPlaceholder")}
+                      Interactive Map Placeholder
                     </p>
                   </div>
                 </CardContent>
@@ -469,7 +460,7 @@ const CaseDetail = () => {
             {/* Timeline */}
             <Card>
               <CardHeader>
-                <CardTitle>{t("caseTimeline")}</CardTitle>
+                <CardTitle>Case Timeline</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -477,9 +468,7 @@ const CaseDetail = () => {
                     <div className="flex gap-4">
                       <div className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
                       <div>
-                        <p className="text-sm font-medium">
-                          {t("incidentOccurred")}
-                        </p>
+                        <p className="text-sm font-medium">Incident Occurred</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(caseData.date).toLocaleDateString()}
                         </p>
@@ -489,9 +478,7 @@ const CaseDetail = () => {
                   <div className="flex gap-4">
                     <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
                     <div>
-                      <p className="text-sm font-medium">
-                        {t("caseSubmitted")}
-                      </p>
+                      <p className="text-sm font-medium">Case Submitted</p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(caseData.createdAt).toLocaleDateString()}
                       </p>
@@ -501,9 +488,7 @@ const CaseDetail = () => {
                     <div className="flex gap-4">
                       <div className="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
                       <div>
-                        <p className="text-sm font-medium">
-                          {t("caseVerified")}
-                        </p>
+                        <p className="text-sm font-medium">Case Verified</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(caseData.updatedAt).toLocaleDateString()}
                         </p>
@@ -522,33 +507,29 @@ const CaseDetail = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-sm">
                   <Shield className="w-4 h-4" />
-                  {t("securityPrivacy")}
+                  Security Privacy
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-xs space-y-2">
-                <p>{t("submitterIdentityProtected")}</p>
-                <p>{t("allDataEncrypted")}</p>
-                <p>{t("verifiedByIndependentSources")}</p>
-                <p>{t("suitableForLegalDocumentation")}</p>
+                <p>Submitter Identity Protected</p>
+                <p>All Data Encrypted</p>
+                <p>Verified By Independent Sources</p>
+                <p>Suitable For Legal Documentation</p>
               </CardContent>
             </Card>
 
             {/* Case Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">
-                  {t("caseInformation")}
-                </CardTitle>
+                <CardTitle className="text-sm">Case Information</CardTitle>
               </CardHeader>
               <CardContent className="text-xs space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t("caseId")}:</span>
-                  <span className="font-mono">{caseData._id}</span>
+                  <span className="text-muted-foreground">Case Id:</span>
+                  <span className="font-mono">{caseData.generated_id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    {t("submitted")}:
-                  </span>
+                  <span className="text-muted-foreground">Submitted:</span>
                   <span>
                     {new Date(caseData.createdAt).toLocaleDateString()}
                   </span>
@@ -561,17 +542,13 @@ const CaseDetail = () => {
                 </div>
                 {caseData.submittedBy && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      {t("submittedBy")}:
-                    </span>
+                    <span className="text-muted-foreground">Submitted By:</span>
                     <span>{caseData.submittedBy}</span>
                   </div>
                 )}
                 {caseData.relationshipToVictim && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      {t("relationship")}:
-                    </span>
+                    <span className="text-muted-foreground">Relationship:</span>
                     <span>{caseData.relationshipToVictim}</span>
                   </div>
                 )}
@@ -581,7 +558,7 @@ const CaseDetail = () => {
             {/* Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm">{t("actions")}</CardTitle>
+                <CardTitle className="text-sm">Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button
@@ -591,7 +568,7 @@ const CaseDetail = () => {
                   asChild
                 >
                   <Link to="/report-additional">
-                    {t("reportAdditionalInformation")}
+                    Report Additional Information
                   </Link>
                 </Button>
                 <Button
@@ -609,7 +586,7 @@ const CaseDetail = () => {
                   ) : (
                     <>
                       <Download className="h-3 w-3 mr-1" />
-                      {t("downloadCaseFile")}
+                      Download Case File
                     </>
                   )}
                 </Button>

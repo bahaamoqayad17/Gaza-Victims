@@ -19,6 +19,11 @@ import {
 import { useGetDashboardStatsQuery } from "@/store/api/apiSlice";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { useAppDispatch } from "@/store/hooks";
+import { logout } from "@/store/slices/authSlice";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const ModeratorsDashboard = () => {
   const { currentLanguage } = useLanguage();
@@ -50,19 +55,31 @@ const ModeratorsDashboard = () => {
     return "pending-cases"; // fallback
   };
 
+  const dispatch = useAppDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success("Logged out successfully");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* <Header /> */}
 
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center gap-3 mb-8">
-          <Shield className="w-8 h-8 text-primary" />
-          <div>
-            <h1 className="text-3xl font-bold">{t("moderatorsDashboard")}</h1>
-            <p className="text-muted-foreground">
-              {t("manageCaseVerification")}
-            </p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Shield className="w-8 h-8 text-primary" />
+            <div>
+              <h1 className="text-3xl font-bold">{t("moderatorsDashboard")}</h1>
+              <p className="text-muted-foreground">
+                {t("manageCaseVerification")}
+              </p>
+            </div>
           </div>
+          <Button variant="outline" size="sm" onClick={() => handleLogout()}>
+            <LogOut className="h-4 w-4 mr-1" />
+            Logout
+          </Button>
         </div>
 
         {/* Stats Overview */}

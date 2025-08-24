@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AssignCaseModal } from "@/components/AssignCaseModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const ThirdPartyReviewCasesTab = () => {
   const router = useNavigate();
@@ -231,13 +231,11 @@ export const ThirdPartyReviewCasesTab = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => router.push(`/case/${case_._id}`)}
-                        >
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          Review
+                        <Button variant="outline" size="sm" asChild>
+                          <Link>
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Review
+                          </Link>
                         </Button>
                         <Button
                           variant="default"

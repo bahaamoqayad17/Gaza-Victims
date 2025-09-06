@@ -106,6 +106,17 @@ export interface DeleteRequest {
   updatedAt: string;
 }
 
+export interface Information {
+  _id: string;
+  note: string;
+  files: string[];
+  caseId: string;
+  status: string;
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Case {
   _id: string;
   generated_id: string;
@@ -939,6 +950,33 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["DeleteRequest"],
     }),
+
+    // Information endpoints
+    getAllInformation: builder.query<
+      ApiResponse<{ information: Information[] }>,
+      void
+    >({
+      query: () => "/information",
+      providesTags: ["Information"],
+    }),
+    updateInformationStatus: builder.mutation<
+      ApiResponse<{ information: Information }>,
+      { id: string; status: string; adminNotes?: string }
+    >({
+      query: ({ id, status, adminNotes }) => ({
+        url: `/information/${id}/status`,
+        method: "PATCH",
+        body: { status, adminNotes },
+      }),
+      invalidatesTags: ["Information"],
+    }),
+    deleteInformation: builder.mutation<ApiResponse<void>, string>({
+      query: (id) => ({
+        url: `/information/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Information"],
+    }),
   }),
 });
 
@@ -966,6 +1004,11 @@ export const {
   useGetDeleteRequestsQuery,
   useUpdateDeleteRequestStatusMutation,
   useDeleteDeleteRequestMutation,
+
+  // Information hooks
+  useGetAllInformationQuery,
+  useUpdateInformationStatusMutation,
+  useDeleteInformationMutation,
 
   // User hooks
   useGetAllUsersQuery,

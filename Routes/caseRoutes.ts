@@ -14,6 +14,7 @@ import {
   getVerifiedCases,
   verifyCase,
   downloadCase,
+  downloadArchive,
   getCaseStatus,
 } from "@/Controllers/CaseController";
 import CatchAsync from "@/Utils/CatchAsync";
@@ -107,6 +108,9 @@ router.post("/status", CatchAsync(getCaseStatus));
 
 // Download case route - accessible to authenticated users
 router.post("/download", CatchAsync(downloadCase));
+
+// Download archive route - accessible to authenticated users
+router.post("/download-archive", CatchAsync(downloadArchive));
 
 // Get case by generated_id (public route for case review)
 router.get("/generated/:generated_id", CatchAsync(getCaseController));

@@ -7,3 +7,5 @@ export { CasesUnderReviewTab } from "./CasesUnderReviewTab";
 export { VerifiedCasesTab } from "./VerifiedCasesTab";
 export { ReportsTab } from "./ReportsTab";
 export { ContactsTab } from "./ContactsTab";
+export { DeleteRequestTab } from "./DeleteRequestTab";
+export { InformationTab } from "./InformationTab";

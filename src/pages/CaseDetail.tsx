@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   Loader2,
   Download,
+  ArrowLeft,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -78,10 +79,27 @@ const CaseDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8 flex items-center justify-center">
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <span>{t("loadingCaseDetails")}</span>
+        <div className="container mx-auto px-4 py-8">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="flex items-center gap-2"
+            >
+              <Link to="/">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Homepage
+              </Link>
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span>Loading case details...</span>
+            </div>
           </div>
         </div>
         <Footer />
@@ -93,16 +111,33 @@ const CaseDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8 flex items-center justify-center">
-          <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">{t("caseNotFound")}</h2>
-            <p className="text-muted-foreground mb-4">
-              {t("caseNotFoundDescription")}
-            </p>
-            <Button asChild>
-              <Link to="/browse">{t("browseCases")}</Link>
+        <div className="container mx-auto px-4 py-8">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="flex items-center gap-2"
+            >
+              <Link to="/">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Homepage
+              </Link>
             </Button>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-2">Case Not Found</h2>
+              <p className="text-muted-foreground mb-4">
+                The case you're looking for could not be found.
+              </p>
+              <Button asChild>
+                <Link to="/browse">Browse Cases</Link>
+              </Button>
+            </div>
           </div>
         </div>
         <Footer />
@@ -115,6 +150,21 @@ const CaseDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="flex items-center gap-2"
+          >
+            <Link to="/">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Homepage
+            </Link>
+          </Button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">

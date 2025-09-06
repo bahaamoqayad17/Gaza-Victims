@@ -15,6 +15,8 @@ import {
   VerifiedCasesTab,
   ReportsTab,
   ContactsTab,
+  DeleteRequestTab,
+  InformationTab,
 } from "@/components/TabsMods";
 import { useGetDashboardStatsQuery } from "@/store/api/apiSlice";
 import { useSelector } from "react-redux";
@@ -164,6 +166,13 @@ const ModeratorsDashboard = () => {
                 </TabsTrigger>
                 <TabsTrigger value="reports">Reports</TabsTrigger>
                 <TabsTrigger value="contacts">Contacts</TabsTrigger>
+                <TabsTrigger value="delete-requests">
+                  Delete Requests
+                </TabsTrigger>
+
+                <TabsTrigger value="informations">
+                  Additional Information Cases
+                </TabsTrigger>
               </>
             )}
 
@@ -214,6 +223,14 @@ const ModeratorsDashboard = () => {
 
               <TabsContent value="contacts" className="space-y-6">
                 <ContactsTab />
+              </TabsContent>
+
+              <TabsContent value="delete-requests" className="space-y-6">
+                <DeleteRequestTab />
+              </TabsContent>
+
+              <TabsContent value="informations" className="space-y-6">
+                <InformationTab />
               </TabsContent>
             </>
           )}

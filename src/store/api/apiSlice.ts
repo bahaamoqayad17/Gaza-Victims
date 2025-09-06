@@ -95,8 +95,20 @@ export interface Contact {
   updatedAt: string;
 }
 
+export interface DeleteRequest {
+  _id: string;
+  reason: string;
+  email?: string;
+  caseId: string;
+  status?: string;
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Case {
   _id: string;
+  generated_id: string;
   name: string;
   age: number;
   gender: string;
@@ -246,7 +258,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["Case", "User", "Auth", "Contact", "Report"],
+  tagTypes: ["Case", "User", "Auth", "Contact", "Report", "DeleteRequest"],
   endpoints: (builder) => ({
     // Auth endpoints
     register: builder.mutation<
@@ -900,6 +912,33 @@ export const apiSlice = createApi({
       query: () => "/contacts",
       providesTags: ["Contact"],
     }),
+
+    // Delete Request endpoints
+    getDeleteRequests: builder.query<
+      ApiResponse<{ deleteRequests: DeleteRequest[] }>,
+      void
+    >({
+      query: () => "/delete-requests",
+      providesTags: ["DeleteRequest"],
+    }),
+    updateDeleteRequestStatus: builder.mutation<
+      ApiResponse<{ deleteRequest: DeleteRequest }>,
+      { id: string; status: string; adminNotes?: string }
+    >({
+      query: ({ id, status, adminNotes }) => ({
+        url: `/delete-requests/${id}/status`,
+        method: "PATCH",
+        body: { status, adminNotes },
+      }),
+      invalidatesTags: ["DeleteRequest"],
+    }),
+    deleteDeleteRequest: builder.mutation<ApiResponse<void>, string>({
+      query: (id) => ({
+        url: `/delete-requests/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["DeleteRequest"],
+    }),
   }),
 });
 
@@ -922,6 +961,11 @@ export const {
   // Contact hooks
   useCreateContactMutation,
   useSearchContactsQuery,
+
+  // Delete Request hooks
+  useGetDeleteRequestsQuery,
+  useUpdateDeleteRequestStatusMutation,
+  useDeleteDeleteRequestMutation,
 
   // User hooks
   useGetAllUsersQuery,

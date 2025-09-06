@@ -277,9 +277,9 @@ const Browse = () => {
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/upload">Submit a Case</Link>
                 </Button>
-                {/* <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild>
                   <Link to="/review-case">Review Submitted Case</Link>
-                </Button> */}
+                </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/download-archive">
                     <Download className="w-4 h-4 mr-2" />

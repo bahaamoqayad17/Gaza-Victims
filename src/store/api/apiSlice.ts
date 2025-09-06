@@ -132,6 +132,40 @@ export interface ReportInput {
   captchaValue: string;
 }
 
+export interface DeleteRequest {
+  _id: string;
+  reason: string;
+  email?: string;
+  caseId: string;
+  status?: string;
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DeleteRequestInput {
+  reason: string;
+  email?: string;
+  caseId: string;
+}
+
+export interface Information {
+  _id: string;
+  note: string;
+  files: string[];
+  caseId: string;
+  status: string;
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InformationInput {
+  note: string;
+  caseId: string;
+  files?: File[];
+}
+
 export interface HomePageData {
   recentCases: Case[];
   pagination: {
@@ -204,7 +238,15 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["Case", "User", "Auth", "Contact", "Report"],
+  tagTypes: [
+    "Case",
+    "User",
+    "Auth",
+    "Contact",
+    "Report",
+    "DeleteRequest",
+    "Information",
+  ],
   endpoints: (builder) => ({
     // Auth endpoints
     register: builder.mutation<
@@ -294,7 +336,7 @@ export const apiSlice = createApi({
     }),
 
     getCaseByGeneratedId: builder.query<ApiResponse<{ case: Case }>, string>({
-      query: (generated_id) => `/cases/generated/${generated_id}`,
+      query: (generated_id) => `/cases/${generated_id}`,
       providesTags: (result, error, generated_id) => [
         { type: "Case", id: generated_id },
       ],
@@ -319,6 +361,28 @@ export const apiSlice = createApi({
     downloadCase: builder.mutation<Blob, { generated_id: string }>({
       query: (data) => ({
         url: `/cases/download`,
+        method: "POST",
+        body: data,
+        responseHandler: async (response) => {
+          return response.blob();
+        },
+      }),
+    }),
+
+    downloadArchive: builder.mutation<
+      Blob,
+      {
+        includeMedia?: boolean;
+        includePhotos?: boolean;
+        includeVideos?: boolean;
+        statusFilter?: string;
+        locationFilter?: string;
+        dateFrom?: string;
+        dateTo?: string;
+      }
+    >({
+      query: (data) => ({
+        url: `/cases/download-archive`,
         method: "POST",
         body: data,
         responseHandler: async (response) => {
@@ -468,6 +532,39 @@ export const apiSlice = createApi({
       },
       invalidatesTags: ["Report"],
     }),
+
+    // Delete Request mutations
+    createDeleteRequest: builder.mutation<
+      ApiResponse<{ deleteRequest: DeleteRequest }>,
+      DeleteRequestInput
+    >({
+      query: (deleteRequestData) => ({
+        url: "/delete-requests",
+        method: "POST",
+        body: deleteRequestData,
+      }),
+      invalidatesTags: ["DeleteRequest"],
+    }),
+
+    // Information mutations
+    createInformation: builder.mutation<
+      ApiResponse<{ information: Information }>,
+      FormData
+    >({
+      query: (formData) => ({
+        url: "/information",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Information"],
+    }),
+    getInformationByCaseId: builder.query<
+      ApiResponse<{ information: Information[] }>,
+      string
+    >({
+      query: (caseId) => `/information/case/${caseId}`,
+      providesTags: ["Information"],
+    }),
   }),
 });
 
@@ -485,6 +582,7 @@ export const {
   useGetCaseByGeneratedIdQuery,
   useGetCaseStatusMutation,
   useDownloadCaseMutation,
+  useDownloadArchiveMutation,
   useCreateCaseMutation,
   useGetCasesLocationsQuery,
   useGetHomePageDataQuery,
@@ -499,4 +597,11 @@ export const {
 
   // Report hooks
   useCreateReportMutation,
+
+  // Delete Request hooks
+  useCreateDeleteRequestMutation,
+
+  // Information hooks
+  useCreateInformationMutation,
+  useGetInformationByCaseIdQuery,
 } = apiSlice;

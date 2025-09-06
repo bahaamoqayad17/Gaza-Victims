@@ -21,13 +21,15 @@ import {
   Upload,
   X,
   Loader2,
+  ArrowLeft,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { toast } from "sonner";
 import {
   useGetCaseByGeneratedIdQuery,
-  useGetCaseStatusMutation,
+  useCreateDeleteRequestMutation,
+  useCreateInformationMutation,
   Case,
 } from "@/store/api/apiSlice";
 import { MobileTooltip } from "@/components/MobileTooltip";
@@ -66,13 +68,26 @@ const ReviewCase = () => {
     skip: !caseFound || !caseNumber.trim(),
   });
 
-  const [getCaseStatus, { isLoading: isStatusLoading }] =
-    useGetCaseStatusMutation();
+  const [createDeleteRequest, { isLoading: isDeleting }] =
+    useCreateDeleteRequestMutation();
+
+  const [createInformation, { isLoading: isSubmittingInfo }] =
+    useCreateInformationMutation();
 
   // Handle case data loading
   useEffect(() => {
     if (caseData?.status === "success" && caseData.data?.case) {
       setCurrentCase(caseData.data.case);
+      setCaseFound(true);
+      // Set case status from the case data itself
+      setCaseStatus({
+        isVerified: caseData.data.case.isVerified,
+        isThirdPartyVerified: caseData.data.case.isThirdPartyVerified,
+        isDigitalForensicsVerified:
+          caseData.data.case.isDigitalForensicsVerified,
+        status: caseData.data.case.status,
+      });
+      toast.success("Case found successfully");
     } else if (caseError) {
       setCaseFound(false);
       setCurrentCase(null);
@@ -88,21 +103,8 @@ const ReviewCase = () => {
     }
 
     try {
-      // First, try to find the case
+      // Trigger the query to find the case
       setCaseFound(true); // This will trigger the query
-
-      // Wait for the case data to load
-      // The useGetCaseByGeneratedIdQuery will handle the actual API call
-
-      // Also get the case status
-      const statusResult = await getCaseStatus({
-        generated_id: caseNumber.trim(),
-      });
-
-      if (statusResult.data?.status === "success") {
-        setCaseStatus(statusResult.data.data!);
-        toast.success("Case found successfully");
-      }
     } catch (error) {
       console.error("Error searching for case:", error);
       setCaseFound(false);
@@ -112,12 +114,46 @@ const ReviewCase = () => {
     }
   };
 
-  const handleAddAdditionalInfo = () => {
-    if (additionalInfo.trim() || additionalFiles.length > 0) {
-      // In real app would send to backend
+  const handleAddAdditionalInfo = async () => {
+    if (!additionalInfo.trim() && additionalFiles.length === 0) {
+      toast.error("Please provide additional information or upload files");
+      return;
+    }
+
+    if (!currentCase?.generated_id) {
+      toast.error("Case ID not found");
+      return;
+    }
+
+    if (!consentAgreed || !safetyAcknowledged || !captchaValue) {
+      toast.error("Please complete all required fields and captcha");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("note", additionalInfo);
+      formData.append("caseId", currentCase.generated_id);
+
+      // Add files to form data
+      additionalFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+
+      await createInformation(formData).unwrap();
+
       toast.success("Additional information submitted successfully");
       setAdditionalInfo("");
       setAdditionalFiles([]);
+      setConsentAgreed(false);
+      setSafetyAcknowledged(false);
+      setCaptchaValue(null);
+    } catch (error: unknown) {
+      console.error("Error submitting additional information:", error);
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "Failed to submit additional information. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
@@ -130,16 +166,37 @@ const ReviewCase = () => {
     setAdditionalFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleRequestDeletion = () => {
-    if (deletionReason.trim()) {
-      // In real app would send deletion request to backend
+  const handleRequestDeletion = async () => {
+    if (!deletionReason.trim()) {
+      toast.error("Please provide a reason for deletion request");
+      return;
+    }
+
+    if (!currentCase?.generated_id) {
+      toast.error("Case ID not found");
+      return;
+    }
+
+    try {
+      await createDeleteRequest({
+        reason: deletionReason,
+        email: contactEmail || undefined,
+        caseId: currentCase.generated_id,
+      }).unwrap();
+
       toast.success(
-        "Deletion request submitted. We will review your request and get back to you."
+        "Deletion request submitted successfully. We will review your request and get back to you."
       );
       setDeletionReason("");
       setContactEmail("");
-    } else {
-      toast.error("Please provide a reason for deletion request");
+      setDeletionCaptchaValue(null);
+      setIsDeletionOpen(false);
+    } catch (error: unknown) {
+      console.error("Error submitting deletion request:", error);
+      const errorMessage =
+        (error as { data?: { message?: string } })?.data?.message ||
+        "Failed to submit deletion request. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
@@ -163,70 +220,65 @@ const ReviewCase = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Search Section */}
+              {!caseFound && (
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="caseNumber">Enter Case Number</Label>
+                    <div className="flex gap-2 mt-2">
+                      <Input
+                        id="caseNumber"
+                        value={caseNumber}
+                        onChange={(e) => setCaseNumber(e.target.value)}
+                        placeholder="Enter case number..."
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            handleSearchCase();
+                          }
+                        }}
+                      />
+                      <Button
+                        onClick={handleSearchCase}
+                        disabled={!caseNumber.trim() || isCaseLoading}
+                      >
+                        {isCaseLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Search className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {isCaseLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="h-8 w-8 animate-spin" />
                   <span className="ml-2">Loading case data...</span>
                 </div>
-              ) : (
+              ) : caseFound && currentCase ? (
                 <div className="space-y-6">
-                  {/* Basic Victim Information */}
+                  {/* Search Again Option */}
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold">
                       Case Status Information
                     </h3>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setCaseFound(false);
+                        setCurrentCase(null);
+                        setCaseStatus(null);
+                        setCaseNumber("");
+                      }}
+                    >
+                      Search Another Case
+                    </Button>
                   </div>
 
-                  <div className="flex flex-wrap gap-x-1 gap-y-2 mb-2 text-xs">
-                    <MobileTooltip content={t("documentedDescription")}>
-                      <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">
-                        {t("documented")}
-                      </span>
-                    </MobileTooltip>
-                    {caseStatus?.isVerified ? (
-                      <MobileTooltip content={t("verifiedDescription")}>
-                        <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">
-                          {t("verified")}
-                        </span>
-                      </MobileTooltip>
-                    ) : (
-                      <MobileTooltip content={t("notVerifiedDescription")}>
-                        <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">
-                          {t("notVerified")}
-                        </span>
-                      </MobileTooltip>
-                    )}
-                    {caseStatus?.isThirdPartyVerified ? (
-                      <MobileTooltip content={t("thirdPartyDescription")}>
-                        <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">
-                          {t("thirdPartyVerified")}
-                        </span>
-                      </MobileTooltip>
-                    ) : (
-                      <MobileTooltip content={t("notThirdPartyDescription")}>
-                        <span className="bg-violet-100 text-violet-800 px-2 py-0.5 border border-violet-300">
-                          {t("notThirdPartyVerified")}
-                        </span>
-                      </MobileTooltip>
-                    )}
-                    {caseStatus?.isDigitalForensicsVerified ? (
-                      <MobileTooltip content={t("digitalForensicsDescription")}>
-                        <span className="bg-cyan-100 text-cyan-800 px-2 py-0.5 border border-cyan-300">
-                          {t("digitalForensicsVerified")}
-                        </span>
-                      </MobileTooltip>
-                    ) : (
-                      <MobileTooltip
-                        content={t("notDigitalForensicsDescription")}
-                      >
-                        <span className="bg-cyan-100 text-cyan-800 px-2 py-0.5 border border-cyan-300">
-                          {t("notDigitalForensicsVerified")}
-                        </span>
-                      </MobileTooltip>
-                    )}
-                  </div>
-
-                  {/* <div>
+                  <div>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold">
                         Victim Information
@@ -393,10 +445,10 @@ const ReviewCase = () => {
                         </div>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
 
                   {/* Photos and Media */}
-                  {/* <div className="border-t pt-6">
+                  <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Photos and Media
                     </h3>
@@ -514,10 +566,10 @@ const ReviewCase = () => {
                         </Button>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
 
                   {/* Incident Details */}
-                  {/* <div className="border-t pt-6">
+                  <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Incident Details
                     </h3>
@@ -689,10 +741,10 @@ const ReviewCase = () => {
                         </div>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
 
                   {/* Documentation and Evidence */}
-                  {/* <div className="border-t pt-6">
+                  <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Documentation and Evidence
                     </h3>
@@ -704,11 +756,8 @@ const ReviewCase = () => {
                             Proof of ID Files
                           </Label>
                           <div className="text-sm space-y-1">
-                            {currentCase?.proofOfIdFiles &&
-                            currentCase.proofOfIdFiles.length > 0 ? (
-                              currentCase.proofOfIdFiles.map((file, index) => (
-                                <p key={index}>• {file}</p>
-                              ))
+                            {currentCase?.proofOfId ? (
+                              <p>• {currentCase.proofOfId}</p>
                             ) : (
                               <p>Not provided</p>
                             )}
@@ -734,11 +783,8 @@ const ReviewCase = () => {
                             Proof of Death Files
                           </Label>
                           <div className="text-sm space-y-1">
-                            {currentCase?.proofOfDeathFiles &&
-                            currentCase.proofOfDeathFiles.length > 0 ? (
-                              currentCase.proofOfDeathFiles.map(
-                                (file, index) => <p key={index}>• {file}</p>
-                              )
+                            {currentCase?.proofOfDeath ? (
+                              <p>• {currentCase.proofOfDeath}</p>
                             ) : (
                               <p>Not provided</p>
                             )}
@@ -764,11 +810,8 @@ const ReviewCase = () => {
                             Additional Evidence Files
                           </Label>
                           <div className="text-sm space-y-1">
-                            {currentCase?.additionalEvidenceFiles &&
-                            currentCase.additionalEvidenceFiles.length > 0 ? (
-                              currentCase.additionalEvidenceFiles.map(
-                                (file, index) => <p key={index}>• {file}</p>
-                              )
+                            {currentCase?.additionalEvidence ? (
+                              <p>• {currentCase.additionalEvidence}</p>
                             ) : (
                               <p>Not provided</p>
                             )}
@@ -874,7 +917,7 @@ const ReviewCase = () => {
                         </Button>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
 
                   {flaggedErrors.length > 0 && (
                     <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
@@ -887,7 +930,7 @@ const ReviewCase = () => {
                   )}
 
                   {/* Add Additional Information */}
-                  {/* <div className="border-t pt-6">
+                  <div className="border-t pt-6">
                     <h3 className="text-lg font-semibold mb-4">
                       Add Additional Information
                     </h3>
@@ -1053,15 +1096,24 @@ const ReviewCase = () => {
                         !consentAgreed ||
                         !safetyAcknowledged ||
                         !captchaValue ||
-                        (!additionalInfo.trim() && additionalFiles.length === 0)
+                        (!additionalInfo.trim() &&
+                          additionalFiles.length === 0) ||
+                        isSubmittingInfo
                       }
                     >
-                      Submit Additional Information
+                      {isSubmittingInfo ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit Additional Information"
+                      )}
                     </Button>
-                  </div> */}
+                  </div>
 
                   {/* Request Case Deletion */}
-                  {/* <div className="border-t pt-6">
+                  <div className="border-t pt-6">
                     <Collapsible
                       open={isDeletionOpen}
                       onOpenChange={setIsDeletionOpen}
@@ -1144,16 +1196,30 @@ const ReviewCase = () => {
                               onClick={handleRequestDeletion}
                               variant="destructive"
                               disabled={
-                                !deletionReason.trim() || !deletionCaptchaValue
+                                !deletionReason.trim() ||
+                                !deletionCaptchaValue ||
+                                isDeleting
                               }
                             >
-                              Submit Deletion Request
+                              {isDeleting ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Submitting...
+                                </>
+                              ) : (
+                                "Submit Deletion Request"
+                              )}
                             </Button>
                           </div>
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
-                  </div> */}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Enter a case number above to review case details</p>
                 </div>
               )}
             </CardContent>

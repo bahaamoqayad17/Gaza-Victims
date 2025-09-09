@@ -18,18 +18,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, User, Shield, RefreshCw, Eye, EyeOff } from "lucide-react";
+import {
+  Plus,
+  User,
+  Mail,
+  Shield,
+  Calendar,
+  FileText,
+  Settings,
+  AlertTriangle,
+  Key,
+  RefreshCw,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAddModeratorMutation } from "@/store/api/apiSlice";
 
-interface AddModeratorDialogProps {
-  onAddModerator?: (moderator: unknown) => void;
+interface AddOrganizationDialogProps {
+  onAddOrganization?: (organization: unknown) => void;
 }
 
-export function AddModeratorDialog({
-  onAddModerator,
-}: AddModeratorDialogProps) {
+export function AddOrganizationDialog({
+  onAddOrganization,
+}: AddOrganizationDialogProps) {
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -39,7 +54,21 @@ export function AddModeratorDialog({
     secondaryEmail: "",
     phone: "",
     role: "",
+    organization: "",
+    department: "",
+    specializations: [] as string[],
+    languages: [] as string[],
+    timeZone: "",
+    startDate: "",
+    securityClearance: "",
+    notes: "",
     password: "",
+    emergencyContact: {
+      name: "",
+      relationship: "",
+      phone: "",
+      email: "",
+    },
   });
 
   const { toast } = useToast();
@@ -131,7 +160,7 @@ export function AddModeratorDialog({
       const result = await addModerator(formData).unwrap();
 
       toast({
-        title: "Moderator added successfully",
+        title: "Organization added successfully",
         description: `${formData.firstName} ${
           formData.lastName
         } has been added as a ${formData.role.replace("_", " ")}`,
@@ -148,16 +177,30 @@ export function AddModeratorDialog({
         secondaryEmail: "",
         phone: "",
         role: "",
+        organization: "",
+        department: "",
+        specializations: [],
+        languages: [],
+        timeZone: "",
+        startDate: "",
+        securityClearance: "",
+        notes: "",
         password: "",
+        emergencyContact: {
+          name: "",
+          relationship: "",
+          phone: "",
+          email: "",
+        },
       });
 
       setOpen(false);
     } catch (error: unknown) {
       const errorMessage =
         (error as { data?: { message?: string } })?.data?.message ||
-        "An error occurred while adding the moderator";
+        "An error occurred while adding the organization";
       toast({
-        title: "Failed to add moderator",
+        title: "Failed to add organization",
         description: errorMessage,
         variant: "destructive",
       });
@@ -169,17 +212,17 @@ export function AddModeratorDialog({
       <DialogTrigger asChild>
         <Button size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Add Moderator
+          Add Organization
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            Add New Moderator
+            Add New Organization
           </DialogTitle>
           <DialogDescription>
-            Add a new moderator to the team. Fill in all required information
+            Add a new organization to the team. Fill in all required information
             and set appropriate permissions.
           </DialogDescription>
         </DialogHeader>
@@ -276,24 +319,6 @@ export function AddModeratorDialog({
                   </Select>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role *</Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => handleInputChange("role", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="senior_moderator">
-                      Senior Moderator
-                    </SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">Password *</Label>
@@ -336,6 +361,210 @@ export function AddModeratorDialog({
               </div>
             </CardContent>
           </Card>
+
+          {/* Role and Organization */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Shield className="w-4 h-4" />
+                Role and Organization
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role *</Label>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value) => handleInputChange("role", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="third_party_moderator">
+                        Third Party Organization
+                      </SelectItem>
+                      <SelectItem value="digital_forensics_moderator">
+                        Digital Forensics Organization
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="organization">Organization</Label>
+                  <Input
+                    id="organization"
+                    value={formData.organization}
+                    onChange={(e) =>
+                      handleInputChange("organization", e.target.value)
+                    }
+                    placeholder="Enter organization name"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="department">Department</Label>
+                  <Input
+                    id="department"
+                    value={formData.department}
+                    onChange={(e) =>
+                      handleInputChange("department", e.target.value)
+                    }
+                    placeholder="Enter department"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) =>
+                      handleInputChange("startDate", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="specializations">
+                    Specializations (comma-separated)
+                  </Label>
+                  <Input
+                    id="specializations"
+                    value={formData.specializations.join(", ")}
+                    onChange={(e) =>
+                      handleArrayChange("specializations", e.target.value)
+                    }
+                    placeholder="e.g. Human Rights, Legal, Forensics"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="languages">Languages (comma-separated)</Label>
+                  <Input
+                    id="languages"
+                    value={formData.languages.join(", ")}
+                    onChange={(e) =>
+                      handleArrayChange("languages", e.target.value)
+                    }
+                    placeholder="e.g. English, Arabic, Spanish"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="securityClearance">
+                  Security Clearance Level
+                </Label>
+                <Select
+                  value={formData.securityClearance}
+                  onValueChange={(value) =>
+                    handleInputChange("securityClearance", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select security clearance" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Public</SelectItem>
+                    <SelectItem value="internal">Internal</SelectItem>
+                    <SelectItem value="confidential">Confidential</SelectItem>
+                    <SelectItem value="restricted">Restricted</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Emergency Contact */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <AlertTriangle className="w-4 h-4" />
+                Emergency Contact
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="emergencyName">Contact Name</Label>
+                  <Input
+                    id="emergencyName"
+                    value={formData.emergencyContact.name}
+                    onChange={(e) =>
+                      handleEmergencyContactChange("name", e.target.value)
+                    }
+                    placeholder="Enter emergency contact name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="emergencyRelationship">Relationship</Label>
+                  <Input
+                    id="emergencyRelationship"
+                    value={formData.emergencyContact.relationship}
+                    onChange={(e) =>
+                      handleEmergencyContactChange(
+                        "relationship",
+                        e.target.value
+                      )
+                    }
+                    placeholder="e.g. Spouse, Parent, Sibling"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="emergencyPhone">Contact Phone</Label>
+                  <Input
+                    id="emergencyPhone"
+                    value={formData.emergencyContact.phone}
+                    onChange={(e) =>
+                      handleEmergencyContactChange("phone", e.target.value)
+                    }
+                    placeholder="Enter emergency contact phone"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="emergencyEmail">Contact Email</Label>
+                  <Input
+                    id="emergencyEmail"
+                    type="email"
+                    value={formData.emergencyContact.email}
+                    onChange={(e) =>
+                      handleEmergencyContactChange("email", e.target.value)
+                    }
+                    placeholder="Enter emergency contact email"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Notes */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <FileText className="w-4 h-4" />
+                Additional Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => handleInputChange("notes", e.target.value)}
+                  placeholder="Enter any additional notes or special instructions..."
+                  rows={3}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <DialogFooter>
@@ -347,7 +576,7 @@ export function AddModeratorDialog({
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Adding..." : "Add Moderator"}
+            {isLoading ? "Adding..." : "Add Organization"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -139,14 +139,14 @@ const Auth = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <Button variant="ghost" asChild>
               <Link to="/" className="flex items-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Archive
               </Link>
             </Button>
-          </div>
+          </div> */}
 
           <Card>
             <CardHeader>

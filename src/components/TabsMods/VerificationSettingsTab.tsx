@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
+import { AddOrganizationDialog } from "@/components/AddOrganizationDialog";
 
 export const VerificationSettingsTab = () => {
   return (
@@ -84,10 +85,7 @@ export const VerificationSettingsTab = () => {
             </div>
           </div>
 
-          <Button variant="outline" className="w-full">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Organization
-          </Button>
+          <AddOrganizationDialog />
         </CardContent>
       </Card>
     </div>

@@ -611,7 +611,7 @@ const CaseDetail = () => {
                 <CardTitle className="text-sm">Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button
+                {/* <Button
                   variant="outline"
                   size="sm"
                   className="w-full text-xs"
@@ -620,7 +620,7 @@ const CaseDetail = () => {
                   <Link to="/report-additional">
                     Report Additional Information
                   </Link>
-                </Button>
+                </Button> */}
                 <Button
                   variant="outline"
                   size="sm"

@@ -20,16 +20,28 @@ export const createReportController = async (req: Request, res: Response) => {
       if (case_) {
         await Case.findOneAndUpdate(
           { generated_id: caseId },
-          {
-            status: "pending",
-            urgency,
-            isVerified: false,
-            isThirdPartyVerified: false,
-            isDigitalForensicsVerified: false,
-            userModeratorVerified: null,
-            userThirdPartyVerified: null,
-            userDigitalForensicsVerified: null,
-          }
+          [
+            {
+              $set: {
+                status: "pending",
+                urgency,
+                isVerified: false,
+                isThirdPartyVerified: false,
+                isDigitalForensicsVerified: false,
+                userModeratorVerified: null,
+                userThirdPartyVerified: null,
+                userDigitalForensicsVerified: null,
+                story: {
+                  $concat: [
+                    { $ifNull: ["$story", ""] }, // keep old story (or empty if null)
+                    "\n", // optional separator
+                    message, // new content
+                  ],
+                },
+              },
+            },
+          ],
+          { new: true }
         );
       }
     }
@@ -62,7 +74,7 @@ export const createReportController = async (req: Request, res: Response) => {
 
 export const getReportsController = async (req: Request, res: Response) => {
   try {
-    const reports = await Report.find();
+    const reports = await Report.find().sort({ createdAt: -1 });
     res.status(200).json({
       status: "success",
       data: {

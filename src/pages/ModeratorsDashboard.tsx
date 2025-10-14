@@ -67,25 +67,32 @@ const ModeratorsDashboard = () => {
     <div className="min-h-screen bg-background">
       {/* <Header /> */}
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Shield className="w-8 h-8 text-primary" />
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold">{t("moderatorsDashboard")}</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+                {t("moderatorsDashboard")}
+              </h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 {t("manageCaseVerification")}
               </p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => handleLogout()}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleLogout()}
+            className="w-full sm:w-auto"
+          >
             <LogOut className="h-4 w-4 mr-1" />
             Logout
           </Button>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -151,26 +158,57 @@ const ModeratorsDashboard = () => {
           </Card>
         </div>
 
-        <Tabs defaultValue={getDefaultTab()} className="space-y-6">
-          <TabsList>
+        <Tabs defaultValue={getDefaultTab()} className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 h-auto sm:h-10 overflow-x-auto sm:overflow-x-visible">
             {/* Admin and Senior Moderator only tabs */}
             {canViewAdminTabs && (
               <>
-                <TabsTrigger value="moderators">{t("moderators")}</TabsTrigger>
-                <TabsTrigger value="pending-cases">
+                <TabsTrigger
+                  value="moderators"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
+                  {t("moderators")}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="pending-cases"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
                   {t("pendingCases")}
                 </TabsTrigger>
-                <TabsTrigger value="verified-cases">Verified Cases</TabsTrigger>
-                <TabsTrigger value="verification-settings">
+                <TabsTrigger
+                  value="verified-cases"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Verified Cases
+                </TabsTrigger>
+                <TabsTrigger
+                  value="verification-settings"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
                   Verification Settings
                 </TabsTrigger>
-                <TabsTrigger value="reports">Reports</TabsTrigger>
-                <TabsTrigger value="contacts">Contacts</TabsTrigger>
-                <TabsTrigger value="delete-requests">
+                <TabsTrigger
+                  value="reports"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Reports
+                </TabsTrigger>
+                <TabsTrigger
+                  value="contacts"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
+                  Contacts
+                </TabsTrigger>
+                <TabsTrigger
+                  value="delete-requests"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
                   Delete Requests
                 </TabsTrigger>
-
-                <TabsTrigger value="informations">
+                <TabsTrigger
+                  value="informations"
+                  className="text-xs sm:text-sm whitespace-nowrap"
+                >
                   Additional Information Cases
                 </TabsTrigger>
               </>
@@ -178,21 +216,30 @@ const ModeratorsDashboard = () => {
 
             {/* Moderator specific tab */}
             {(canViewModeratorTabs || canViewAdminTabs) && (
-              <TabsTrigger value="cases-under-review">
+              <TabsTrigger
+                value="cases-under-review"
+                className="text-xs sm:text-sm whitespace-nowrap"
+              >
                 Cases Under Review
               </TabsTrigger>
             )}
 
             {/* Third Party Moderator specific tab */}
             {(canViewThirdPartyTabs || canViewAdminTabs) && (
-              <TabsTrigger value="third-party-review-cases">
+              <TabsTrigger
+                value="third-party-review-cases"
+                className="text-xs sm:text-sm whitespace-nowrap"
+              >
                 Third Party Review Cases
               </TabsTrigger>
             )}
 
             {/* Digital Forensics Moderator specific tab */}
             {(canViewDigitalForensicsTabs || canViewAdminTabs) && (
-              <TabsTrigger value="digital-forensics-review-cases">
+              <TabsTrigger
+                value="digital-forensics-review-cases"
+                className="text-xs sm:text-sm whitespace-nowrap"
+              >
                 Digital Forensics Review Cases
               </TabsTrigger>
             )}
@@ -201,35 +248,53 @@ const ModeratorsDashboard = () => {
           {/* Admin and Senior Moderator only content */}
           {canViewAdminTabs && (
             <>
-              <TabsContent value="moderators" className="space-y-6">
+              <TabsContent
+                value="moderators"
+                className="space-y-4 sm:space-y-6"
+              >
                 <ModeratorsTab />
               </TabsContent>
 
-              <TabsContent value="pending-cases" className="space-y-6">
+              <TabsContent
+                value="pending-cases"
+                className="space-y-4 sm:space-y-6"
+              >
                 <PendingCasesTab />
               </TabsContent>
 
-              <TabsContent value="verified-cases" className="space-y-6">
+              <TabsContent
+                value="verified-cases"
+                className="space-y-4 sm:space-y-6"
+              >
                 <VerifiedCasesTab />
               </TabsContent>
 
-              <TabsContent value="verification-settings" className="space-y-6">
+              <TabsContent
+                value="verification-settings"
+                className="space-y-4 sm:space-y-6"
+              >
                 <VerificationSettingsTab />
               </TabsContent>
 
-              <TabsContent value="reports" className="space-y-6">
+              <TabsContent value="reports" className="space-y-4 sm:space-y-6">
                 <ReportsTab />
               </TabsContent>
 
-              <TabsContent value="contacts" className="space-y-6">
+              <TabsContent value="contacts" className="space-y-4 sm:space-y-6">
                 <ContactsTab />
               </TabsContent>
 
-              <TabsContent value="delete-requests" className="space-y-6">
+              <TabsContent
+                value="delete-requests"
+                className="space-y-4 sm:space-y-6"
+              >
                 <DeleteRequestTab />
               </TabsContent>
 
-              <TabsContent value="informations" className="space-y-6">
+              <TabsContent
+                value="informations"
+                className="space-y-4 sm:space-y-6"
+              >
                 <InformationTab />
               </TabsContent>
             </>
@@ -237,14 +302,20 @@ const ModeratorsDashboard = () => {
 
           {/* Moderator specific content */}
           {(canViewModeratorTabs || canViewAdminTabs) && (
-            <TabsContent value="cases-under-review" className="space-y-6">
+            <TabsContent
+              value="cases-under-review"
+              className="space-y-4 sm:space-y-6"
+            >
               <CasesUnderReviewTab />
             </TabsContent>
           )}
 
           {/* Third Party Moderator specific content */}
           {(canViewThirdPartyTabs || canViewAdminTabs) && (
-            <TabsContent value="third-party-review-cases" className="space-y-6">
+            <TabsContent
+              value="third-party-review-cases"
+              className="space-y-4 sm:space-y-6"
+            >
               <ThirdPartyReviewCasesTab />
             </TabsContent>
           )}
@@ -253,7 +324,7 @@ const ModeratorsDashboard = () => {
           {(canViewDigitalForensicsTabs || canViewAdminTabs) && (
             <TabsContent
               value="digital-forensics-review-cases"
-              className="space-y-6"
+              className="space-y-4 sm:space-y-6"
             >
               <DigitalForensicsReviewCasesTab />
             </TabsContent>

@@ -284,6 +284,7 @@ export const getCasesLocationsController = async (
         $match: {
           "location.lat": { $exists: true, $ne: "" },
           "location.lng": { $exists: true, $ne: "" },
+          isVerified: true,
         },
       },
       {
@@ -372,6 +373,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
       {
         $match: {
           date: { $exists: true, $ne: null },
+          isVerified: true,
         },
       },
       {
@@ -427,6 +429,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
         $match: {
           "location.lat": { $exists: true, $ne: "" },
           "location.lng": { $exists: true, $ne: "" },
+          isVerified: true,
         },
       },
       {
@@ -482,6 +485,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
         {
           $match: {
             date: { $exists: true, $ne: null },
+            isVerified: true,
           },
         },
         {
@@ -520,6 +524,11 @@ export const getHomePageController = async (req: Request, res: Response) => {
       // Cases by status
       casesByStatus: await Case.aggregate([
         {
+          $match: {
+            isVerified: true,
+          },
+        },
+        {
           $group: {
             _id: "$status",
             count: { $sum: 1 },
@@ -530,6 +539,11 @@ export const getHomePageController = async (req: Request, res: Response) => {
       // Cases by gender
       casesByGender: await Case.aggregate([
         {
+          $match: {
+            isVerified: true,
+          },
+        },
+        {
           $group: {
             _id: "$gender",
             count: { $sum: 1 },
@@ -539,6 +553,11 @@ export const getHomePageController = async (req: Request, res: Response) => {
 
       // Cases by age groups
       casesByAgeGroup: await Case.aggregate([
+        {
+          $match: {
+            isVerified: true,
+          },
+        },
         {
           $group: {
             _id: {
@@ -564,7 +583,10 @@ export const getHomePageController = async (req: Request, res: Response) => {
       // Top locations by case count
       topLocationsByCases: await Case.aggregate([
         {
-          $match: { locationName: { $exists: true, $ne: "" } },
+          $match: {
+            locationName: { $exists: true, $ne: "" },
+            isVerified: true,
+          },
         },
         {
           $group: {
@@ -590,6 +612,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
         {
           $match: {
             date: { $exists: true, $ne: null },
+            isVerified: true,
           },
         },
         {
@@ -606,6 +629,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
         {
           $match: {
             dateAsDate: { $gte: thirtyDaysAgo },
+            isVerified: true,
           },
         },
         {
@@ -634,6 +658,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
         {
           $match: {
             dateAsDate: { $gte: thirtyDaysAgo },
+            isVerified: true,
           },
         },
         {

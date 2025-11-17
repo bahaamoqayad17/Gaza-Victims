@@ -22,7 +22,7 @@ export const getAllContactsController = async (req: Request, res: Response) => {
 // POST /api/contacts - Create a new contact
 export const createContactController = async (req: Request, res: Response) => {
   try {
-    const { name, email, mobile_number, message, type } = req.body;
+    const { name, email, mobile_number, message, type, recaptcha } = req.body;
 
     // Basic validation
     if (!name || !email || !mobile_number || !message) {
@@ -30,6 +30,14 @@ export const createContactController = async (req: Request, res: Response) => {
         status: "fail",
         message:
           "Please provide all required fields: name, email, mobile_number, and message",
+      });
+    }
+
+    // Validate reCAPTCHA checkbox (contact form uses a checkbox, not actual reCAPTCHA component)
+    if (!recaptcha) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Please confirm that you are not a robot",
       });
     }
 

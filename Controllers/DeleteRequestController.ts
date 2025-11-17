@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 import DeleteRequest from "../Models/DeleteRequest";
 import CatchAsync from "../Utils/CatchAsync";
 import AppError from "../Utils/AppError";
+import { verifyRecaptcha } from "../Utils/recaptchaVerification";
 
 // Create a new delete request
 export const createDeleteRequest = CatchAsync(
   async (req: Request, res: Response) => {
-    const { reason, email, caseId } = req.body;
+    const { reason, email, caseId, captchaValue } = req.body;
 
     // Validate required fields
     if (!reason || !caseId) {
@@ -16,6 +17,16 @@ export const createDeleteRequest = CatchAsync(
     // Validate email format if provided
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new AppError("Please provide a valid email address", 400);
+    }
+
+    // Verify reCAPTCHA
+    if (!captchaValue) {
+      throw new AppError("reCAPTCHA verification is required", 400);
+    }
+
+    const isCaptchaValid = await verifyRecaptcha(captchaValue);
+    if (!isCaptchaValid) {
+      throw new AppError("reCAPTCHA verification failed. Please try again.", 400);
     }
 
     // Create the delete request

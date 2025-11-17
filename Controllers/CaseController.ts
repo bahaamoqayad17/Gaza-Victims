@@ -3,6 +3,8 @@ import User from "@/Models/User";
 import { processFilesForS3 } from "@/Utils/fileUpload";
 import ApiFeatures from "@/Utils/ApiFeatures";
 import { Request, Response } from "express";
+import { verifyRecaptcha } from "@/Utils/recaptchaVerification";
+import AppError from "@/Utils/AppError";
 
 // Dashboard stats endpoint
 export const getDashboardStats = async (req: Request, res: Response) => {
@@ -24,11 +26,11 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       isVerified: false,
     });
     const thirdPartyReviewCases = await Case.countDocuments({
-      status: "third_party_review",
+      status: "under_third_party_review",
       isThirdPartyVerified: false,
     });
     const digitalForensicsReviewCases = await Case.countDocuments({
-      status: "digital_forensics_review",
+      status: "under_digital_forensics_review",
       isDigitalForensicsVerified: false,
     });
     const verifiedCases = await Case.countDocuments({ isVerified: true });
@@ -112,7 +114,7 @@ export const getCasesForThirdPartyReview = async (
     const cases = await Case.find({
       isThirdPartyVerified: false,
       isVerified: true,
-      status: "third_party_review",
+      status: "under_third_party_review",
     }).populate("userThirdPartyVerified", "name email");
 
     res.status(200).json({
@@ -183,7 +185,7 @@ export const getCasesForDigitalForensicsReview = async (
     const cases = await Case.find({
       isDigitalForensicsVerified: false,
       isVerified: true,
-      status: "digital_forensics_review",
+      status: "under_digital_forensics_review",
     }).populate("userDigitalForensicsVerified", "name email");
 
     res.status(200).json({
@@ -234,6 +236,38 @@ export const createCaseController = async (
   res: Response
 ) => {
   try {
+    // Extract captchaValue from body before processing
+    const { captchaValue, ...caseDataFromBody } = req.body;
+
+    // Verify reCAPTCHA
+    if (!captchaValue) {
+      return res.status(400).json({
+        status: "fail",
+        message: "reCAPTCHA verification is required",
+      });
+    }
+
+    try {
+      const isCaptchaValid = await verifyRecaptcha(captchaValue);
+      if (!isCaptchaValid) {
+        return res.status(400).json({
+          status: "fail",
+          message: "reCAPTCHA verification failed. Please try again.",
+        });
+      }
+    } catch (error) {
+      if (error instanceof AppError) {
+        return res.status(error.statusCode).json({
+          status: "fail",
+          message: error.message,
+        });
+      }
+      return res.status(500).json({
+        status: "error",
+        message: "Failed to verify reCAPTCHA",
+      });
+    }
+
     // Generate temporary ID for file organization
     const tempId = new Date().getTime().toString();
 
@@ -246,10 +280,7 @@ export const createCaseController = async (
       uploadedFiles = await processFilesForS3(files, tempId);
     }
 
-    // Use the parsed body data directly (files are already excluded)
-    const caseDataFromBody = req.body;
-
-    // Combine case data with uploaded file URLs
+    // Combine case data with uploaded file URLs (exclude captchaValue from case data)
     const caseData = {
       ...caseDataFromBody,
       ...uploadedFiles,
@@ -366,7 +397,7 @@ export const getHomePageController = async (req: Request, res: Response) => {
       .limit(limit)
       .select("-__v");
 
-    const totalCases = await Case.countDocuments();
+    const totalCases = await Case.countDocuments({ isVerified: true });
 
     // 2. Get timeline navigation data (years and months with case counts)
     const timelineData = await Case.aggregate([
@@ -752,7 +783,7 @@ export const assignCase = async (req: Request, res: Response) => {
         });
       }
 
-      case_.status = "third_party_review";
+      case_.status = "under_third_party_review";
       case_.userThirdPartyVerified = userAssigned._id;
     } else if (userAssigned?.role === "digital_forensics_moderator") {
       if (!case_.isVerified) {
@@ -762,7 +793,7 @@ export const assignCase = async (req: Request, res: Response) => {
         });
       }
 
-      case_.status = "digital_forensics_review";
+      case_.status = "under_digital_forensics_review";
       case_.userDigitalForensicsVerified = userAssigned._id;
     } else {
       return res.status(400).json({
@@ -1188,8 +1219,8 @@ export const downloadArchive = async (req: Request, res: Response) => {
           query.status = {
             $in: [
               "under_review",
-              "third_party_review",
-              "digital_forensics_review",
+              "under_third_party_review",
+              "under_digital_forensics_review",
             ],
           };
           break;

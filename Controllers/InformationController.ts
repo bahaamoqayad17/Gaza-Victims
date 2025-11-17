@@ -2,16 +2,27 @@ import { Request, Response } from "express";
 import Information from "../Models/Information";
 import CatchAsync from "../Utils/CatchAsync";
 import AppError from "../Utils/AppError";
+import { verifyRecaptcha } from "../Utils/recaptchaVerification";
 
 // Create a new information submission
 export const createInformation = CatchAsync(
   async (req: Request & { formData?: any }, res: Response) => {
-    const { note, caseId } = req.body;
+    const { note, caseId, captchaValue } = req.body;
     const files = req.formData?.files || {};
 
     // Validate required fields
     if (!note || !caseId) {
       throw new AppError("Note and case ID are required", 400);
+    }
+
+    // Verify reCAPTCHA
+    if (!captchaValue) {
+      throw new AppError("reCAPTCHA verification is required", 400);
+    }
+
+    const isCaptchaValid = await verifyRecaptcha(captchaValue);
+    if (!isCaptchaValid) {
+      throw new AppError("reCAPTCHA verification failed. Please try again.", 400);
     }
 
     // Process and upload files to S3 if any

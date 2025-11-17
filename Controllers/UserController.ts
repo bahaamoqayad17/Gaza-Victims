@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import User from "@/Models/User";
 import Case from "@/Models/Case";
 
+// Extended Request interface to include user
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
+
 // REST API Controllers
 export const getAllUsersController = async (req: Request, res: Response) => {
   try {
@@ -362,6 +367,97 @@ export const deactiveUserController = async (req: Request, res: Response) => {
     res.status(500).json({
       status: "error",
       message: "Something went wrong while deactivating user",
+    });
+  }
+};
+
+export const changePasswordController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    // Validate required fields
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Please provide currentPassword, newPassword, and confirmPassword",
+      });
+    }
+
+    // Validate password match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        status: "fail",
+        message: "New passwords do not match",
+      });
+    }
+
+    // Validate password length
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Password must be at least 8 characters long",
+      });
+    }
+
+    // Get current user from request (set by protect middleware)
+    const user = await User.findById(req.user._id).select("+password");
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+
+    // Verify current password
+    const isCurrentPasswordCorrect = await user.correctPassword(
+      currentPassword,
+      user.password
+    );
+
+    if (!isCurrentPasswordCorrect) {
+      return res.status(401).json({
+        status: "fail",
+        message: "Current password is incorrect",
+      });
+    }
+
+    // Check if new password is same as current password
+    const isSamePassword = await user.correctPassword(
+      newPassword,
+      user.password
+    );
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        status: "fail",
+        message: "New password must be different from current password",
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    user.passwordConfirm = confirmPassword;
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      status: "success",
+      message: "Password changed successfully",
+      data: {
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong while changing password",
     });
   }
 };

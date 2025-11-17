@@ -10,6 +10,7 @@ import {
   deleteUserController,
   deactiveUserController,
   activateUserController,
+  changePasswordController,
 } from "@/Controllers/UserController";
 import CatchAsync from "@/Utils/CatchAsync";
 import { protect, restrictTo } from "@/Utils/authMiddleware";
@@ -63,6 +64,12 @@ router.patch(
   protect,
   restrictTo("admin", "senior_moderator"),
   CatchAsync(activateUserController)
+);
+
+router.patch(
+  "/change-password",
+  protect,
+  CatchAsync(changePasswordController)
 );
 
 export default router;

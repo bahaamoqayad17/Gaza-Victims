@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Report from "@/Models/Report";
 import Case from "@/Models/Case";
+import { verifyRecaptcha } from "@/Utils/recaptchaVerification";
+import AppError from "@/Utils/AppError";
 
 export const createReportController = async (req: Request, res: Response) => {
   try {
@@ -13,7 +15,21 @@ export const createReportController = async (req: Request, res: Response) => {
       relation_to_victim,
       report_type,
       urgency,
+      captchaValue,
     } = req.body;
+
+    // Verify reCAPTCHA
+    if (!captchaValue) {
+      throw new AppError("reCAPTCHA verification is required", 400);
+    }
+
+    const isCaptchaValid = await verifyRecaptcha(captchaValue);
+    if (!isCaptchaValid) {
+      throw new AppError(
+        "reCAPTCHA verification failed. Please try again.",
+        400
+      );
+    }
 
     if (caseId) {
       const case_ = await Case.findOne({ generated_id: caseId });
@@ -65,6 +81,15 @@ export const createReportController = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
+
+    // Handle AppError instances
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        status: "fail",
+        message: error.message,
+      });
+    }
+
     res.status(500).json({
       status: "error",
       message: "Something went wrong while creating report",

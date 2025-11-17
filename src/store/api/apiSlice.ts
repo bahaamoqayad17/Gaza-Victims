@@ -583,6 +583,23 @@ export const apiSlice = createApi({
       invalidatesTags: ["User"],
     }),
 
+    // Change password endpoint (for current user)
+    changePassword: builder.mutation<
+      ApiResponse<{ user: User }>,
+      {
+        currentPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+      }
+    >({
+      query: ({ currentPassword, newPassword, confirmPassword }) => ({
+        url: "/users/change-password",
+        method: "PATCH",
+        body: { currentPassword, newPassword, confirmPassword },
+      }),
+      invalidatesTags: ["User"],
+    }),
+
     // Get user records endpoint
     getUserRecords: builder.query<ApiResponse<{ cases: Case[] }>, string>({
       query: (userId) => `/users/user-records/${userId}`,
@@ -1019,6 +1036,7 @@ export const {
   useDeleteUserMutation,
   useDeactivateUserMutation,
   useActivateUserMutation,
+  useChangePasswordMutation,
   useGetUserRecordsQuery,
 
   // Case review hooks

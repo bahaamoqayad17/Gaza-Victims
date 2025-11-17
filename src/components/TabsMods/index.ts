@@ -9,3 +9,4 @@ export { ReportsTab } from "./ReportsTab";
 export { ContactsTab } from "./ContactsTab";
 export { DeleteRequestTab } from "./DeleteRequestTab";
 export { InformationTab } from "./InformationTab";
+export { ResetPasswordTab } from "./ResetPasswordTab";

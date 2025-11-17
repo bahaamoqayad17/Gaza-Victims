@@ -91,14 +91,14 @@ export const ModeratorsTab = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Moderator Management</CardTitle>
+            <CardTitle>Reviewer Management</CardTitle>
             <AddModeratorDialog />
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin" />
-            <span className="ml-2">Loading moderators...</span>
+            <span className="ml-2">Loading reviewers...</span>
           </div>
         </CardContent>
       </Card>
@@ -111,14 +111,14 @@ export const ModeratorsTab = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Moderator Management</CardTitle>
+            <CardTitle>Reviewer Management</CardTitle>
             <AddModeratorDialog />
           </div>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
             <AlertDescription>
-              Failed to load moderators.{" "}
+              Failed to load reviewers.{" "}
               {error && "data" in error
                 ? (error.data as { message?: string })?.message
                 : "Please try again."}
@@ -141,7 +141,7 @@ export const ModeratorsTab = () => {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Moderator Management</CardTitle>
+          <CardTitle>Reviewer Management</CardTitle>
           <AddModeratorDialog />
         </div>
       </CardHeader>
@@ -151,7 +151,7 @@ export const ModeratorsTab = () => {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search moderators..."
+              placeholder="Search reviewers..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -165,13 +165,13 @@ export const ModeratorsTab = () => {
             <SelectContent>
               <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="senior_moderator">Senior Moderator</SelectItem>
-              <SelectItem value="moderator">Moderator</SelectItem>
+              <SelectItem value="senior_moderator">Senior Reviewer</SelectItem>
+              <SelectItem value="moderator">Reviewer</SelectItem>
               <SelectItem value="third_party_moderator">
-                Third Party Moderator
+                Third Party Reviewer
               </SelectItem>
               <SelectItem value="digital_forensics_moderator">
-                Digital Forensics Moderator
+                Digital Forensics Reviewer
               </SelectItem>
             </SelectContent>
           </Select>
@@ -192,7 +192,7 @@ export const ModeratorsTab = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Moderator</TableHead>
+              <TableHead>Reviewer</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Cases Reviewed</TableHead>
@@ -207,7 +207,7 @@ export const ModeratorsTab = () => {
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  No moderators found matching your criteria.
+                  No reviewers found matching your criteria.
                 </TableCell>
               </TableRow>
             ) : (
@@ -253,7 +253,9 @@ export const ModeratorsTab = () => {
                   </TableCell>
                   <TableCell>{user.casesReviewed}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {user.createdAt}
+                    {user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString()
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <UserActionsMenu

@@ -17,6 +17,7 @@ import {
   ContactsTab,
   DeleteRequestTab,
   InformationTab,
+  ResetPasswordTab,
 } from "@/components/TabsMods";
 import { useGetDashboardStatsQuery } from "@/store/api/apiSlice";
 import { useSelector } from "react-redux";
@@ -159,7 +160,7 @@ const ModeratorsDashboard = () => {
         </div>
 
         <Tabs defaultValue={getDefaultTab()} className="space-y-4 sm:space-y-6">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 h-auto sm:h-10 overflow-x-auto sm:overflow-x-visible">
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 h-auto sm:h-10 overflow-x-auto sm:overflow-x-visible mb-24">
             {/* Admin and Senior Moderator only tabs */}
             {canViewAdminTabs && (
               <>
@@ -243,6 +244,14 @@ const ModeratorsDashboard = () => {
                 Digital Forensics Review Cases
               </TabsTrigger>
             )}
+
+            {/* Change Password Tab - Available to all users */}
+            <TabsTrigger
+              value="reset-password"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Change Password
+            </TabsTrigger>
           </TabsList>
 
           {/* Admin and Senior Moderator only content */}
@@ -329,6 +338,14 @@ const ModeratorsDashboard = () => {
               <DigitalForensicsReviewCasesTab />
             </TabsContent>
           )}
+
+          {/* Reset Password Tab - Available to all users */}
+          <TabsContent
+            value="reset-password"
+            className="space-y-4 sm:space-y-6"
+          >
+            <ResetPasswordTab />
+          </TabsContent>
         </Tabs>
       </div>
 

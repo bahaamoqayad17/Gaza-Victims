@@ -131,7 +131,7 @@ export function AddModeratorDialog({
       const result = await addModerator(formData).unwrap();
 
       toast({
-        title: "Moderator added successfully",
+        title: "Reviewer added successfully",
         description: `${formData.firstName} ${
           formData.lastName
         } has been added as a ${formData.role.replace("_", " ")}`,
@@ -155,9 +155,9 @@ export function AddModeratorDialog({
     } catch (error: unknown) {
       const errorMessage =
         (error as { data?: { message?: string } })?.data?.message ||
-        "An error occurred while adding the moderator";
+        "An error occurred while adding the reviewer";
       toast({
-        title: "Failed to add moderator",
+        title: "Failed to add reviewer",
         description: errorMessage,
         variant: "destructive",
       });
@@ -169,18 +169,18 @@ export function AddModeratorDialog({
       <DialogTrigger asChild>
         <Button size="sm">
           <Plus className="w-4 h-4 mr-2" />
-          Add Moderator
+          Add Reviewer
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            Add New Moderator
+            Add New Reviewer
           </DialogTitle>
           <DialogDescription>
-            Add a new moderator to the team. Fill in all required information
-            and set appropriate permissions.
+            Add a new reviewer to the team. Fill in all required information and
+            set appropriate permissions.
           </DialogDescription>
         </DialogHeader>
 
@@ -347,7 +347,7 @@ export function AddModeratorDialog({
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Adding..." : "Add Moderator"}
+            {isLoading ? "Adding..." : "Add Reviewer"}
           </Button>
         </DialogFooter>
       </DialogContent>

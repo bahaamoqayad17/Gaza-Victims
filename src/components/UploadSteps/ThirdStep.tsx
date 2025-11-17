@@ -73,7 +73,7 @@ export default function ThirdStep({
     <Form {...form}>
       <form className="space-y-6">
         {/* Evidence Collection Tutorial */}
-        <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+        {/* <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
           <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
             <Eye className="w-4 h-4" />
             {t("evidenceCollectionTutorial")}
@@ -131,7 +131,7 @@ export default function ThirdStep({
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div>
           <Label>{t("proofOfId")}</Label>

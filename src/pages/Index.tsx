@@ -73,7 +73,7 @@ const transformCaseToVictim = (caseData: {
   newsLink: caseData.newsLinks?.[0] || "",
   lifeStory: caseData.story || "",
   deathDetails: caseData.circumstances || "",
-  familyRelationship: caseData.leftBehind?.join(", ") || "",
+  familyRelationship: caseData.leftBehind,
   occupation: caseData.occupation || "",
   perpetrator: caseData.perpetrator || "",
   images: [
@@ -106,7 +106,6 @@ const Index = () => {
       })),
     })) || [];
 
-  console.log({ homePageData });
   const statistics = homePageData?.statistics;
   const mapData = homePageData?.mapData;
 
@@ -260,14 +259,21 @@ const Index = () => {
                     </div>
                   </div>
 
-                  {console.log(recentCases)}
-
                   {/* Mobile: Vertical scroll, Desktop: Grid */}
                   <div className="md:hidden space-y-4">
                     {recentCases.slice(0, 10).map((victim) => (
                       <VictimCard
                         key={victim.id}
-                        victim={victim}
+                        victim={{
+                          ...victim,
+                          _id: victim.id,
+
+                          familyRelationship: victim.familyRelationship
+                            ?.map((relationship) =>
+                              t(relationship as keyof typeof t)
+                            )
+                            .join(", "),
+                        }}
                         showReportButton={true}
                         clickable={true}
                       />
@@ -279,7 +285,15 @@ const Index = () => {
                       {recentCases.slice(0, 10).map((victim) => (
                         <VictimCard
                           key={victim.id}
-                          victim={victim}
+                          victim={{
+                            ...victim,
+                            _id: victim.id,
+                            familyRelationship: victim.familyRelationship
+                              ?.map((relationship) =>
+                                t(relationship as keyof typeof t)
+                              )
+                              .join(", "),
+                          }}
                           showReportButton={true}
                           clickable={true}
                         />
@@ -312,7 +326,7 @@ const Index = () => {
                           <span className="font-bold text-2xl">
                             {statistics?.totalCases?.toLocaleString() || "0"}
                           </span>{" "}
-                          Total Cases
+                          {t("totalCases")}
                         </Link>
                         <span className="hidden md:inline">•</span>
                         <Link
@@ -322,7 +336,7 @@ const Index = () => {
                           <span className="font-bold text-2xl">
                             {statistics?.uniqueLocations || "0"}
                           </span>{" "}
-                          Locations
+                          {t("locations")}
                         </Link>
                         <span className="hidden md:inline">•</span>
                         <Link
@@ -352,7 +366,7 @@ const Index = () => {
           {/* Show More Button */}
           <div className="container mx-auto px-4 py-8 text-center">
             <Button asChild size="lg" variant="outline">
-              <Link to="/browse">Show More Cases</Link>
+              <Link to="/browse">{t("showMoreCases")}</Link>
             </Button>
           </div>
 

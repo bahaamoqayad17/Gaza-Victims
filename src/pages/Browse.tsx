@@ -86,7 +86,7 @@ const transformCaseToVictim = (caseData: {
   newsLink: caseData.newsLinks?.[0] || "",
   lifeStory: caseData.story || "",
   deathDetails: caseData.circumstances || "",
-  familyRelationship: caseData.leftBehind?.join(", ") || "",
+  familyRelationship: caseData.leftBehind,
   occupation: caseData.occupation || "",
   perpetrator: caseData.perpetrator || "",
   images: [
@@ -134,15 +134,15 @@ const Browse = () => {
   // Note: In a real app, you might want to get these from a separate endpoint
   const uniqueStatuses = ["pending", "verified", "investigating", "documented"];
   const uniqueCauses = [
-    "Bombing",
-    "Airstrike",
-    "Chemical Attack",
-    "Execution",
-    "Landmine",
-    "Police Brutality",
-    "Targeted Killing",
-    "Civil Unrest",
-    "Siege",
+    "bombing",
+    "airstrike",
+    "chemicalAttack",
+    "execution",
+    "landmine",
+    "policeBrutality",
+    "targetedKilling",
+    "civilUnrest",
+    "siege",
   ];
 
   // Reset to page 1 when filters change
@@ -212,7 +212,7 @@ const Browse = () => {
                     <SelectItem value="all">{t("allStatus")}</SelectItem>
                     {uniqueStatuses.map((status) => (
                       <SelectItem key={status} value={status}>
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                        {t(status as keyof typeof t)}
                       </SelectItem>
                     ))}
                     <SelectItem value="thirdPartyVerified">
@@ -232,7 +232,7 @@ const Browse = () => {
                     <SelectItem value="all">{t("allCauses")}</SelectItem>
                     {uniqueCauses.map((cause) => (
                       <SelectItem key={cause} value={cause}>
-                        {cause}
+                        {t(cause as keyof typeof t)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -264,7 +264,6 @@ const Browse = () => {
             </p>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <p className="text-sm text-muted-foreground">
-                {pagination?.totalCases || 0} {t("casesFound")}
                 {pagination &&
                   ` (Showing ${
                     (pagination.currentPage - 1) * pagination.limit + 1
@@ -275,10 +274,10 @@ const Browse = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/upload">Submit a Case</Link>
+                  <Link to="/upload">{t("submitCase")}</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/review-case">Review Submitted Case</Link>
+                  <Link to="/review-case">{t("reviewSubmittedCase")}</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/download-archive">
@@ -300,7 +299,16 @@ const Browse = () => {
                 {cases.map((victim) => (
                   <VictimCard
                     key={victim.id}
-                    victim={victim}
+                    victim={{
+                      ...victim,
+                      _id: victim.id,
+                      familyRelationship:
+                        victim.familyRelationship
+                          ?.map((relationship) =>
+                            t(relationship as keyof typeof t)
+                          )
+                          .join(", ") || "",
+                    }}
                     showReportButton={true}
                   />
                 ))}

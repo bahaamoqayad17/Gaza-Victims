@@ -44,7 +44,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
         return t("reportCase");
       default:
         if (location.pathname.startsWith("/case/")) {
-          return "Case Details";
+          return t("caseDetails");
         }
         return t("archive");
     }

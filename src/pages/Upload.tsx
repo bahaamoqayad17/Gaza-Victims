@@ -280,6 +280,7 @@ const Upload = () => {
       relationshipToVictim: step3Data.relationshipToVictim,
       consentAgreed: step5Data.consentAgreed,
       safetyAcknowledged: step5Data.safetyAcknowledged,
+      captchaValue: captchaValue || step5Data.captchaValue || "",
     };
 
     return caseData;

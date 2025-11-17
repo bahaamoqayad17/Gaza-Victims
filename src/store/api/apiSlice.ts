@@ -147,6 +147,7 @@ export interface DeleteRequestInput {
   reason: string;
   email?: string;
   caseId: string;
+  captchaValue: string;
 }
 
 export interface Information {
@@ -450,6 +451,7 @@ export const apiSlice = createApi({
         mobile_number: string;
         message: string;
         type?: string;
+        recaptcha: boolean;
       }
     >({
       query: (contactData) => ({
@@ -511,6 +513,7 @@ export const apiSlice = createApi({
           report_type: reportData.report_type,
           urgency: reportData.urgency,
           type: reportData.type,
+          captchaValue: reportData.captchaValue,
         };
 
         // Only include optional fields if they have values

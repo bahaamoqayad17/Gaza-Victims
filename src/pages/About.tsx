@@ -70,6 +70,7 @@ const About = () => {
         mobile_number: data.mobile_number,
         message: data.message,
         type: contactType,
+        recaptcha: data.recaptcha,
       };
 
       await createContact(contactData).unwrap();

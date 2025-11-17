@@ -134,6 +134,7 @@ const ReviewCase = () => {
       const formData = new FormData();
       formData.append("note", additionalInfo);
       formData.append("caseId", currentCase.generated_id);
+      formData.append("captchaValue", captchaValue || "");
 
       // Add files to form data
       additionalFiles.forEach((file) => {
@@ -177,11 +178,17 @@ const ReviewCase = () => {
       return;
     }
 
+    if (!deletionCaptchaValue) {
+      toast.error("Please complete the reCAPTCHA verification");
+      return;
+    }
+
     try {
       await createDeleteRequest({
         reason: deletionReason,
         email: contactEmail || undefined,
         caseId: currentCase.generated_id,
+        captchaValue: deletionCaptchaValue,
       }).unwrap();
 
       toast.success(

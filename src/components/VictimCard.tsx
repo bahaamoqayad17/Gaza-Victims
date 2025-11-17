@@ -255,7 +255,7 @@ export const VictimCard = ({
                     </Link>
                   </Button>
                 )}
-                {victim.newsLink && (
+                {/* {victim.newsLink && (
                   <Button
                     size="sm"
                     variant="ghost"
@@ -270,7 +270,7 @@ export const VictimCard = ({
                       <ExternalLink className="h-3 w-3 text-blue-500" />
                     </a>
                   </Button>
-                )}
+                )} */}
               </div>
             </div>
 
@@ -332,13 +332,15 @@ export const VictimCard = ({
               </div>
               <div className="flex items-center gap-1">
                 <span className="text-sm">
-                  {t("causeOfDeath")}: {victim.causeOfDeath}
+                  {t("causeOfDeath")}:{" "}
+                  {t(victim.causeOfDeath as keyof typeof t)}
                 </span>
               </div>
               {victim.perpetrator && (
                 <div className="flex items-center gap-1">
                   <span className="text-sm">
-                    {t("perpetrator")}: {victim.perpetrator}
+                    {t("perpetrator")}:{" "}
+                    {t(victim.perpetrator as keyof typeof t)}
                   </span>
                 </div>
               )}

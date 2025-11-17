@@ -207,7 +207,8 @@ const CaseDetail = () => {
                       {caseData.perpetrator && (
                         <div className="text-sm">
                           <span>
-                            {t("perpetrator")}: {caseData.perpetrator}
+                            {t("perpetrator")}:{" "}
+                            {t(caseData.perpetrator as keyof typeof t)}
                           </span>
                         </div>
                       )}
@@ -293,7 +294,9 @@ const CaseDetail = () => {
                 {caseData.causeOfDeath && (
                   <div>
                     <h4 className="font-semibold mb-2">{t("causeOfDeath")}</h4>
-                    <Badge variant="outline">{caseData.causeOfDeath}</Badge>
+                    <Badge variant="outline">
+                      {t(caseData.causeOfDeath as keyof typeof t)}
+                    </Badge>
                   </div>
                 )}
 
@@ -555,9 +558,9 @@ const CaseDetail = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Status:</span>
+                  <span className="text-muted-foreground">{t("status")}:</span>
                   <Badge variant="outline" className="text-xs">
-                    {caseData.status}
+                    {t(caseData.status as keyof typeof t)}
                   </Badge>
                 </div>
                 {caseData.submittedBy && (
@@ -565,7 +568,7 @@ const CaseDetail = () => {
                     <span className="text-muted-foreground">
                       {t("submittedBy")}:
                     </span>
-                    <span>{caseData.submittedBy}</span>
+                    <span>{t(caseData.submittedBy as keyof typeof t)}</span>
                   </div>
                 )}
                 {caseData.relationshipToVictim && (
@@ -573,7 +576,9 @@ const CaseDetail = () => {
                     <span className="text-muted-foreground">
                       {t("relationship")}:
                     </span>
-                    <span>{caseData.relationshipToVictim}</span>
+                    <span>
+                      {t(caseData.relationshipToVictim as keyof typeof t)}
+                    </span>
                   </div>
                 )}
               </CardContent>

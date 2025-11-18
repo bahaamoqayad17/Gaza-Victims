@@ -21,6 +21,7 @@ import {
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
 import { toast } from "@/hooks/use-toast";
+import InteractiveMap from "@/components/InteractiveMap";
 
 const CaseDetail = () => {
   const { id } = useParams();
@@ -498,11 +499,34 @@ const CaseDetail = () => {
                       </p>
                     )}
                   </div>
-                  <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Interactive Map Placeholder
-                    </p>
-                  </div>
+                  {caseData.location && (
+                    <InteractiveMap
+                      initialCenter={
+                        [
+                          parseFloat(caseData.location.lng),
+                          parseFloat(caseData.location.lat),
+                        ] as [number, number]
+                      }
+                      initialZoom={13}
+                      mapData={{
+                        locations: [
+                          {
+                            lat: caseData.location.lat.toString(),
+                            lng: caseData.location.lng.toString(),
+                            locationName: caseData.locationName || "",
+                            caseCount: 1,
+                            recentCases: [
+                              {
+                                _id: caseData._id || "",
+                                name: caseData.name,
+                                date: caseData.date,
+                              },
+                            ],
+                          },
+                        ],
+                      }}
+                    />
+                  )}
                 </CardContent>
               </Card>
             )}

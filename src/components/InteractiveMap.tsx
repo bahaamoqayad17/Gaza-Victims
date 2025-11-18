@@ -6,6 +6,11 @@ import { MapPin, Plus, Minus } from "lucide-react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
+interface LocationData {
+  lat: number;
+  lng: number;
+}
+
 interface VictimData {
   id: string;
   name: string;
@@ -15,79 +20,49 @@ interface VictimData {
   lng: number;
 }
 
-const mockVictims: VictimData[] = [
-  {
-    id: "001",
-    name: "Sarah M.",
-    location: "Kyiv",
-    date: "2025-07-20",
-    lat: 50.4501,
-    lng: 30.5234,
-  },
-  {
-    id: "002",
-    name: "Ahmed K.",
-    location: "Kharkiv",
-    date: "2025-07-19",
-    lat: 49.9935,
-    lng: 36.2304,
-  },
-  {
-    id: "003",
-    name: "Maria L.",
-    location: "Mariupol",
-    date: "2025-07-18",
-    lat: 47.0971,
-    lng: 37.5431,
-  },
-  {
-    id: "004",
-    name: "David L.",
-    location: "Bucha",
-    date: "2025-07-17",
-    lat: 50.5489,
-    lng: 30.2097,
-  },
-  {
-    id: "005",
-    name: "Michael T.",
-    location: "Donetsk",
-    date: "2025-07-16",
-    lat: 48.0159,
-    lng: 37.8028,
-  },
-  {
-    id: "006",
-    name: "Elena R.",
-    location: "Lviv",
-    date: "2025-07-15",
-    lat: 49.8397,
-    lng: 24.0297,
-  },
-  {
-    id: "007",
-    name: "Petro K.",
-    location: "Odesa",
-    date: "2025-07-14",
-    lat: 46.4825,
-    lng: 30.7233,
-  },
-  {
-    id: "008",
-    name: "Oksana V.",
-    location: "Dnipro",
-    date: "2025-07-13",
-    lat: 48.4647,
-    lng: 35.0462,
-  },
-];
+interface InteractiveMapProps {
+  onLocationSelect?: (location: { lat: number; lng: number }) => void;
+  enableSelection?: boolean;
+  initialCenter?: [number, number]; // [lng, lat]
+  initialZoom?: number;
+  mapData?: {
+    locations: Array<{
+      lat: string;
+      lng: string;
+      locationName: string;
+      caseCount: number;
+      recentCases: Array<{
+        _id: string;
+        name: string;
+        date?: string;
+      }>;
+    }>;
+  };
+}
 
-export const InteractiveMap = () => {
+export const InteractiveMap = ({
+  onLocationSelect,
+  enableSelection = false,
+  initialCenter,
+  initialZoom,
+  mapData,
+}: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [hoveredVictim, setHoveredVictim] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(6);
-  const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
+  const [zoom, setZoom] = useState(initialZoom || 9);
+  const currentMarker = useRef<mapboxgl.Marker | null>(null);
+
+  // Calculate center: use initialCenter, or first location from mapData, or default
+  const getCenter = (): [number, number] => {
+    if (initialCenter) return initialCenter;
+    if (mapData?.locations && mapData.locations.length > 0) {
+      return [
+        Number(mapData.locations[0].lng),
+        Number(mapData.locations[0].lat),
+      ];
+    }
+    return [34.3667, 31.4]; // Default center of Gaza/Israel
+  };
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -95,62 +70,57 @@ export const InteractiveMap = () => {
     // Set mapbox access token - for demo purposes, using a placeholder
     mapboxgl.accessToken = import.meta.env.VITE_MAP_ACCESS_KEY || "";
 
-    // Initialize map centered on Ukraine
+    // Initialize map
+    const center = getCenter();
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/light-v11",
-      center: [31.1656, 48.3794], // Center of Ukraine
-      zoom: zoom,
+      center: center,
+      zoom: initialZoom || zoom,
       interactive: true,
+    });
+
+    map.current.on("load", () => {
+      console.log("Map loaded");
+    });
+
+    map.current.on("click", (e) => {
+      if (!enableSelection) return;
+
+      // Remove existing marker if it exists
+      if (currentMarker.current) {
+        currentMarker.current.remove();
+      }
+
+      const marker = new mapboxgl.Marker()
+        .setLngLat([e.lngLat.lng, e.lngLat.lat])
+        .addTo(map.current!);
+
+      currentMarker.current = marker;
+
+      onLocationSelect({
+        lat: e.lngLat.lat,
+        lng: e.lngLat.lng,
+      });
     });
 
     // Add zoom controls
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-    // Add markers for each victim
-    const newMarkers: mapboxgl.Marker[] = [];
-    mockVictims.forEach((victim) => {
-      const markerElement = document.createElement("div");
-      markerElement.className = "relative w-4 h-4 cursor-pointer";
-      markerElement.innerHTML = `
-        <div class="w-4 h-4 bg-red-500 rounded-full shadow-lg border-2 border-white">
-          <div class="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-30"></div>
-        </div>
-      `;
+    // Add markers for locations with cases
+    const locationsToShow = mapData?.locations.map((v) => ({
+      lat: v.lat.toString(),
+      lng: v.lng.toString(),
+      locationName: v.locationName,
+      caseCount: v.caseCount,
+      recentCases: v.recentCases,
+    }));
 
-      const marker = new mapboxgl.Marker(markerElement)
-        .setLngLat([victim.lng, victim.lat])
+    locationsToShow?.forEach((location, index) => {
+      new mapboxgl.Marker()
+        .setLngLat([Number(location.lng), Number(location.lat)])
         .addTo(map.current!);
-
-      // Add hover popup
-      const popup = new mapboxgl.Popup({
-        offset: 15,
-        closeButton: false,
-        closeOnClick: false,
-      }).setHTML(`
-        <div class="text-xs">
-          <div class="font-semibold">${victim.name}</div>
-          <div class="text-gray-600">${victim.location}</div>
-          <div class="text-gray-600">${new Date(
-            victim.date
-          ).toLocaleDateString()}</div>
-        </div>
-      `);
-
-      markerElement.addEventListener("mouseenter", () => {
-        setHoveredVictim(victim.id);
-        marker.setPopup(popup).togglePopup();
-      });
-
-      markerElement.addEventListener("mouseleave", () => {
-        setHoveredVictim(null);
-        popup.remove();
-      });
-
-      newMarkers.push(marker);
     });
-
-    setMarkers(newMarkers);
 
     // Update zoom state when map zoom changes
     map.current.on("zoom", () => {
@@ -160,10 +130,12 @@ export const InteractiveMap = () => {
     });
 
     return () => {
-      markers.forEach((marker) => marker.remove());
+      if (currentMarker.current) {
+        currentMarker.current.remove();
+      }
       map.current?.remove();
     };
-  }, []);
+  }, [mapData]);
 
   const handleZoomIn = () => {
     if (map.current) {
@@ -185,7 +157,7 @@ export const InteractiveMap = () => {
           <div className="text-center p-4">
             <MapPin className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              Interactive Map of Ukraine
+              Interactive Map of Gaza
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Mapbox integration requires API key
@@ -219,7 +191,9 @@ export const InteractiveMap = () => {
         {/* Map label */}
         <div className="absolute bottom-4 left-4 bg-white/90 px-2 py-1 rounded text-xs text-muted-foreground flex items-center gap-1">
           <MapPin className="h-3 w-3" />
-          <span>Recent Cases - Ukraine ({mockVictims.length} cases)</span>
+          <span>
+            Recent Cases - Gaza ({mapData?.locations?.length || 0} cases)
+          </span>
         </div>
       </CardContent>
     </Card>

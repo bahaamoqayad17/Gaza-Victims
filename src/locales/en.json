@@ -589,5 +589,15 @@
     "relationship": "Relationship",
     "actions": "Actions",
     "reportAdditionalInformation": "Report Additional Information",
-    "downloadCaseFile": "Download Case File"
+    "downloadCaseFile": "Download Case File",
+    "loading": "Loading...",
+    "casesMap": "Cases Map",
+    "totalLocations": "Total Locations",
+    "casesWithLocation": "Cases with location",
+    "lastUpdated": "Last updated",
+    "loadingMap": "Loading map data...",
+    "noLocationsFound": "No case locations found.",
+    "showingLocations": "Showing",
+    "locations": "locations",
+    "backToHome": "Back to Home"
 }

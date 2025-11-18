@@ -8,7 +8,7 @@
     "login": "تسجيل الدخول",
     "victimsArchive": "أرشيف الضحايا",
     "documentingLives": "توثيق الأرواح المفقودة للحفاظ على الذاكرة والسعي للمساءلة.",
-    "submitDocumentation": "تقديم التوثيق",
+    "submitDocumentation": "إبلاغ عن قضية",
     "browseRecords": "تصفح السجلات",
     "killedYesterday": "التالية أسماؤهم \"قُتلوا\" بالأمس",
     "asOf": "اعتباراً من",
@@ -611,5 +611,6 @@
     "policeBrutality": "عنف الشرطة",
     "targetedKilling": "قتل موجه",
     "civilUnrest": "ثورة عمالية",
-    "siege": "حصار"
+    "siege": "حصار",
+    "loading": "جاري التحميل..."
 }

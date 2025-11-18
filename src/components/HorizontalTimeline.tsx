@@ -175,9 +175,7 @@ const HorizontalTimeline: React.FC<TimelineProps> = ({
       <Card className="w-full p-4 bg-muted/20 overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="h-4 w-4" />
-          <span className="text-sm font-semibold">
-            Loading timeline data...
-          </span>
+          <span className="text-sm font-semibold">{t("loading")}</span>
         </div>
         <div className="h-28 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

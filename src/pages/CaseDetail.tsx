@@ -20,6 +20,7 @@ import {
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
 import { toast } from "@/hooks/use-toast";
+import InteractiveMap from "@/components/InteractiveMap";
 
 const CaseDetail = () => {
   const { id } = useParams();
@@ -81,7 +82,7 @@ const CaseDetail = () => {
         <div className="container mx-auto px-4 py-8 flex items-center justify-center">
           <div className="flex items-center gap-2">
             <Loader2 className="h-6 w-6 animate-spin" />
-            <span>{t("loadingCaseDetails")}</span>
+            <span>{t("loading")}</span>
           </div>
         </div>
         <Footer />
@@ -409,11 +410,6 @@ const CaseDetail = () => {
                   <CardTitle>{t("incidentNewsStory")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      {t("newsArticleScreenshot")}
-                    </p>
-                  </div>
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm">
                       {t("relatedNewsCoverage")}:
@@ -454,18 +450,41 @@ const CaseDetail = () => {
                     <p className="text-muted-foreground">
                       {caseData.locationName || t("locationProvided")}
                     </p>
-                    {caseData.location && (
+                    {/* {caseData.location && (
                       <p className="text-sm text-muted-foreground mt-1">
                         {t("coordinates")}: {caseData.location.lat}° N,{" "}
                         {caseData.location.lng}° E
                       </p>
-                    )}
+                    )} */}
                   </div>
-                  <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      {t("interactiveMapPlaceholder")}
-                    </p>
-                  </div>
+                  {caseData.location && (
+                    <InteractiveMap
+                      initialCenter={
+                        [
+                          parseFloat(caseData.location.lng),
+                          parseFloat(caseData.location.lat),
+                        ] as [number, number]
+                      }
+                      initialZoom={13}
+                      mapData={{
+                        locations: [
+                          {
+                            lat: caseData.location.lat.toString(),
+                            lng: caseData.location.lng.toString(),
+                            locationName: caseData.locationName || "",
+                            caseCount: 1,
+                            recentCases: [
+                              {
+                                _id: caseData._id || "",
+                                name: caseData.name,
+                                date: caseData.date,
+                              },
+                            ],
+                          },
+                        ],
+                      }}
+                    />
+                  )}
                 </CardContent>
               </Card>
             )}

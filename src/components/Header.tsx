@@ -120,7 +120,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t("submit")}
+              {t("submitDocumentation")}
             </Link>
             <Link
               to="/about"
@@ -193,7 +193,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   : "hover:bg-muted hover:text-foreground"
               }`}
             >
-              {t("submit")}
+              {t("submitDocumentation")}
             </Link>
             <Link
               to="/about"

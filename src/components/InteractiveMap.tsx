@@ -22,6 +22,8 @@ interface VictimData {
 interface InteractiveMapProps {
   onLocationSelect?: (location: { lat: number; lng: number }) => void;
   enableSelection?: boolean;
+  initialCenter?: [number, number]; // [lng, lat]
+  initialZoom?: number;
   mapData?: {
     locations: Array<{
       lat: string;
@@ -40,24 +42,40 @@ interface InteractiveMapProps {
 export const InteractiveMap = ({
   onLocationSelect,
   enableSelection = false,
+  initialCenter,
+  initialZoom,
   mapData,
 }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [zoom, setZoom] = useState(9);
+  const [zoom, setZoom] = useState(initialZoom || 9);
   const currentMarker = useRef<mapboxgl.Marker | null>(null);
+  
+  // Calculate center: use initialCenter, or first location from mapData, or default
+  const getCenter = (): [number, number] => {
+    if (initialCenter) return initialCenter;
+    if (mapData?.locations && mapData.locations.length > 0) {
+      return [
+        Number(mapData.locations[0].lng),
+        Number(mapData.locations[0].lat),
+      ];
+    }
+    return [34.3667, 31.4]; // Default center of Gaza/Israel
+  };
+
   useEffect(() => {
     if (!mapContainer.current) return;
 
     // Set mapbox access token - for demo purposes, using a placeholder
     mapboxgl.accessToken = import.meta.env.VITE_MAP_ACCESS_KEY || "";
 
-    // Initialize map centered on Ukraine
+    // Initialize map
+    const center = getCenter();
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/light-v11",
-      center: [34.3667, 31.4], // Center of Israel
-      zoom: zoom,
+      center: center,
+      zoom: initialZoom || zoom,
       interactive: true,
     });
 
@@ -116,7 +134,7 @@ export const InteractiveMap = ({
       }
       map.current?.remove();
     };
-  }, []);
+  }, [mapData]);
 
   const handleZoomIn = () => {
     if (map.current) {

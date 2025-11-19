@@ -24,13 +24,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, type ContactFormData } from "@/lib/validationSchemas";
 import { useCreateContactMutation } from "@/store/api/apiSlice";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const About = () => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
   const [submitted, setSubmitted] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
 
   const [createContact, { isLoading }] = useCreateContactMutation();
 
@@ -45,8 +48,6 @@ const About = () => {
     resolver: zodResolver(contactSchema),
   });
 
-  const watchRecaptcha = watch("recaptcha");
-
   const handleTypeChange = (type: string, checked: boolean) => {
     if (checked) {
       setSelectedTypes((prev) => [...prev, type]);
@@ -57,6 +58,12 @@ const About = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
+      // Check if reCAPTCHA is completed
+      if (!recaptchaValue) {
+        toast.error("Please complete the reCAPTCHA verification");
+        return;
+      }
+
       // Determine contact type based on selected checkboxes
       let contactType = "general";
       if (selectedTypes.includes("technical")) contactType = "technical";
@@ -70,7 +77,7 @@ const About = () => {
         mobile_number: data.mobile_number,
         message: data.message,
         type: contactType,
-        recaptcha: data.recaptcha,
+        recaptcha: recaptchaValue as string, // Already validated above
       };
 
       await createContact(contactData).unwrap();
@@ -79,6 +86,11 @@ const About = () => {
       setSubmitted(true);
       reset();
       setSelectedTypes([]);
+      setRecaptchaValue(null);
+      // Reset reCAPTCHA
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
     } catch (error) {
       console.error("Contact submission error:", error);
       const errorMessage =
@@ -91,6 +103,11 @@ const About = () => {
           ? String(error.data.message)
           : t("aboutPageContactErrorToast");
       toast.error(errorMessage);
+      // Reset reCAPTCHA on error
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      setRecaptchaValue(null);
     }
   };
 
@@ -391,23 +408,35 @@ const About = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="recaptcha"
-                    checked={watchRecaptcha || false}
-                    onCheckedChange={(checked) =>
-                      setValue("recaptcha", checked as boolean)
-                    }
-                  />
-                  <Label htmlFor="recaptcha" className="text-sm">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">
                     {t("aboutPageContactRecaptcha")}
                   </Label>
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                      onChange={(value) => {
+                        setRecaptchaValue(value || null);
+                        setValue("recaptcha", value || "");
+                      }}
+                      onExpired={() => {
+                        setRecaptchaValue(null);
+                        setValue("recaptcha", "");
+                      }}
+                      onError={() => {
+                        setRecaptchaValue(null);
+                        setValue("recaptcha", "");
+                        toast.error("reCAPTCHA error. Please try again.");
+                      }}
+                    />
+                  </div>
+                  {errors.recaptcha && (
+                    <p className="text-sm text-red-500">
+                      {errors.recaptcha.message}
+                    </p>
+                  )}
                 </div>
-                {errors.recaptcha && (
-                  <p className="text-sm text-red-500">
-                    {errors.recaptcha.message}
-                  </p>
-                )}
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (

@@ -114,8 +114,8 @@ export const contactSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters long"),
   type: z.string().optional(),
   recaptcha: z
-    .boolean()
-    .refine((val) => val === true, "Please verify that you are not a robot"),
+    .string()
+    .min(1, "Please complete the reCAPTCHA verification"),
 });
 
 // Auth validation schemas

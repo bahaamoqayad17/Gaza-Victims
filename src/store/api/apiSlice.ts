@@ -451,7 +451,7 @@ export const apiSlice = createApi({
         mobile_number: string;
         message: string;
         type?: string;
-        recaptcha: boolean;
+        recaptcha: string;
       }
     >({
       query: (contactData) => ({

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Contact from "@/Models/Contact";
+import { verifyRecaptcha } from "@/Utils/recaptchaVerification";
 
 // GET /api/contacts - Get all contacts
 export const getAllContactsController = async (req: Request, res: Response) => {
@@ -33,11 +34,27 @@ export const createContactController = async (req: Request, res: Response) => {
       });
     }
 
-    // Validate reCAPTCHA checkbox (contact form uses a checkbox, not actual reCAPTCHA component)
+    // Verify reCAPTCHA token
     if (!recaptcha) {
       return res.status(400).json({
         status: "fail",
-        message: "Please confirm that you are not a robot",
+        message: "reCAPTCHA verification is required",
+      });
+    }
+
+    try {
+      const isCaptchaValid = await verifyRecaptcha(recaptcha);
+      if (!isCaptchaValid) {
+        return res.status(400).json({
+          status: "fail",
+          message: "reCAPTCHA verification failed. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("reCAPTCHA verification error:", error);
+      return res.status(400).json({
+        status: "fail",
+        message: "Failed to verify reCAPTCHA",
       });
     }
 

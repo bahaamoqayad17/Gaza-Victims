@@ -155,14 +155,19 @@ const CaseDetail = () => {
                       {caseData.leftBehind &&
                         caseData.leftBehind.length > 0 && (
                           <p className="text-muted-foreground italic text-sm mt-1">
-                            {t("leftBehind")}: {caseData.leftBehind.join(", ")}
+                            {t("leftBehind")}:{" "}
+                            {caseData.leftBehind
+                              .map((leftBehind) =>
+                                t(leftBehind as keyof typeof t)
+                              )
+                              .join(", ")}
                           </p>
                         )}
                     </div>
 
                     <div className="flex flex-wrap gap-1 mb-2 text-xs">
                       <span className="bg-slate-100 text-slate-700 px-2 py-0.5 border border-slate-300">
-                        {caseData.status}
+                        {t(caseData.status as keyof typeof t)}
                       </span>
                       {caseData.isVerified && (
                         <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-emerald-300">

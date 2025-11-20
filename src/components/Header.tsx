@@ -3,7 +3,6 @@ import { Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { LanguageSelector, useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
-import { useEffect } from "react";
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -15,17 +14,21 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation(currentLanguage);
 
-  // Set RTL for Arabic and Farsi
-  useEffect(() => {
-    if (currentLanguage === "ar" || currentLanguage === "fa") {
-      document.body.setAttribute("dir", "rtl");
-    } else {
-      document.body.setAttribute("dir", "ltr");
-    }
-  }, [currentLanguage]);
+  // Helper to get path without language prefix
+  const getPathWithoutLang = (pathname: string) => {
+    const match = pathname.match(/^\/[a-z]{2}(\/.*|$)/);
+    return match ? match[1] || "/" : pathname;
+  };
+
+  // Helper to build path with language
+  const buildPath = (path: string) => {
+    return `/${currentLanguage}${path === "/" ? "" : path}`;
+  };
 
   const getPageTitle = () => {
-    switch (location.pathname) {
+    const pathWithoutLang = getPathWithoutLang(location.pathname);
+
+    switch (pathWithoutLang) {
       case "/":
         return t("archive");
       case "/browse":
@@ -38,12 +41,12 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
         return t("about");
       case "/legal":
         return "Legal Information";
-      case "/download":
+      case "/download-archive":
         return "Download Archive";
       case "/report":
         return t("reportCase");
       default:
-        if (location.pathname.startsWith("/case/")) {
+        if (pathWithoutLang.startsWith("/case/")) {
           return t("caseDetails");
         }
         return t("archive");
@@ -51,8 +54,9 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
   };
 
   const isActivePage = (path: string) => {
-    if (path === "/" && location.pathname === "/") return true;
-    if (path !== "/" && location.pathname.startsWith(path)) return true;
+    const pathWithoutLang = getPathWithoutLang(location.pathname);
+    if (path === "/" && pathWithoutLang === "/") return true;
+    if (path !== "/" && pathWithoutLang.startsWith(path)) return true;
     return false;
   };
 
@@ -73,9 +77,9 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                   <Menu className="h-4 w-4" />
                 </Button>
               )}
-              <Link to="/" className="flex items-center gap-2">
+              <Link to={buildPath("/")} className="flex items-center gap-2">
                 <h1 className="text-lg font-bold truncate">
-                  {location.pathname === "/" ? (
+                  {getPathWithoutLang(location.pathname) === "/" ? (
                     getPageTitle()
                   ) : (
                     <>
@@ -93,7 +97,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
           {/* Mobile navigation - second line */}
           <div className="flex justify-center items-center gap-4 pb-3 text-sm font-medium border-t pt-2">
             <Link
-              to="/browse"
+              to={buildPath("/browse")}
               className={`px-2 py-1 rounded transition-colors ${
                 isActivePage("/browse")
                   ? "bg-primary text-primary-foreground"
@@ -103,7 +107,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t("cases")}
             </Link>
             <Link
-              to="/map"
+              to={buildPath("/map")}
               className={`px-2 py-1 rounded transition-colors ${
                 isActivePage("/map")
                   ? "bg-primary text-primary-foreground"
@@ -113,7 +117,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t("map")}
             </Link>
             <Link
-              to="/upload"
+              to={buildPath("/upload")}
               className={`px-2 py-1 rounded transition-colors ${
                 isActivePage("/upload")
                   ? "bg-primary text-primary-foreground"
@@ -123,7 +127,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t("submitDocumentation")}
             </Link>
             <Link
-              to="/about"
+              to={buildPath("/about")}
               className={`px-2 py-1 rounded transition-colors ${
                 isActivePage("/about")
                   ? "bg-primary text-primary-foreground"
@@ -132,6 +136,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
             >
               {t("about")}
             </Link>
+            <LanguageSelector />
           </div>
         </div>
 
@@ -148,9 +153,9 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
                 <Menu className="h-4 w-4" />
               </Button>
             )}
-            <Link to="/" className="flex items-center gap-2">
+            <Link to={buildPath("/")} className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate">
-                {location.pathname === "/" ? (
+                {getPathWithoutLang(location.pathname) === "/" ? (
                   t("archive")
                 ) : (
                   <>
@@ -166,7 +171,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
           </div>
           <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
             <Link
-              to="/browse"
+              to={buildPath("/browse")}
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
                 isActivePage("/browse")
                   ? "bg-primary text-primary-foreground"
@@ -176,7 +181,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t("cases")}
             </Link>
             <Link
-              to="/map"
+              to={buildPath("/map")}
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
                 isActivePage("/map")
                   ? "bg-primary text-primary-foreground"
@@ -186,7 +191,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t("map")}
             </Link>
             <Link
-              to="/upload"
+              to={buildPath("/upload")}
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors ${
                 isActivePage("/upload")
                   ? "bg-primary text-primary-foreground"
@@ -196,7 +201,7 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
               {t("submitDocumentation")}
             </Link>
             <Link
-              to="/about"
+              to={buildPath("/about")}
               className={`text-xs sm:text-sm px-1 sm:px-2 py-1 rounded transition-colors hidden md:inline-block ${
                 isActivePage("/about")
                   ? "bg-primary text-primary-foreground"

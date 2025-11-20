@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, ReactNode } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { Globe } from "lucide-react";
 import { Language } from "@/lib/translations";
+import { useEffect } from "react";
 
 const languages = [
   { code: "ar", name: "العربية", flag: "🇸🇦" },
@@ -31,26 +32,53 @@ const languages = [
   { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
 ];
 
-// Language context for global state management
-const LanguageContext = createContext<{
-  currentLanguage: Language;
-  setCurrentLanguage: (lang: Language) => void;
-}>({
-  currentLanguage: "en",
-  setCurrentLanguage: () => {},
-});
+// Valid language codes
+export const validLanguages: Language[] = languages.map(
+  (lang) => lang.code as Language
+);
 
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>("en");
+// Hook to get and set language from URL path
+export const useLanguage = () => {
+  const params = useParams<{ lang?: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  return (
-    <LanguageContext.Provider value={{ currentLanguage, setCurrentLanguage }}>
-      {children}
-    </LanguageContext.Provider>
-  );
+  // Get language from URL path, default to "ar"
+  const langParam = params.lang;
+  const currentLanguage: Language =
+    langParam && validLanguages.includes(langParam as Language)
+      ? (langParam as Language)
+      : "ar";
+
+  // Set language in URL path
+  const setCurrentLanguage = (lang: Language) => {
+    const currentPath = location.pathname;
+
+    // Remove current language prefix if it exists
+    const pathWithoutLang = currentPath.replace(/^\/[a-z]{2}(\/|$)/, "/");
+
+    // Build new path with language
+    const newPath =
+      pathWithoutLang === "/" ? `/${lang}` : `/${lang}${pathWithoutLang}`;
+
+    // Preserve search params and hash
+    const search = location.search;
+    const hash = location.hash;
+
+    navigate(`${newPath}${search}${hash}`, { replace: true });
+  };
+
+  // Set RTL for Arabic and Farsi
+  useEffect(() => {
+    if (currentLanguage === "ar" || currentLanguage === "fa") {
+      document.body.setAttribute("dir", "rtl");
+    } else {
+      document.body.setAttribute("dir", "ltr");
+    }
+  }, [currentLanguage]);
+
+  return { currentLanguage, setCurrentLanguage };
 };
-
-export const useLanguage = () => useContext(LanguageContext);
 
 export const LanguageSelector = () => {
   const { currentLanguage, setCurrentLanguage } = useLanguage();

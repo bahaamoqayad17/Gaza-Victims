@@ -599,5 +599,11 @@
     "noLocationsFound": "No case locations found.",
     "showingLocations": "Showing",
     "locations": "locations",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "caseDetails": "Case Details",
+    "under_third_party_review": "Under third party review",
+    "under_digital_forensics_review": "Under digital forensics review",
+    "under_moderator_review": "Under moderator review",
+    "under_admin_review": "Under admin review",
+    "under_review": "Under review"
 }

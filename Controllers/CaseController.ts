@@ -1,6 +1,7 @@
 import Case from "@/Models/Case";
 import User from "@/Models/User";
 import { processFilesForS3 } from "@/Utils/fileUpload";
+import { uploadFileToS3, downloadFileFromS3 } from "@/Utils/s3-utils";
 import ApiFeatures from "@/Utils/ApiFeatures";
 import { Request, Response } from "express";
 import { verifyRecaptcha } from "@/Utils/recaptchaVerification";
@@ -1177,6 +1178,183 @@ export const getCaseStatus = async (req: Request, res: Response) => {
   }
 };
 
+export const updateCaseImage = async (
+  req: Request & { formData?: any },
+  res: Response
+) => {
+  try {
+    const { caseId, imageType } = req.body;
+    const files = req.formData?.files || {};
+
+    if (!caseId || !imageType) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Case ID and image type are required",
+      });
+    }
+
+    if (imageType !== "proofOfId" && imageType !== "proofOfDeath") {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid image type. Must be 'proofOfId' or 'proofOfDeath'",
+      });
+    }
+
+    // Find the case
+    const case_ = await Case.findById(caseId);
+    if (!case_) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Case not found",
+      });
+    }
+
+    // Get the file
+    const fileKey = imageType === "proofOfId" ? "proofOfId" : "proofOfDeath";
+    const fileData = files[fileKey];
+
+    if (!fileData) {
+      return res.status(400).json({
+        status: "fail",
+        message: `No ${fileKey} file provided`,
+      });
+    }
+
+    // Get single file from array or object
+    const file = Array.isArray(fileData) ? fileData[0] : fileData;
+
+    // Read file buffer
+    let buffer: Buffer;
+    if (file.buffer) {
+      buffer = file.buffer;
+    } else if (file.filepath) {
+      const fs = await import("fs");
+      buffer = await fs.promises.readFile(file.filepath);
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid file data",
+      });
+    }
+
+    // Upload to S3
+    const folder = `${case_.generated_id}/${
+      imageType === "proofOfId" ? "proof-of-id" : "proof-of-death"
+    }`;
+    const fileName = file.name || `${imageType}-${Date.now()}.png`;
+    const contentType = file.type || "image/png";
+
+    const uploadResult = await uploadFileToS3(
+      buffer,
+      fileName,
+      contentType,
+      folder
+    );
+
+    // Update case with new image URL
+    const updateData: any = {};
+    updateData[imageType] = uploadResult.url;
+
+    const updatedCase = await Case.findByIdAndUpdate(caseId, updateData, {
+      new: true,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Case image updated successfully",
+      data: {
+        case: updatedCase,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating case image:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to update case image",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const proxyImage = async (req: Request, res: Response) => {
+  try {
+    const { imageUrl } = req.query;
+
+    if (!imageUrl || typeof imageUrl !== "string") {
+      return res.status(400).json({
+        status: "fail",
+        message: "Image URL is required",
+      });
+    }
+
+    // Validate that the URL is from our S3 bucket or allowed domains
+    const allowedDomains = [
+      process.env.AWS_BUCKET_NAME
+        ? `${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`
+        : "",
+    ].filter(Boolean);
+
+    const urlObj = new URL(imageUrl);
+    const isAllowed =
+      allowedDomains.length === 0 ||
+      allowedDomains.some((domain) => urlObj.hostname.includes(domain));
+
+    if (!isAllowed && allowedDomains.length > 0) {
+      return res.status(403).json({
+        status: "fail",
+        message: "Image URL not allowed",
+      });
+    }
+
+    try {
+      // Fetch the image from the URL
+      const response = await fetch(imageUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+        },
+      });
+
+      if (!response.ok) {
+        return res.status(response.status).json({
+          status: "fail",
+          message: `Failed to fetch image: ${response.statusText}`,
+        });
+      }
+
+      // Get the image buffer
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Get content type from response or default to image
+      const contentType = response.headers.get("content-type") || "image/png";
+
+      // Set CORS headers to allow frontend access
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Cache-Control", "public, max-age=3600");
+
+      // Send the image
+      res.send(buffer);
+    } catch (error) {
+      console.error("Error proxying image:", error);
+      res.status(500).json({
+        status: "error",
+        message: "Failed to proxy image",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  } catch (error) {
+    console.error("Error in proxyImage:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to proxy image",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
 export const downloadArchive = async (req: Request, res: Response) => {
   try {
     const {
@@ -1202,31 +1380,6 @@ export const downloadArchive = async (req: Request, res: Response) => {
     // Build query based on filters
     const query: any = {};
 
-    // Status filter
-    if (statusFilter !== "all") {
-      switch (statusFilter) {
-        case "documented":
-          query.isVerified = false;
-          query.status = "pending";
-          break;
-        case "verified":
-          query.isVerified = true;
-          query.isThirdPartyVerified = true;
-          query.isDigitalForensicsVerified = true;
-          query.status = "verified";
-          break;
-        case "investigating":
-          query.status = {
-            $in: [
-              "under_review",
-              "under_third_party_review",
-              "under_digital_forensics_review",
-            ],
-          };
-          break;
-      }
-    }
-
     // Location filter
     if (locationFilter) {
       query.locationName = { $regex: locationFilter, $options: "i" };
@@ -1248,7 +1401,9 @@ export const downloadArchive = async (req: Request, res: Response) => {
     console.log("Query for cases:", JSON.stringify(query, null, 2));
 
     // Find cases matching the filters
-    const cases = await Case.find(query).sort({ createdAt: -1 });
+    const cases = await Case.find({ ...query, isVerified: true }).sort({
+      createdAt: -1,
+    });
 
     if (cases.length === 0) {
       return res.status(404).json({

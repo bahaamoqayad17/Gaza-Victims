@@ -16,6 +16,8 @@ import {
   downloadCase,
   downloadArchive,
   getCaseStatus,
+  updateCaseImage,
+  proxyImage,
 } from "@/Controllers/CaseController";
 import CatchAsync from "@/Utils/CatchAsync";
 import { validateCaseCreation } from "@/Utils/validationMiddleware";
@@ -104,7 +106,18 @@ router.patch(
   CatchAsync(verifyCase)
 );
 
+router.patch(
+  "/update-image/:id",
+  protect,
+  restrictTo("admin", "senior_moderator", "moderator"),
+  parseFormData,
+  CatchAsync(updateCaseImage)
+);
+
 router.post("/status", CatchAsync(getCaseStatus));
+
+// Proxy image route - for CORS-free image access
+router.get("/proxy-image", CatchAsync(proxyImage));
 
 // Download case route - accessible to authenticated users
 router.post("/download", CatchAsync(downloadCase));

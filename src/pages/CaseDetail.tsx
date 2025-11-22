@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import {
   Loader2,
   Download,
   ArrowLeft,
+  Edit,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
@@ -17,11 +19,13 @@ import { Footer } from "@/components/Footer";
 import {
   useGetCaseByIdQuery,
   useDownloadCaseMutation,
+  useUpdateCaseImageMutation,
 } from "@/store/api/apiSlice";
 import { useLanguage } from "@/components/LanguageSelector";
 import { useTranslation } from "@/lib/translations";
 import { toast } from "@/hooks/use-toast";
 import InteractiveMap from "@/components/InteractiveMap";
+import { ImageEditor } from "@/components/ImageEditor";
 
 const CaseDetail = () => {
   const { id } = useParams();
@@ -36,6 +40,16 @@ const CaseDetail = () => {
 
   const [downloadCase, { isLoading: isDownloading }] =
     useDownloadCaseMutation();
+
+  const [updateCaseImage, { isLoading: isUpdatingImage }] =
+    useUpdateCaseImageMutation();
+
+  // Image editor state
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editorImageUrl, setEditorImageUrl] = useState("");
+  const [editorImageType, setEditorImageType] = useState<
+    "proofOfId" | "proofOfDeath"
+  >("proofOfId");
 
   const handleDownload = async () => {
     if (!caseData?.generated_id) return;
@@ -73,6 +87,76 @@ const CaseDetail = () => {
         description: "Failed to download case file. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleOpenEditor = (
+    imageUrl: string,
+    imageType: "proofOfId" | "proofOfDeath"
+  ) => {
+    setEditorImageUrl(imageUrl);
+    setEditorImageType(imageType);
+    setEditorOpen(true);
+  };
+
+  const handleSaveEditedImage = async (editedImageUrl: string) => {
+    if (!caseData?._id) {
+      toast({
+        title: "Error",
+        description: "Case ID not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Convert blob URL to File
+      const response = await fetch(editedImageUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch edited image");
+      }
+      const blob = await response.blob();
+
+      if (blob.size === 0) {
+        throw new Error("Received empty image blob");
+      }
+
+      const file = new File(
+        [blob],
+        `${editorImageType}-edited-${Date.now()}.png`,
+        { type: "image/png" }
+      );
+
+      // Update case image on backend
+      await updateCaseImage({
+        caseId: caseData._id,
+        imageType: editorImageType,
+        file,
+      }).unwrap();
+
+      // Clean up blob URL
+      URL.revokeObjectURL(editedImageUrl);
+
+      toast({
+        title: "Image Updated",
+        description: `The ${editorImageType} image has been updated successfully.`,
+      });
+
+      setEditorOpen(false);
+    } catch (error: unknown) {
+      console.error("Error updating case image:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : (error as { data?: { message?: string } })?.data?.message ||
+            "Failed to update case image. Please try again.";
+      toast({
+        title: "Update Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      // Re-throw to let ImageEditor know it failed
+      throw error;
     }
   };
 
@@ -385,12 +469,43 @@ const CaseDetail = () => {
             {caseData.proofOfId && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Proof Of Identity</CardTitle>
+                  <CardTitle className="flex items-center justify-between">
+                    Proof Of Identity
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        handleOpenEditor(caseData.proofOfId!, "proofOfId")
+                      }
+                      disabled={isUpdatingImage}
+                    >
+                      {isUpdatingImage && editorImageType === "proofOfId" ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Image
+                        </>
+                      )}
+                    </Button>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
                     <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
-                      {/* <div className="text-center filter blur-sm"> */}
+                      {isUpdatingImage && editorImageType === "proofOfId" ? (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg z-10">
+                          <div className="bg-background rounded-lg p-4 flex flex-col items-center gap-2">
+                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                            <p className="text-sm font-medium">
+                              Updating image...
+                            </p>
+                          </div>
+                        </div>
+                      ) : null}
                       <div className="text-center">
                         <img
                           src={caseData.proofOfId}
@@ -399,11 +514,6 @@ const CaseDetail = () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="absolute inset-0 flex items-center justify-center">
-                      <Button variant="outline" size="sm">
-                        Login To View
-                      </Button>
-                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -413,12 +523,23 @@ const CaseDetail = () => {
             {caseData.proofOfDeath && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Proof Of Death</CardTitle>
+                  <CardTitle className="flex items-center justify-between">
+                    Proof Of Death
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
                     <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
-                      {/* <div className="text-center filter blur-sm"> */}
+                      {isUpdatingImage && editorImageType === "proofOfDeath" ? (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg z-10">
+                          <div className="bg-background rounded-lg p-4 flex flex-col items-center gap-2">
+                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                            <p className="text-sm font-medium">
+                              Updating image...
+                            </p>
+                          </div>
+                        </div>
+                      ) : null}
                       <div className="text-center">
                         <img
                           src={caseData.proofOfDeath}
@@ -427,16 +548,11 @@ const CaseDetail = () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <Button variant="outline" size="sm" className="mb-2">
-                        Login To View
-                      </Button>
-                      {caseData.proofOfDeathGraphic && (
-                        <p className="text-xs text-center text-amber-600 px-4">
-                          Graphic Content Warning
-                        </p>
-                      )}
-                    </div> */}
+                    {caseData.proofOfDeathGraphic && (
+                      <p className="text-xs text-center text-amber-600 px-4 mt-2">
+                        Graphic Content Warning
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -671,6 +787,18 @@ const CaseDetail = () => {
       </div>
 
       <Footer />
+
+      {/* Image Editor Dialog */}
+      {editorImageUrl && (
+        <ImageEditor
+          isOpen={editorOpen}
+          onClose={() => setEditorOpen(false)}
+          imageUrl={editorImageUrl}
+          imageType={editorImageType}
+          onSave={handleSaveEditedImage}
+          isSaving={isUpdatingImage}
+        />
+      )}
     </div>
   );
 };

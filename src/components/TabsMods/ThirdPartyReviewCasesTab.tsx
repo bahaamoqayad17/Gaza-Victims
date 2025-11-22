@@ -232,7 +232,7 @@ export const ThirdPartyReviewCasesTab = () => {
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button variant="outline" size="sm" asChild>
-                          <Link>
+                          <Link to={`/case/${case_.generated_id}`}>
                             <CheckCircle className="w-4 h-4 mr-1" />
                             Review
                           </Link>

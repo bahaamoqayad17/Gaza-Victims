@@ -369,6 +369,28 @@ export const apiSlice = createApi({
       }),
     }),
 
+    updateCaseImage: builder.mutation<
+      ApiResponse<{ case: Case }>,
+      { caseId: string; imageType: "proofOfId" | "proofOfDeath"; file: File }
+    >({
+      query: ({ caseId, imageType, file }) => {
+        const formData = new FormData();
+        formData.append("caseId", caseId);
+        formData.append("imageType", imageType);
+        formData.append(imageType, file);
+
+        return {
+          url: `/cases/update-image/${caseId}`,
+          method: "PATCH",
+          body: formData,
+        };
+      },
+      invalidatesTags: (result, error, { caseId }) => [
+        { type: "Case", id: caseId },
+        "Case",
+      ],
+    }),
+
     createCase: builder.mutation<ApiResponse<{ case: Case }>, FormData>({
       query: (formData) => ({
         url: "/cases",
@@ -1054,6 +1076,9 @@ export const {
 
   // Case verification hook
   useVerifyCaseMutation,
+
+  // Case image update hook
+  useUpdateCaseImageMutation,
 
   // Reports hooks
   useGetReportsQuery,

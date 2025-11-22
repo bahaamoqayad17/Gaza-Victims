@@ -77,14 +77,14 @@ const DownloadArchive = () => {
       window.URL.revokeObjectURL(url);
 
       toast({
-        title: "Archive Download Started",
-        description: "Your archive is being prepared and downloaded.",
+        title: t("archiveDownloadStarted"),
+        description: t("archiveDownloadStartedDescription"),
       });
     } catch (error) {
       console.error("Error downloading archive:", error);
       toast({
-        title: "Download Failed",
-        description: "Failed to download archive. Please try again.",
+        title: t("downloadFailed"),
+        description: t("downloadFailedDescription"),
         variant: "destructive",
       });
     }
@@ -107,7 +107,7 @@ const DownloadArchive = () => {
             <CardContent className="space-y-6">
               {/* Media Options */}
               <div className="space-y-4">
-                <h4 className="font-medium">Media Content</h4>
+                <h4 className="font-medium">{t("mediaContent")}</h4>
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -117,7 +117,9 @@ const DownloadArchive = () => {
                         setIncludeMedia(checked as boolean)
                       }
                     />
-                    <Label htmlFor="include-media">Include media files</Label>
+                    <Label htmlFor="include-media">
+                      {t("includeMediaFiles")}
+                    </Label>
                   </div>
 
                   {includeMedia && (
@@ -135,7 +137,7 @@ const DownloadArchive = () => {
                           className="flex items-center gap-2"
                         >
                           <FileImage className="w-4 h-4" />
-                          Photos
+                          {t("photos")}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -151,7 +153,7 @@ const DownloadArchive = () => {
                           className="flex items-center gap-2"
                         >
                           <FileVideo className="w-4 h-4" />
-                          Videos
+                          {t("videos")}
                         </Label>
                       </div>
                     </div>
@@ -165,35 +167,39 @@ const DownloadArchive = () => {
               <div className="space-y-4">
                 <h4 className="font-medium flex items-center gap-2">
                   <Filter className="w-4 h-4" />
-                  Content Filters
+                  {t("contentFilters")}
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="status-filter">Status</Label>
+                    <Label htmlFor="status-filter">{t("status")}</Label>
                     <Select
                       value={statusFilter}
                       onValueChange={setStatusFilter}
                     >
                       <SelectTrigger id="status-filter">
-                        <SelectValue placeholder="All Status" />
+                        <SelectValue placeholder={t("allStatus")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="documented">Documented</SelectItem>
-                        <SelectItem value="verified">Verified</SelectItem>
+                        <SelectItem value="all">{t("allStatus")}</SelectItem>
+                        <SelectItem value="documented">
+                          {t("documented")}
+                        </SelectItem>
+                        <SelectItem value="verified">
+                          {t("verified")}
+                        </SelectItem>
                         <SelectItem value="investigating">
-                          Investigating
+                          {t("investigating")}
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="location-filter">Location</Label>
+                    <Label htmlFor="location-filter">{t("location")}</Label>
                     <Input
                       id="location-filter"
-                      placeholder="Filter by location..."
+                      placeholder={t("filterByLocation")}
                       value={locationFilter}
                       onChange={(e) => setLocationFilter(e.target.value)}
                     />
@@ -207,7 +213,7 @@ const DownloadArchive = () => {
                       className="flex items-center gap-2"
                     >
                       <Calendar className="w-4 h-4" />
-                      Date From
+                      {t("dateFrom")}
                     </Label>
                     <Input
                       id="date-from"
@@ -218,7 +224,7 @@ const DownloadArchive = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="date-to">Date To</Label>
+                    <Label htmlFor="date-to">{t("dateTo")}</Label>
                     <Input
                       id="date-to"
                       type="date"
@@ -233,12 +239,12 @@ const DownloadArchive = () => {
 
               {/* Download Info */}
               <div className="bg-muted/50 p-4 rounded-lg">
-                <h4 className="font-medium mb-2">Download Information</h4>
+                <h4 className="font-medium mb-2">{t("downloadInformation")}</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Archives are provided in ZIP format</li>
-                  <li>• Large archives may take several minutes to prepare</li>
-                  <li>• Download links are valid for 24 hours</li>
-                  <li>• Media files significantly increase archive size</li>
+                  <li>• {t("zipFormat")}</li>
+                  <li>• {t("largeMayTake")}</li>
+                  <li>• {t("linksValid")}</li>
+                  <li>• {t("mediaIncrease")}</li>
                 </ul>
               </div>
 
@@ -254,9 +260,7 @@ const DownloadArchive = () => {
                 ) : (
                   <Download className="w-4 h-4 mr-2" />
                 )}
-                {isLoading
-                  ? "Preparing Archive..."
-                  : "Prepare Archive Download"}
+                {isLoading ? t("preparingArchive") : t("prepareArchive")}
               </Button>
             </CardContent>
           </Card>

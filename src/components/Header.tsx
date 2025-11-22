@@ -40,9 +40,9 @@ export const Header = ({ onMenuToggle, showSidebar = false }: HeaderProps) => {
       case "/about":
         return t("about");
       case "/legal":
-        return "Legal Information";
+        return t("legalInformation");
       case "/download-archive":
-        return "Download Archive";
+        return t("downloadArchive");
       case "/report":
         return t("reportCase");
       default:

@@ -498,10 +498,10 @@ const Upload = () => {
           <div className="flex items-center gap-4 mb-2">
             <Badge variant="outline" className="gap-1">
               <Shield className="w-3 h-3" />
-              Anonymous
+              {t("anonymous")}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              Step {currentStep} of {totalSteps}
+              {t("step")} {currentStep} {t("of")} {totalSteps}
             </span>
           </div>
           <Progress value={progress} className="h-2" />

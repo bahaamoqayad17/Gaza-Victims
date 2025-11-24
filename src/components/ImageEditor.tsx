@@ -55,18 +55,49 @@ export const ImageEditor = ({
       setBlurAmount(5);
       setBrushSize(30);
       setIsErasing(false);
+      imageRef.current = null;
 
-      // Load image directly from URL
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        imageRef.current = img;
-        initializeCanvas();
-      };
-      img.onerror = () => {
-        console.error("Failed to load image");
-      };
-      img.src = imageUrl;
+      // Small delay to ensure dialog is rendered
+      const timer = setTimeout(() => {
+        // Load image directly from URL
+        const img = new Image();
+
+        // Try with CORS first
+        img.crossOrigin = "anonymous";
+        img.src = imageUrl;
+
+        img.onload = () => {
+          if (img.width > 0 && img.height > 0) {
+            imageRef.current = img;
+            // Small delay to ensure canvas refs are ready
+            setTimeout(() => {
+              initializeCanvas();
+            }, 50);
+          }
+        };
+
+        img.onerror = () => {
+          // Fallback: try without CORS
+          console.warn("Failed to load image with CORS, trying without...");
+          const img2 = new Image();
+          img2.onload = () => {
+            if (img2.width > 0 && img2.height > 0) {
+              imageRef.current = img2;
+              setTimeout(() => {
+                initializeCanvas();
+              }, 50);
+            }
+          };
+          img2.onerror = () => {
+            console.error("Failed to load image:", imageUrl);
+          };
+          img2.src = imageUrl;
+        };
+
+        img.src = imageUrl;
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, imageUrl]);
@@ -82,7 +113,20 @@ export const ImageEditor = ({
     const canvas = canvasRef.current;
     const maskCanvas = maskCanvasRef.current;
     const img = imageRef.current;
-    if (!canvas || !maskCanvas || !img) return;
+
+    if (!canvas || !maskCanvas || !img) {
+      console.warn("Canvas or image not ready:", {
+        canvas: !!canvas,
+        maskCanvas: !!maskCanvas,
+        img: !!img,
+      });
+      return;
+    }
+
+    if (img.width === 0 || img.height === 0) {
+      console.warn("Image has invalid dimensions:", img.width, img.height);
+      return;
+    }
 
     const maxWidth = 1200;
     const maxHeight = 800;
@@ -97,6 +141,10 @@ export const ImageEditor = ({
       height = height * scale;
     }
 
+    // Ensure minimum dimensions
+    if (width < 1) width = 1;
+    if (height < 1) height = 1;
+
     canvas.width = width;
     canvas.height = height;
     maskCanvas.width = width;
@@ -110,7 +158,12 @@ export const ImageEditor = ({
       // Clear any previous content
       ctx.clearRect(0, 0, width, height);
       // Draw the image
-      ctx.drawImage(img, 0, 0, width, height);
+      try {
+        ctx.drawImage(img, 0, 0, width, height);
+        console.log("Image drawn to canvas:", width, "x", height);
+      } catch (error) {
+        console.error("Error drawing image to canvas:", error);
+      }
     }
 
     // Clear mask
@@ -314,12 +367,12 @@ export const ImageEditor = ({
         console.error("Canvas is tainted:", taintError);
       }
 
-      if (isTainted) {
-        setIsProcessing(false);
-        throw new Error(
-          "Cannot export image due to CORS restrictions. The image may not have loaded correctly through the proxy. Please close and reopen the editor, or refresh the page."
-        );
-      }
+      // if (isTainted) {
+      //   setIsProcessing(false);
+      //   throw new Error(
+      //     "Cannot export image due to CORS restrictions. The image may not have loaded correctly through the proxy. Please close and reopen the editor, or refresh the page."
+      //   );
+      // }
 
       // Try to export as blob
       const blob = await new Promise<Blob | null>((resolve, reject) => {
@@ -532,6 +585,7 @@ export const ImageEditor = ({
                 await handleSave();
               } catch (error) {
                 // Error is already handled in handleSave and will be shown via toast
+                console.log("Save failed bahaa:", error);
                 console.error("Save failed:", error);
               }
             }}

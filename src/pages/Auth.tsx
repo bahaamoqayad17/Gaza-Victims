@@ -162,8 +162,10 @@ const Auth = () => {
                 value={activeTab}
                 onValueChange={setActiveTab}
               >
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsList className="w-full">
+                  <TabsTrigger className="w-full" value="login">
+                    Login
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="login">

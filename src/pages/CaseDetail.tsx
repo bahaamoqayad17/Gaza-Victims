@@ -48,8 +48,9 @@ const CaseDetail = () => {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorImageUrl, setEditorImageUrl] = useState("");
   const [editorImageType, setEditorImageType] = useState<
-    "proofOfId" | "proofOfDeath"
+    "proofOfId" | "proofOfDeath" | "portraitPhoto" | "additionalAttachment"
   >("proofOfId");
+  const [editorImageIndex, setEditorImageIndex] = useState<number | null>(null);
 
   const handleDownload = async () => {
     if (!caseData?.generated_id) return;
@@ -92,10 +93,16 @@ const CaseDetail = () => {
 
   const handleOpenEditor = (
     imageUrl: string,
-    imageType: "proofOfId" | "proofOfDeath"
+    imageType:
+      | "proofOfId"
+      | "proofOfDeath"
+      | "portraitPhoto"
+      | "additionalAttachment",
+    imageIndex?: number
   ) => {
     setEditorImageUrl(imageUrl);
     setEditorImageType(imageType);
+    setEditorImageIndex(imageIndex ?? null);
     setEditorOpen(true);
   };
 
@@ -104,6 +111,16 @@ const CaseDetail = () => {
       toast({
         title: "Error",
         description: "Case ID not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if image type is supported by backend
+    if (editorImageType !== "proofOfId" && editorImageType !== "proofOfDeath") {
+      toast({
+        title: "Not Supported",
+        description: `Editing ${editorImageType} images is not yet supported. Only proofOfId and proofOfDeath can be updated.`,
         variant: "destructive",
       });
       return;
@@ -128,9 +145,10 @@ const CaseDetail = () => {
       );
 
       // Update case image on backend
+      // Type assertion is safe because we already checked above
       await updateCaseImage({
         caseId: caseData._id,
-        imageType: editorImageType,
+        imageType: editorImageType as "proofOfId" | "proofOfDeath",
         file,
       }).unwrap();
 
@@ -262,13 +280,42 @@ const CaseDetail = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col md:flex-row gap-6">
-                  <div className="aspect-[4/3] w-32 overflow-hidden bg-muted flex-shrink-0 mx-auto md:mx-0 rounded-lg">
+                  <div className="aspect-[4/3] w-32 overflow-hidden bg-muted flex-shrink-0 mx-auto md:mx-0 rounded-lg relative">
                     {caseData.portraitPhoto ? (
-                      <img
-                        src={caseData.portraitPhoto}
-                        alt={`${caseData.name}`}
-                        className="w-full h-full object-cover"
-                      />
+                      <>
+                        <img
+                          src={caseData.portraitPhoto}
+                          alt={`${caseData.name}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                              handleOpenEditor(
+                                caseData.portraitPhoto!,
+                                "portraitPhoto"
+                              )
+                            }
+                            disabled={isUpdatingImage}
+                            className="shadow-lg"
+                          >
+                            {isUpdatingImage &&
+                            editorImageType === "portraitPhoto" ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Updating...
+                              </>
+                            ) : (
+                              <>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit Image
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </>
                     ) : (
                       <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-400 text-xs">No Photo</span>
@@ -388,13 +435,42 @@ const CaseDetail = () => {
                         (attachment, index) => (
                           <div
                             key={index}
-                            className="aspect-square bg-muted rounded-lg overflow-hidden"
+                            className="aspect-square bg-muted rounded-lg overflow-hidden relative"
                           >
                             <img
                               src={attachment}
                               alt={`${caseData.name} - Image ${index + 1}`}
                               className="w-full h-full object-cover"
                             />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() =>
+                                  handleOpenEditor(
+                                    attachment,
+                                    "additionalAttachment",
+                                    index
+                                  )
+                                }
+                                disabled={isUpdatingImage}
+                                className="shadow-lg"
+                              >
+                                {isUpdatingImage &&
+                                editorImageType === "additionalAttachment" &&
+                                editorImageIndex === index ? (
+                                  <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Updating...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit Image
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           </div>
                         )
                       )}
@@ -469,33 +545,11 @@ const CaseDetail = () => {
             {caseData.proofOfId && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    Proof Of Identity
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        handleOpenEditor(caseData.proofOfId!, "proofOfId")
-                      }
-                      disabled={isUpdatingImage}
-                    >
-                      {isUpdatingImage && editorImageType === "proofOfId" ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Updating...
-                        </>
-                      ) : (
-                        <>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit Image
-                        </>
-                      )}
-                    </Button>
-                  </CardTitle>
+                  <CardTitle>Proof Of Identity</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
-                    <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
+                    <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center relative">
                       {isUpdatingImage && editorImageType === "proofOfId" ? (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg z-10">
                           <div className="bg-background rounded-lg p-4 flex flex-col items-center gap-2">
@@ -505,8 +559,23 @@ const CaseDetail = () => {
                             </p>
                           </div>
                         </div>
-                      ) : null}
-                      <div className="text-center">
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg z-10">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                              handleOpenEditor(caseData.proofOfId!, "proofOfId")
+                            }
+                            disabled={isUpdatingImage}
+                            className="shadow-lg"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Image
+                          </Button>
+                        </div>
+                      )}
+                      <div className="text-center w-full h-full">
                         <img
                           src={caseData.proofOfId}
                           alt="Identity Document"
@@ -529,7 +598,7 @@ const CaseDetail = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="relative">
-                    <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center">
+                    <div className="aspect-[4/3] bg-muted rounded-lg flex items-center justify-center relative">
                       {isUpdatingImage && editorImageType === "proofOfDeath" ? (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg z-10">
                           <div className="bg-background rounded-lg p-4 flex flex-col items-center gap-2">
@@ -539,8 +608,26 @@ const CaseDetail = () => {
                             </p>
                           </div>
                         </div>
-                      ) : null}
-                      <div className="text-center">
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg z-10">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                              handleOpenEditor(
+                                caseData.proofOfDeath!,
+                                "proofOfDeath"
+                              )
+                            }
+                            disabled={isUpdatingImage}
+                            className="shadow-lg"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Image
+                          </Button>
+                        </div>
+                      )}
+                      <div className="text-center w-full h-full">
                         <img
                           src={caseData.proofOfDeath}
                           alt="Death Certificate"

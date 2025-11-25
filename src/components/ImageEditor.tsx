@@ -16,7 +16,11 @@ interface ImageEditorProps {
   isOpen: boolean;
   onClose: () => void;
   imageUrl: string;
-  imageType: "proofOfId" | "proofOfDeath";
+  imageType:
+    | "proofOfId"
+    | "proofOfDeath"
+    | "portraitPhoto"
+    | "additionalAttachment";
   onSave?: (editedImageUrl: string) => void;
   isSaving?: boolean;
 }
@@ -51,54 +55,42 @@ export const ImageEditor = ({
 
   useEffect(() => {
     if (isOpen && imageUrl) {
-      // Reset when opening editor
-      setBlurAmount(5);
-      setBrushSize(30);
-      setIsErasing(false);
-      imageRef.current = null;
+      (async () => {
+        try {
+          // Encode the imageUrl to handle special characters
+          const encodedUrl = encodeURIComponent(imageUrl);
+          const proxyUrl = `${
+            import.meta.env.VITE_API_URL
+          }/cases/proxy-image?imageUrl=${encodedUrl}`;
 
-      // Small delay to ensure dialog is rendered
-      const timer = setTimeout(() => {
-        // Load image directly from URL
-        const img = new Image();
+          const response = await fetch(proxyUrl);
 
-        // Try with CORS first
-        img.crossOrigin = "anonymous";
-        img.src = imageUrl;
-
-        img.onload = () => {
-          if (img.width > 0 && img.height > 0) {
-            imageRef.current = img;
-            // Small delay to ensure canvas refs are ready
-            setTimeout(() => {
-              initializeCanvas();
-            }, 50);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
           }
-        };
 
-        img.onerror = () => {
-          // Fallback: try without CORS
-          console.warn("Failed to load image with CORS, trying without...");
-          const img2 = new Image();
-          img2.onload = () => {
-            if (img2.width > 0 && img2.height > 0) {
-              imageRef.current = img2;
-              setTimeout(() => {
-                initializeCanvas();
-              }, 50);
-            }
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.src = objectUrl;
+
+          img.onload = () => {
+            imageRef.current = img;
+            setTimeout(() => initializeCanvas(), 50);
           };
-          img2.onerror = () => {
-            console.error("Failed to load image:", imageUrl);
+
+          img.onerror = () => {
+            console.error("Failed to load image from blob URL");
+            URL.revokeObjectURL(objectUrl);
           };
-          img2.src = imageUrl;
-        };
-
-        img.src = imageUrl;
-      }, 100);
-
-      return () => clearTimeout(timer);
+        } catch (err) {
+          console.error("Failed to fetch image:", err);
+        }
+      })();
     }
+    // initializeCanvas is only called from within this effect and doesn't need to be in deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, imageUrl]);
 
@@ -106,6 +98,7 @@ export const ImageEditor = ({
     if (imageRef.current) {
       redrawCanvas();
     }
+    // redrawCanvas is stable and doesn't need to be in deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blurAmount]);
 
@@ -409,6 +402,7 @@ export const ImageEditor = ({
 
       if (onSave) {
         onSave(editedImageUrl);
+        setIsProcessing(false);
         // Don't set isProcessing to false here - let parent handle it
         // The parent will close the dialog when done
       } else {

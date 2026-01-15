@@ -28,7 +28,7 @@ import {
   MessageCircle,
   Loader2,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "./LanguageSelector";
 import { useTranslation } from "@/lib/translations";
 import { formatDate, calculateDaysSince } from "@/lib/dateUtils";
@@ -72,7 +72,7 @@ export const VictimCard = ({
   const { t } = useTranslation(currentLanguage);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [copied, setCopied] = useState(false);
-
+  const navigate = useNavigate();
   const caseUrl = `${window.location.origin}/case/${victim.generated_id}`;
 
   const handleCopyUrl = async () => {
@@ -180,7 +180,10 @@ export const VictimCard = ({
 
   return (
     <div className="flex flex-col">
-      <Card className="hover:shadow-lg transition-shadow mx-auto max-w-sm">
+      <Card
+        className="hover:shadow-lg transition-shadow mx-auto max-w-sm cursor-pointer"
+        onClick={() => navigate(`/case/${victim.generated_id}`)}
+      >
         <CardContent className="p-3 md:p-4 lg:p-6">
           {/* Photo display */}
           <div className="mb-3 md:mb-4">

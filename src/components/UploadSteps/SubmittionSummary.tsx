@@ -107,12 +107,12 @@ export default function SubmittionSummary({
                   {t(
                     "iUnderstandAndAcknowledgeThatISolelyResponsibleForMyOwnSafetyAndSecurityWhenSubmittingThisDocumentation"
                   )}
-                  {t(
+                  {/* {t(
                     "iTakeFullResponsibilityForAnyRisksAssociatedWithMySubmissionIncludingButNotLimitedToPotentialRetaliationLegalConsequencesOrOtherHarm"
                   )}
                   {t(
                     "thePlatformProvidesNoGuaranteeOfProtectionAndAssumesNoResponsibilityForAnyConsequencesWhetherImmediateOrFutureThatMayAriseFromMyActOfSubmission"
-                  )}
+                  )} */}
                 </FormLabel>
                 <FormMessage />
               </FormItem>
@@ -135,12 +135,12 @@ export default function SubmittionSummary({
             {t(
               "byProceedingWithThisSubmissionYouAcknowledgeThatYouAreTakingThisActionAtYourOwnRiskAndDiscretion"
             )}
-            {t(
+            {/* {t(
               "thisPlatformCannotAndDoesNotProvideAnyGuaranteesRegardingYourSafetyAnonymityOrProtectionFromPotentialConsequences"
             )}
             {t(
               "youAreStronglyAdvisedToTakeAllNecessaryPrecautionsToProtectYourselfAndConsultWithAppropriateSecurityProfessionalsIfYouHaveConcernsAboutYourSafety"
-            )}
+            )} */}
           </p>
         </div>
 

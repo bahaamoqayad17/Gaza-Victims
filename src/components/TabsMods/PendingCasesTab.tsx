@@ -20,6 +20,8 @@ import { useToast } from "@/hooks/use-toast";
 import { AssignCaseModal } from "@/components/AssignCaseModal";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { Link } from "react-router-dom";
+
 
 export const PendingCasesTab = () => {
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -199,15 +201,17 @@ export const PendingCasesTab = () => {
                       {case_.userModeratorVerified
                         ? typeof case_.userModeratorVerified === "object"
                           ? (case_.userModeratorVerified as { name: string })
-                              ?.name
+                            ?.name
                           : "Assigned"
                         : "Unassigned"}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          Review
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={`/case/${case_.generated_id}`}>
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Review
+                          </Link>
                         </Button>
                         {canAssignCases && (
                           <Button
